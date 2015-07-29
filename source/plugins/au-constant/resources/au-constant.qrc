@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-constant">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
