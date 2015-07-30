@@ -94,6 +94,14 @@ bool SerializationFile::load()
         return false;
     }
 
+    // Check version
+    if (m_version != packVersionString(QMUSIC_API_VERSION)) {
+        qCritical() << QObject::tr("File has been saved with API version %1. Current API version is %2")
+                       .arg(unpackVersionString(m_version))
+                       .arg(QMUSIC_API_VERSION);
+        return false;
+    }
+
     // Check CRC
     quint32 crc = crc32(m_buffer.constData(), size);
     if (crc != m_crc) {
