@@ -45,7 +45,12 @@ set(${PROJECT_NAME}_INCLUDES ${INCLUDES} CACHE INTERNAL "${PROJECT_NAME} library
 
 add_definitions(-DPA_USE_ASIO=1)
 add_definitions(-DPA_USE_WDMKS=1)
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
+# Disable compiler warnings
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions("/wd4996")
+endif()
 
 add_library(${PROJECT_NAME} ${SRCS})
 
