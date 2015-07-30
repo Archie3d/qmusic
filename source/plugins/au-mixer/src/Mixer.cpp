@@ -8,13 +8,9 @@
 Mixer::Mixer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_inputAPtr = InputPortPtr(new InputPort("", QVariant::Double));
-    m_inputBPtr = InputPortPtr(new InputPort("", QVariant::Double));
-    m_outputPtr = OutputPortPtr(new OutputPort("", QVariant::Double));
-
-    addInput(m_inputAPtr);
-    addInput(m_inputBPtr);
-    addOutput(m_outputPtr);
+    m_pInputA = addInput("", QVariant::Double);
+    m_pInputB = addInput("", QVariant::Double);
+    m_pOutput = addOutput("", QVariant::Double);
 }
 
 Mixer::~Mixer()
@@ -31,9 +27,9 @@ void Mixer::processStop()
 
 void Mixer::process()
 {
-    double a = m_inputAPtr->value().toDouble();
-    double b = m_inputBPtr->value().toDouble();
-    m_outputPtr->setValue(a + b);
+    double a = m_pInputA->value().toDouble();
+    double b = m_pInputB->value().toDouble();
+    m_pOutput->setValue(a + b);
 }
 
 QGraphicsItem* Mixer::graphicsItem()

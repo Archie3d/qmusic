@@ -1,6 +1,8 @@
 #include <QPainter>
 #include <QFont>
 #include <QGraphicsSimpleTextItem>
+#include "InputPort.h"
+#include "OutputPort.h"
 #include "SerializationContext.h"
 #include "SignalChainAudioUnitItem.h"
 #include "SignalChainConnectionItem.h"
@@ -136,14 +138,23 @@ const QString SignalChainInputPortItem::UID("SignalChainInputPortItem");
 
 SignalChainInputPortItem::SignalChainInputPortItem(QGraphicsItem *pParent)
     : SignalChainPortItem(Type_InputPort, "", pParent),
-      m_inputPortPtr(nullptr)
+      m_pInputPort(nullptr)
 {
 }
 
-SignalChainInputPortItem::SignalChainInputPortItem(const InputPortPtr &input, QGraphicsItem *pParent)
-    : SignalChainPortItem(Type_InputPort, input->name(), pParent),
-      m_inputPortPtr(input)
+SignalChainInputPortItem::SignalChainInputPortItem(InputPort *pInput, QGraphicsItem *pParent)
+    : SignalChainPortItem(Type_InputPort, pInput->name(), pParent),
+      m_pInputPort(pInput)
 {
+}
+
+QVariant::Type SignalChainInputPortItem::dataType() const
+{
+    if (m_pInputPort != nullptr) {
+        return m_pInputPort->dataType();
+    }
+
+    return QVariant::Invalid;
 }
 
 void SignalChainInputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -170,15 +181,24 @@ const QString SignalChainOutputPortItem::UID("SignalChainOutputPortItem");
 
 SignalChainOutputPortItem::SignalChainOutputPortItem(QGraphicsItem *pParent)
     : SignalChainPortItem(Type_OutputPort, "", pParent),
-      m_outputPortPtr(nullptr)
+      m_pOutputPort(nullptr)
 {
 
 }
 
-SignalChainOutputPortItem::SignalChainOutputPortItem(const OutputPortPtr &output, QGraphicsItem *pParent)
-    : SignalChainPortItem(Type_OutputPort, output->name(), pParent),
-      m_outputPortPtr(output)
+SignalChainOutputPortItem::SignalChainOutputPortItem(OutputPort *pOutput, QGraphicsItem *pParent)
+    : SignalChainPortItem(Type_OutputPort, pOutput->name(), pParent),
+      m_pOutputPort(pOutput)
 {
+}
+
+QVariant::Type SignalChainOutputPortItem::dataType() const
+{
+    if (m_pOutputPort != nullptr) {
+        return m_pOutputPort->dataType();
+    }
+
+    return QVariant::Invalid;
 }
 
 void SignalChainOutputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const

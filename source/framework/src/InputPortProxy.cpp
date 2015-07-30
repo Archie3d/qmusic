@@ -1,31 +1,31 @@
-#include "../include/InputPortProxy.h"
+#include "InputPortProxy.h"
 
 InputPortProxy::InputPortProxy()
     : InputPort(),
-      m_inputPtr(nullptr)
+      m_pInputPort(nullptr)
 {
 }
 
-InputPortProxy::InputPortProxy(const InputPortPtr &inputPtr)
-    : InputPort(inputPtr->name(), inputPtr->dataType()),
-      m_inputPtr(inputPtr)
+InputPortProxy::InputPortProxy(InputPort *pInput)
+    : InputPort(pInput->name(), pInput->dataType()),
+      m_pInputPort(pInput)
 {
 }
 
-InputPortProxy::InputPortProxy(const QString &name, const InputPortPtr &inputPtr)
-    : InputPort(name, inputPtr->dataType()),
-      m_inputPtr(inputPtr)
+InputPortProxy::InputPortProxy(const QString &name, InputPort *pInput)
+    : InputPort(name, pInput->dataType()),
+      m_pInputPort(pInput)
 {
 }
 
 QVariant InputPortProxy::value() const
 {
-    return m_inputPtr.isNull() ? QVariant() : m_inputPtr->value();
+    return m_pInputPort == nullptr ? QVariant() : m_pInputPort->value();
 }
 
 void InputPortProxy::update()
 {
-    if (m_inputPtr.isNull()) {
-        m_inputPtr->update();
+    if (m_pInputPort != nullptr) {
+        m_pInputPort->update();
     }
 }

@@ -17,14 +17,10 @@ double square(double phase) {
 
 Generator::Generator(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
-      m_phase(0.0),
-      m_outputPtr(nullptr)
+      m_phase(0.0)
 {
-    m_inputFreqPtr = addInput("f", QVariant::Double);
-    m_outputPtr = addOutput("out", QVariant::Double);
-
-    //addControlInput("Freq", QVariant::Double);
-    //addControlOutput("Freq", QVariant::Double);
+    m_pInputFreq = addInput("f", QVariant::Double);
+    m_pOutput = addOutput("out", QVariant::Double);
 
     createProperties();
 }
@@ -45,7 +41,7 @@ void Generator::process()
 {
     ISignalChain* chain = signalChain();
     double dt = chain->timeStep();
-    double f = m_inputFreqPtr->value().toDouble();
+    double f = m_pInputFreq->value().toDouble();
     double dPhase = f * 2 * M_PI * dt;
     m_phase += dPhase;
     if (m_phase > 2 * M_PI) {
@@ -68,7 +64,7 @@ void Generator::process()
         break;
     }
 
-    m_outputPtr->setValue(out);
+    m_pOutput->setValue(out);
 }
 
 void Generator::reset()

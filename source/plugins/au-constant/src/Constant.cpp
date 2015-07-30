@@ -7,10 +7,9 @@
 #include "../include/Constant.h"
 
 Constant::Constant(AudioUnitPlugin *pPlugin)
-    : AudioUnit(pPlugin),
-      m_outputPtr(nullptr)
+    : AudioUnit(pPlugin)
 {
-    m_outputPtr = addOutput("", QVariant::Double);
+    m_pOutput = addOutput("", QVariant::Double);
     createProperties();
 
     m_pValueItem = nullptr;
@@ -30,7 +29,7 @@ void Constant::processStop()
 
 void Constant::process()
 {
-    m_outputPtr->setValue(m_pPropConstant->value());
+    m_pOutput->setValue(m_pPropConstant->value());
 }
 
 void Constant::reset()

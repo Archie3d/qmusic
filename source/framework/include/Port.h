@@ -2,7 +2,6 @@
 #define PORT_H
 
 #include <QVariant>
-
 #include "FrameworkApi.h"
 
 class QMUSIC_FRAMEWORK_API Port

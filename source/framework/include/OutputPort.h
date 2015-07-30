@@ -30,7 +30,5 @@ private:
     QVariant m_value;
 };
 
-typedef QSharedPointer<OutputPort> OutputPortPtr;
-
 #endif // OUTPUTPORT_H
 

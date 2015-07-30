@@ -13,18 +13,14 @@ static float sRightBuffer[2*BUFFER_SIZE];
 
 
 AudioSink::AudioSink(AudioUnitPlugin *pPlugin)
-    : AudioUnit(pPlugin),
-      m_inputLeftPtr(nullptr),
-      m_inputRightPtr(nullptr)
+    : AudioUnit(pPlugin)
 {
-    m_inputLeftPtr = InputPortPtr(new InputPort("L", QVariant::Double));
-    m_inputRightPtr = InputPortPtr(new InputPort("R", QVariant::Double));
-    addInput(m_inputLeftPtr);
-    addInput(m_inputRightPtr);
+    m_pInputLeft = addInput("L", QVariant::Double);
+    m_pInputRight = addInput("R", QVariant::Double);
 
     m_pThread = new QThread(this);
     m_pThreadObject = new AudioSinkThreadObject(BUFFER_SIZE);
-    m_pThreadObject->setInputPorts(m_inputLeftPtr, m_inputRightPtr);
+    m_pThreadObject->setInputPorts(m_pInputLeft, m_pInputRight);
     m_pThreadObject->moveToThread(m_pThread);
     m_pThread->start(QThread::TimeCriticalPriority);
 

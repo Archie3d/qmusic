@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPathItem>
 #include <QStyleOptionGraphicsItem>
+#include "InputPort.h"
 #include "SerializationContext.h"
 #include "SignalChainPortItem.h"
 #include "SignalChainConnectionItem.h"
@@ -28,9 +29,9 @@ SignalChainConnectionItem::SignalChainConnectionItem(QGraphicsItem *pParent)
 SignalChainConnectionItem::~SignalChainConnectionItem()
 {
     if (m_pTargetPortItem != nullptr) {
-        InputPortPtr inputPtr = m_pTargetPortItem->inputPort();
-        if (!inputPtr.isNull()) {
-            inputPtr->disconnect();
+        InputPort *pInputPort = m_pTargetPortItem->inputPort();
+        if (pInputPort != nullptr) {
+            pInputPort->disconnect();
         }
         m_pTargetPortItem->removeConnection(this);
     }

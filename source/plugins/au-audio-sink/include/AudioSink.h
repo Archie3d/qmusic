@@ -42,8 +42,8 @@ private slots:
 
 private:
 
-    InputPortPtr m_inputLeftPtr;
-    InputPortPtr m_inputRightPtr;
+    InputPort *m_pInputLeft;
+    InputPort *m_pInputRight;
     QThread *m_pThread;
     AudioSinkThreadObject *m_pThreadObject;
 };

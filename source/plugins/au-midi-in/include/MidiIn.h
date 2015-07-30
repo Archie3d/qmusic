@@ -36,9 +36,9 @@ private:
     double m_frequency;
     double m_velocity;
 
-    OutputPortPtr m_outputNoteOnPtr;
-    OutputPortPtr m_outputFreqPtr;
-    OutputPortPtr m_outputVelocityPtr;
+    OutputPort *m_pOutputNoteOn;
+    OutputPort *m_pOutputFreq;
+    OutputPort *m_pOutputVelocity;
 
     QtVariantProperty *m_pPropMidiDevice;
     QtVariantProperty *m_pPropChannel;

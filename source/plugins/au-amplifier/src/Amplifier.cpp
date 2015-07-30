@@ -11,9 +11,9 @@ Amplifier::Amplifier(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_inputPtr = addInput("", QVariant::Double);
-    m_gainPtr = addInput("", QVariant::Double);
-    m_outputPtr = addOutput("", QVariant::Double);
+    m_pInput = addInput("", QVariant::Double);
+    m_pGain = addInput("", QVariant::Double);
+    m_pOutput = addOutput("", QVariant::Double);
 }
 
 Amplifier::~Amplifier()
@@ -30,9 +30,9 @@ void Amplifier::processStop()
 
 void Amplifier::process()
 {
-    double v = m_inputPtr->value().toDouble();    
-    double gain = m_gainPtr->value().toDouble();
-    m_outputPtr->setValue(v * gain);
+    double v = m_pInput->value().toDouble();
+    double gain = m_pGain->value().toDouble();
+    m_pOutput->setValue(v * gain);
 }
 
 void Amplifier::reset()

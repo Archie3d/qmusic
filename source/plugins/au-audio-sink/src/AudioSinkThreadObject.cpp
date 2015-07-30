@@ -35,11 +35,11 @@ void AudioSinkThreadObject::setSignalChain(ISignalChain *pSignalChain)
     m_pSignalChain = pSignalChain;
 }
 
-void AudioSinkThreadObject::setInputPorts(InputPortPtr left, InputPortPtr right)
+void AudioSinkThreadObject::setInputPorts(InputPort *pLeft, InputPort *pRight)
 {
     QMutexLocker lock(&m_mutex);
-    m_leftChannelInputPtr = left;
-    m_rightChannelInputPtr = right;
+    m_pLeftChannelInput = pLeft;
+    m_pRightChannelInput = pRight;
 }
 
 void AudioSinkThreadObject::start()
@@ -60,14 +60,14 @@ void AudioSinkThreadObject::stop()
 
 float AudioSinkThreadObject::getNextLeftChannelSample()
 {
-    m_leftChannelInputPtr->update();
-    return m_leftChannelInputPtr->value().toDouble();
+    m_pLeftChannelInput->update();
+    return m_pLeftChannelInput->value().toDouble();
 }
 
 float AudioSinkThreadObject::getNextRightChannelSample()
 {
-    m_rightChannelInputPtr->update();
-    return m_rightChannelInputPtr->value().toDouble();
+    m_pRightChannelInput->update();
+    return m_pRightChannelInput->value().toDouble();
 }
 
 void AudioSinkThreadObject::generateSamples()

@@ -15,9 +15,9 @@ MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
 {
     m_pMidiInputDevice = nullptr;
 
-    m_outputFreqPtr = addOutput("f", QVariant::Double);
-    m_outputVelocityPtr = addOutput("velocity", QVariant::Double);
-    m_outputNoteOnPtr = addOutput("note on", QVariant::Bool);
+    m_pOutputFreq = addOutput("f", QVariant::Double);
+    m_pOutputVelocity = addOutput("velocity", QVariant::Double);
+    m_pOutputNoteOn = addOutput("note on", QVariant::Bool);
 
     createProperties();
 }
@@ -65,9 +65,9 @@ void MidiIn::processStop()
 
 void MidiIn::process()
 {
-    m_outputNoteOnPtr->setValue(m_noteOn);
-    m_outputFreqPtr->setValue(m_frequency);
-    m_outputVelocityPtr->setValue(m_velocity);
+    m_pOutputNoteOn->setValue(m_noteOn);
+    m_pOutputFreq->setValue(m_frequency);
+    m_pOutputVelocity->setValue(m_velocity);
 }
 
 void MidiIn::reset()

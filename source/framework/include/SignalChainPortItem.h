@@ -2,12 +2,12 @@
 #define SIGNALCHAINPORTITEM_H
 
 #include "FrameworkApi.h"
-#include "InputPort.h"
-#include "OutputPort.h"
 #include "SignalChainItem.h"
 
 class SignalChainConnectionItem;
 class SignalChainAudioUnitItem;
+class InputPort;
+class OutputPort;
 
 /**
  * @brief Absttract graphics item representing a signal port.
@@ -63,10 +63,10 @@ public:
     const static QString UID;
 
     SignalChainInputPortItem(QGraphicsItem *pParent = nullptr);
-    SignalChainInputPortItem(const InputPortPtr &input, QGraphicsItem *pParent = nullptr);
+    SignalChainInputPortItem(InputPort *pInput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return false; }
-    QVariant::Type dataType() const override { return m_inputPortPtr->dataType(); }
-    InputPortPtr inputPort() const { return m_inputPortPtr; }
+    QVariant::Type dataType() const override;
+    InputPort* inputPort() const { return m_pInputPort; }
 
     // ISerializable interface
     QString uid() const { return UID; }
@@ -75,7 +75,7 @@ public:
     static ISerializable* create() { return new SignalChainInputPortItem(); }
 
 private:
-    InputPortPtr m_inputPortPtr;
+    InputPort *m_pInputPort;
 };
 
 class QMUSIC_FRAMEWORK_API SignalChainOutputPortItem : public SignalChainPortItem
@@ -85,10 +85,10 @@ public:
     const static QString UID;
 
     SignalChainOutputPortItem(QGraphicsItem *pParent = nullptr);
-    SignalChainOutputPortItem(const OutputPortPtr &output, QGraphicsItem *pParent = nullptr);
+    SignalChainOutputPortItem(OutputPort *pOutput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return true; }
-    QVariant::Type dataType() const override { return m_outputPortPtr->dataType(); }
-    OutputPortPtr outputPort() const { return m_outputPortPtr; }
+    QVariant::Type dataType() const override;
+    OutputPort* outputPort() const { return m_pOutputPort; }
 
     // ISerializable interface
     QString uid() const { return UID; }
@@ -97,7 +97,7 @@ public:
     static ISerializable* create() { return new SignalChainOutputPortItem(); }
 
 private:
-    OutputPortPtr m_outputPortPtr;
+    OutputPort *m_pOutputPort;
 };
 
 #endif // SIGNALCHAINPORTITEM_H

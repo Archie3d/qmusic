@@ -1,8 +1,11 @@
 #ifndef INPUTPORT_H
 #define INPUTPORT_H
 
+#include <QVariant>
+#include "Port.h"
 #include "FrameworkApi.h"
-#include "OutputPort.h"
+
+class OutputPort;
 
 class QMUSIC_FRAMEWORK_API InputPort : public Port
 {
@@ -14,18 +17,16 @@ public:
     QVariant value() const override;
     void update() override;
 
-    void connect(const OutputPortPtr &outputPtr);
+    void connect(OutputPort *pOutput);
     void disconnect();
 
-    OutputPortPtr connectedOutputPort() const { return m_connectedOutputPort; }
+    OutputPort* connectedOutputPort() const { return m_pConnectedOutputPort; }
 
 private:
 
     /// Pointer to connected output port, if any.
-    OutputPortPtr m_connectedOutputPort;
+    OutputPort *m_pConnectedOutputPort;
 };
-
-typedef QSharedPointer<InputPort> InputPortPtr;
 
 #endif // INPUTPORT_H
 

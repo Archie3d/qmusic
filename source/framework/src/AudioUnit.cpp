@@ -18,10 +18,10 @@ AudioUnit::AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent)
 
 AudioUnit::~AudioUnit()
 {
-    // Clear audio unit association with output ports
-    foreach (const OutputPortPtr &outputPtr, m_outputs) {
-        outputPtr->setAudioUnit(nullptr);
-    }
+    // Delete ports
+    qDeleteAll(m_inputs);
+    qDeleteAll(m_outputs);
+
     delete m_pPropertyManager;
 }
 
@@ -41,8 +41,8 @@ void AudioUnit::update()
         return;
     }
 
-    foreach (const InputPortPtr inputPtr, m_inputs) {
-        inputPtr->update();
+    foreach (InputPort *pInput, m_inputs) {
+        pInput->update();
     }
 
     process();
@@ -76,53 +76,52 @@ void AudioUnit::control(const QString &name, const QVariant &value)
     // Ignore controls by default.
 }
 
-InputPortPtr AudioUnit::addInput(const QString &name, QVariant::Type type)
+InputPort *AudioUnit::addInput(const QString &name, QVariant::Type type)
 {
-    InputPortPtr inputPtr(new InputPort(name, type));
-    addInput(inputPtr);
-    return inputPtr;
+    InputPort *pInput = new InputPort(name, type);
+    addInput(pInput);
+    return pInput;
 }
 
-void AudioUnit::addInput(const InputPortPtr &inputPtr)
+void AudioUnit::addInput(InputPort *pInput)
 {
-    Q_ASSERT(!inputPtr.isNull());
-    m_inputs.append(inputPtr);
+    Q_ASSERT(pInput != nullptr);
+    m_inputs.append(pInput);
 }
 
-QList<InputPortPtr> AudioUnit::inputs() const
+QList<InputPort *> AudioUnit::inputs() const
 {
     return m_inputs;
 }
 
-OutputPortPtr AudioUnit::addOutput(const QString &name, QVariant::Type type)
+OutputPort *AudioUnit::addOutput(const QString &name, QVariant::Type type)
 {
-    OutputPortPtr outputPtr(new OutputPort(name, type));
-    addOutput(outputPtr);
-    return outputPtr;
+    OutputPort *pOutput = new OutputPort(name, type);
+    addOutput(pOutput);
+    return pOutput;
 }
 
-void AudioUnit::addOutput(const OutputPortPtr &outputPtr)
+void AudioUnit::addOutput(OutputPort *pOutput)
 {
-    Q_ASSERT(!outputPtr.isNull());
-    outputPtr->setAudioUnit(this);
-    m_outputs.append(outputPtr);
+    Q_ASSERT(pOutput != nullptr);
+    pOutput->setAudioUnit(this);
+    m_outputs.append(pOutput);
 }
 
-QList<OutputPortPtr> AudioUnit::outputs() const
+QList<OutputPort *> AudioUnit::outputs() const
 {
     return m_outputs;
 }
 
 void AudioUnit::removeAllInputs()
 {
+    qDeleteAll(m_inputs);
     m_inputs.clear();
 }
 
 void AudioUnit::removeAllOutputs()
 {
-    foreach (const OutputPortPtr &outputPtr, m_outputs) {
-        outputPtr->setAudioUnit(nullptr);
-    }
+    qDeleteAll(m_outputs);
     m_outputs.clear();
 }
 

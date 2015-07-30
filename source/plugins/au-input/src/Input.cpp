@@ -16,11 +16,8 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pLeftBuffer = new AudioBuffer(BUFFER_SIZE * 2);
     m_pRightBuffer = new AudioBuffer(BUFFER_SIZE * 2);
 
-    m_outputLeftPtr = OutputPortPtr(new OutputPort("L", QVariant::Double));
-    m_outputRightPtr = OutputPortPtr(new OutputPort("R", QVariant::Double));
-
-    addOutput(m_outputLeftPtr);
-    addOutput(m_outputRightPtr);
+    m_pOutputLeft = addOutput("L", QVariant::Double);
+    m_pOutputRight = addOutput("R", QVariant::Double);
 
     Application::instance()->audioDevice()->addListener(this);
 }
@@ -72,6 +69,6 @@ void Input::process()
         m_pRightBuffer->read(&r, 1);
     }
 
-    m_outputLeftPtr->setValue(l);
-    m_outputRightPtr->setValue(r);
+    m_pOutputLeft->setValue(l);
+    m_pOutputRight->setValue(r);
 }

@@ -18,8 +18,8 @@ Envelope::Envelope(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_noteOnInputPtr = addInput("on", QVariant::Bool);
-    m_outputPtr = addOutput("gain", QVariant::Double);
+    m_pNoteOnInput = addInput("on", QVariant::Bool);
+    m_pOutput = addOutput("gain", QVariant::Double);
 
     createProperties();
 }
@@ -49,7 +49,7 @@ void Envelope::processStop()
 
 void Envelope::process()
 {
-    bool noteOn = m_noteOnInputPtr->value().toBool();
+    bool noteOn = m_pNoteOnInput->value().toBool();
 
     // Handle note on signal
     if (noteOn) {
@@ -74,7 +74,7 @@ void Envelope::process()
     calculateDecay();
     calculateRelease();
 
-    m_outputPtr->setValue(m_output);
+    m_pOutput->setValue(m_output);
 }
 
 void Envelope::reset()

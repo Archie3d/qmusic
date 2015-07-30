@@ -40,8 +40,8 @@ private:
     void calculateRelease();
 
 
-    InputPortPtr m_noteOnInputPtr;
-    OutputPortPtr m_outputPtr;
+    InputPort *m_pNoteOnInput;
+    OutputPort *m_pOutput;
 
     bool m_noteOn;
     State m_state;

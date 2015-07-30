@@ -28,9 +28,9 @@ private:
 
     VAOnePoleFilter m_filter;
 
-    InputPortPtr m_inputPtr;
-    InputPortPtr m_inputCutOffFreqPtr;
-    OutputPortPtr m_outputPtr;
+    InputPort *m_pInput;
+    InputPort *m_pInputCutOffFreq;
+    OutputPort *m_pOutput;
 
     QtVariantProperty *m_pFilterType;
 };

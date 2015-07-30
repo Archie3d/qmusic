@@ -297,11 +297,11 @@ void SignalChainScene::establishConnection(SignalChainPortItem *pFinalPort)
     m_pConnectionItem->updatePath();
 
     // Establish connection at signal chain
-    InputPortPtr inputPtr = m_pConnectionItem->inputPortItem()->inputPort();
-    OutputPortPtr outputPtr = m_pConnectionItem->outputPortItem()->outputPort();
-    Q_ASSERT(!inputPtr.isNull());
-    Q_ASSERT(!outputPtr.isNull());
-    inputPtr->connect(outputPtr);
+    InputPort *pInputPort = m_pConnectionItem->inputPortItem()->inputPort();
+    OutputPort *pOutputPort = m_pConnectionItem->outputPortItem()->outputPort();
+    Q_ASSERT(pInputPort != nullptr);
+    Q_ASSERT(pOutputPort != nullptr);
+    pInputPort->connect(pOutputPort);
 
     m_pConnectionItem = nullptr;
     emit endConnection();

@@ -8,18 +8,16 @@ class QMUSIC_FRAMEWORK_API InputPortProxy : public InputPort
 {
 public:
     InputPortProxy();
-    InputPortProxy(const InputPortPtr &inputPtr);
-    InputPortProxy(const QString &name, const InputPortPtr &inputPtr);
+    InputPortProxy(InputPort *pInput);
+    InputPortProxy(const QString &name, InputPort *pInput);
 
     QVariant value() const override;
     void update() override;
 private:
 
     /// Associated input port.
-    InputPortPtr m_inputPtr;
+    InputPort *m_pInputPort;
 };
-
-typedef QSharedPointer<InputPortProxy> InputPortProxyPtr;
 
 #endif // INPUTPORTPROXY_H
 

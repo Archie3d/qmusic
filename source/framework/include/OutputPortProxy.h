@@ -9,8 +9,8 @@ class QMUSIC_FRAMEWORK_API OutputPortProxy : public OutputPort
 public:
 
     OutputPortProxy();
-    OutputPortProxy(const OutputPortPtr &output);
-    OutputPortProxy(const QString &name, const OutputPortPtr &output);
+    OutputPortProxy(OutputPort *pOutput);
+    OutputPortProxy(const QString &name, OutputPort *pOutput);
 
     QVariant value() const override;
     void update() override;
@@ -18,10 +18,8 @@ public:
 private:
 
     /// Related output port.
-    OutputPortPtr m_outputPtr;
+    OutputPort *m_pOutputPort;
 };
-
-typedef QSharedPointer<OutputPortProxy> OutputPortProxyPtr;
 
 #endif // OUTPUTPORTPROXY_H
 

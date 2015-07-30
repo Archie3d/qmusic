@@ -33,13 +33,13 @@ public:
 
     AudioUnitPlugin* plugin() const { return m_pPlugin; }
 
-    InputPortPtr addInput(const QString &name, QVariant::Type type);
-    void addInput(const InputPortPtr &inputPtr);
-    QList<InputPortPtr> inputs() const;
+    InputPort* addInput(const QString &name, QVariant::Type type);
+    void addInput(InputPort *pInput);
+    QList<InputPort*> inputs() const;
 
-    OutputPortPtr addOutput(const QString &name, QVariant::Type type);
-    void addOutput(const OutputPortPtr &outputPtr);
-    QList<OutputPortPtr> outputs() const;
+    OutputPort* addOutput(const QString &name, QVariant::Type type);
+    void addOutput(OutputPort *pOutput);
+    QList<OutputPort*> outputs() const;
 
     void removeAllInputs();
     void removeAllOutputs();
@@ -92,10 +92,10 @@ private:
     ISignalChain *m_pSignalChain;
 
     /// Input ports.
-    QList<InputPortPtr> m_inputs;
+    QList<InputPort*> m_inputs;
 
     /// Output ports.
-    QList<OutputPortPtr> m_outputs;
+    QList<OutputPort*> m_outputs;
 
     /// Flag telling that this unit has been already updated.
     bool m_updated;

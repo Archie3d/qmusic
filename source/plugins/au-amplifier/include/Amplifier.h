@@ -23,9 +23,9 @@ private:
 
     void createProperties();
 
-    InputPortPtr m_inputPtr;
-    InputPortPtr m_gainPtr;
-    OutputPortPtr m_outputPtr;
+    InputPort *m_pInput;
+    InputPort *m_pGain;
+    OutputPort *m_pOutput;
 };
 
 #endif // AMPLIFIER_H

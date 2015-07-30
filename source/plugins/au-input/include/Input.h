@@ -28,8 +28,8 @@ private:
     AudioBuffer *m_pLeftBuffer;
     AudioBuffer *m_pRightBuffer;
 
-    OutputPortPtr m_outputLeftPtr;
-    OutputPortPtr m_outputRightPtr;
+    OutputPort *m_pOutputLeft;
+    OutputPort *m_pOutputRight;
 };
 
 #endif // AUDIOSINK_H

@@ -187,13 +187,13 @@ void SignalChainAudioUnitItem::createPortItems()
 {
     Q_ASSERT(m_pAudioUnit != nullptr);
 
-    foreach (const InputPortPtr &input, m_pAudioUnit->inputs()) {
-        SignalChainInputPortItem *pInputItem = new SignalChainInputPortItem(input, this);
+    foreach (InputPort *pInput, m_pAudioUnit->inputs()) {
+        SignalChainInputPortItem *pInputItem = new SignalChainInputPortItem(pInput, this);
         m_inputPortItems.append(pInputItem);
     }
 
-    foreach (const OutputPortPtr &output, m_pAudioUnit->outputs()) {
-        SignalChainOutputPortItem *pOutputItem = new SignalChainOutputPortItem(output, this);
+    foreach (OutputPort *pOutput, m_pAudioUnit->outputs()) {
+        SignalChainOutputPortItem *pOutputItem = new SignalChainOutputPortItem(pOutput, this);
         m_outputPortItems.append(pOutputItem);
     }
 }

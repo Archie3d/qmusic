@@ -22,9 +22,9 @@ protected:
 
 private:
 
-    InputPortPtr m_inputAPtr;
-    InputPortPtr m_inputBPtr;
-    OutputPortPtr m_outputPtr;
+    InputPort *m_pInputA;
+    InputPort *m_pInputB;
+    OutputPort *m_pOutput;
 };
 
 #endif // AUDIOSINK_H

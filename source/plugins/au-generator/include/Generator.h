@@ -26,8 +26,8 @@ private:
 
     double m_phase;
 
-    InputPortPtr m_inputFreqPtr;
-    OutputPortPtr m_outputPtr;
+    InputPort *m_pInputFreq;
+    OutputPort *m_pOutput;
 
     QtVariantProperty *m_pPropWaveform;
     QtVariantProperty *m_pPropFrequency;

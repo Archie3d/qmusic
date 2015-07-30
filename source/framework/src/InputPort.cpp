@@ -1,8 +1,9 @@
-#include "../include/InputPort.h"
+#include "OutputPort.h"
+#include "InputPort.h"
 
 InputPort::InputPort()
     : Port(Direction_Input),
-      m_connectedOutputPort(nullptr)
+      m_pConnectedOutputPort(nullptr)
 {
 }
 
@@ -13,22 +14,22 @@ InputPort::InputPort(const QString &name, QVariant::Type type)
 
 QVariant InputPort::value() const
 {
-    return m_connectedOutputPort.isNull() ? QVariant() : m_connectedOutputPort->value();
+    return m_pConnectedOutputPort == nullptr ? QVariant() : m_pConnectedOutputPort->value();
 }
 
 void InputPort::update()
 {
-    if (!m_connectedOutputPort.isNull()) {
-        m_connectedOutputPort->update();
+    if (m_pConnectedOutputPort != nullptr) {
+        m_pConnectedOutputPort->update();
     }
 }
 
-void InputPort::connect(const OutputPortPtr &outputPtr)
+void InputPort::connect(OutputPort *pOutput)
 {
-    m_connectedOutputPort = outputPtr;
+    m_pConnectedOutputPort = pOutput;
 }
 
 void InputPort::disconnect()
 {
-    m_connectedOutputPort.clear();
+    m_pConnectedOutputPort = nullptr;
 }

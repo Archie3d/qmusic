@@ -24,7 +24,7 @@ public:
     AudioBuffer* rightChannelBuffer() const { return m_pRightBuffer; }
 
     void setSignalChain(ISignalChain *pSignalChain);
-    void setInputPorts(InputPortPtr left, InputPortPtr right);
+    void setInputPorts(InputPort *pLeft, InputPort *pRight);
 
 public slots:
 
@@ -59,8 +59,8 @@ private:
     bool m_started;
     bool m_firstBuffer;
 
-    InputPortPtr m_leftChannelInputPtr;
-    InputPortPtr m_rightChannelInputPtr;
+    InputPort *m_pLeftChannelInput;
+    InputPort *m_pRightChannelInput;
 };
 
 #endif // AUDIOSINKTHREADOBJECT_H

@@ -11,10 +11,10 @@ LHPFilter::LHPFilter(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_filter()
 {
-    m_inputPtr = addInput("in", QVariant::Double);
-    m_inputCutOffFreqPtr = addInput("f", QVariant::Double);
+    m_pInput = addInput("in", QVariant::Double);
+    m_pInputCutOffFreq = addInput("f", QVariant::Double);
 
-    m_outputPtr = addOutput("out", QVariant::Double);
+    m_pOutput = addOutput("out", QVariant::Double);
 
     createProperties();
 }
@@ -37,8 +37,8 @@ void LHPFilter::process()
 {
     int type = m_pFilterType->value().toInt();
     m_filter.setType(type == 0 ? VAOnePoleFilter::Type_LP : VAOnePoleFilter::Type_HP);
-    m_filter.setCutOffFrequency(m_inputCutOffFreqPtr->value().toDouble());
-    m_outputPtr->setValue(m_filter.doFilter(m_inputPtr->value().toDouble()));
+    m_filter.setCutOffFrequency(m_pInputCutOffFreq->value().toDouble());
+    m_pOutput->setValue(m_filter.doFilter(m_pInput->value().toDouble()));
 }
 
 void LHPFilter::reset()

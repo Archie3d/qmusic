@@ -29,7 +29,7 @@ private:
 
     QGraphicsSimpleTextItem *m_pValueItem;
 
-    OutputPortPtr m_outputPtr;
+    OutputPort *m_pOutput;
     QtVariantProperty *m_pPropConstant;
 };
 
