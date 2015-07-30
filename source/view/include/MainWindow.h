@@ -20,6 +20,10 @@ public:
 
 private slots:
 
+    void newSignalChain();
+    void saveSignalChain();
+    void saveAsSignalChain();
+
     void startSignalChain();
     void stopSignalChain();
 
@@ -27,6 +31,7 @@ private:
 
     void createDockingWindows();
     void createActions();
+    void createMenu();
     void createToolBars();
 
     void updateActions();
@@ -39,8 +44,18 @@ private:
     SignalChainWidget *m_pSignalChainWidget;
 
     // Actions
+    QAction *m_pNewSignalChainAction;
+    QAction *m_pOpenSignalChainAction;
+    QAction *m_pSaveSignalChainAction;
+    QAction *m_pSaveAsSignalChainAction;
+    QAction *m_pQuitAction;
+
     QAction *m_pStartSignalChainAction;
     QAction *m_pStopSignalChainAction;
+
+    // Menus
+    QMenu *m_pFileMenu;
+    QMenu *m_pSoundMenu;
 
     // Toolbars
     QToolBar *m_pSignalChainToolBar;

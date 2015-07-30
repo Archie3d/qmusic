@@ -1,5 +1,9 @@
 #include <QAction>
+#include <QMenuBar>
 #include <QToolBar>
+#include <QMessageBox>
+#include <QFileDialog>
+#include "Application.h"
 #include "LogWindow.h"
 #include "AudioUnitsManagerWindow.h"
 #include "AudioUnitPropertiesWindow.h"
@@ -14,6 +18,7 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     createDockingWindows();
 
     createActions();
+    createMenu();
     createToolBars();
 
     m_pSignalChainWidget = new SignalChainWidget();
@@ -29,6 +34,44 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::newSignalChain()
+{
+    int ret = QMessageBox::question(
+                this,
+                tr("New signal chain"),
+                tr("Do you want to create a new signal chain?<br>"
+                   "(All unsaved data will be lost)"),
+                QMessageBox::Yes | QMessageBox::No,
+                QMessageBox::No);
+
+    if (ret == QMessageBox::No) {
+        m_pSignalChainWidget->newSignalChainScene();
+    }
+}
+
+void MainWindow::saveSignalChain()
+{
+    if (m_pSignalChainWidget->sceneFile().isEmpty()) {
+        saveAsSignalChain();
+        return;
+    }
+
+    m_pSignalChainWidget->save(m_pSignalChainWidget->sceneFile());
+}
+
+void MainWindow::saveAsSignalChain()
+{
+    QString proposedPath = Application::instance()->applicationDirPath();
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save signal chain as"),
+                                                    proposedPath,
+                                                    tr("QMusic signal chain (*.sch)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    m_pSignalChainWidget->save(fileName);
 }
 
 void MainWindow::startSignalChain()
@@ -57,11 +100,40 @@ void MainWindow::createDockingWindows()
 
 void MainWindow::createActions()
 {
+    m_pNewSignalChainAction = new QAction(tr("&New"), this);
+    connect(m_pNewSignalChainAction, SIGNAL(triggered()), this, SLOT(newSignalChain()));
+
+    m_pOpenSignalChainAction = new QAction(tr("&Open..."), this);
+
+    m_pSaveSignalChainAction = new QAction(tr("&Save"), this);
+    connect(m_pSaveSignalChainAction, SIGNAL(triggered()), this, SLOT(saveSignalChain()));
+
+    m_pSaveAsSignalChainAction = new QAction(tr("Save &as..."), this);
+    connect(m_pSaveAsSignalChainAction, SIGNAL(triggered()), this, SLOT(saveAsSignalChain()));
+
+    m_pQuitAction = new QAction(tr("&Quit"), this);
+
     m_pStartSignalChainAction = new QAction(QIcon(":/icons/play.png"), tr("Start"), this);
     connect(m_pStartSignalChainAction, SIGNAL(triggered()), this, SLOT(startSignalChain()));
 
     m_pStopSignalChainAction = new QAction(QIcon(":/icons/stop.png"), tr("Stop"), this);
     connect(m_pStopSignalChainAction, SIGNAL(triggered()), this, SLOT(stopSignalChain()));
+}
+
+void MainWindow::createMenu()
+{
+    m_pFileMenu = menuBar()->addMenu(tr("&File"));
+    m_pFileMenu->addAction(m_pNewSignalChainAction);
+    m_pFileMenu->addAction(m_pOpenSignalChainAction);
+    m_pFileMenu->addSeparator();
+    m_pFileMenu->addAction(m_pSaveSignalChainAction);
+    m_pFileMenu->addAction(m_pSaveAsSignalChainAction);
+    m_pFileMenu->addSeparator();
+    m_pFileMenu->addAction(m_pQuitAction);
+
+    m_pSoundMenu = menuBar()->addMenu(tr("&Sound"));
+    m_pSoundMenu->addAction(m_pStartSignalChainAction);
+    m_pSoundMenu->addAction(m_pStopSignalChainAction);
 }
 
 void MainWindow::createToolBars()
@@ -75,6 +147,10 @@ void MainWindow::createToolBars()
 void MainWindow::updateActions()
 {
     bool isStarted = m_pSignalChainWidget->scene()->signalChain()->isStarted();
+
+    m_pNewSignalChainAction->setEnabled(!isStarted);
+    m_pOpenSignalChainAction->setEnabled(!isStarted);
+
     m_pStartSignalChainAction->setVisible(!isStarted);
     m_pStopSignalChainAction->setVisible(isStarted);
 }

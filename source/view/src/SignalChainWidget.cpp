@@ -19,6 +19,11 @@ SignalChainWidget::SignalChainWidget(QWidget *pParent)
     newSignalChainScene();
 }
 
+void SignalChainWidget::save(const QString &path)
+{
+    m_signalChainSceneFile = path;
+}
+
 void SignalChainWidget::newSignalChainScene()
 {
     SignalChainScene *pOldScene = m_pSignalChainScene;
@@ -29,6 +34,8 @@ void SignalChainWidget::newSignalChainScene()
     if (pOldScene != nullptr) {
         pOldScene->deleteLater();
     }
+
+    m_signalChainSceneFile.clear();
 }
 
 void SignalChainWidget::onBeginConnection()

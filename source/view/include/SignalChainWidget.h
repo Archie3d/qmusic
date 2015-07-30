@@ -17,6 +17,10 @@ public:
 
     SignalChainScene* scene() const { return m_pSignalChainScene; }
 
+    QString sceneFile() const { return m_signalChainSceneFile; }
+
+    void save(const QString &path);
+
 public slots:
 
     void newSignalChainScene();
@@ -28,6 +32,7 @@ private slots:
 
 private:
 
+    QString m_signalChainSceneFile;
     QGraphicsView *m_pSignalChainView;
     SignalChainScene *m_pSignalChainScene;
 };
