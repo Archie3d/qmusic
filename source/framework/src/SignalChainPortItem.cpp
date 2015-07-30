@@ -5,13 +5,17 @@
 #include "SignalChainConnectionItem.h"
 #include "SignalChainPortItem.h"
 
-const int cRadius = 4;
+const int cRadius = 3;
+const int cFontSize = 7;
+const char *cFontFamily = "Verdana";
 
 QMap<QVariant::Type, QColor> cTypeToColorMap = []() {
     QMap<QVariant::Type, QColor> map;
     map[QVariant::Int] = QColor("blue");
     map[QVariant::Double] = QColor("red");
     map[QVariant::Bool] = QColor("green");
+    map[QVariant::List] = QColor("cyan");
+    map[QVariant::Map] = QColor("magenta");
     return map;
 }();
 
@@ -31,8 +35,8 @@ SignalChainPortItem::SignalChainPortItem(Type type, const QString &labelText, QG
     // Add port label
     QGraphicsSimpleTextItem *pLabelItem = new QGraphicsSimpleTextItem(labelText, this);
     QFont font = pLabelItem->font();
-    font.setFamily("Verdana");
-    font.setPointSize(7);
+    font.setFamily(cFontFamily);
+    font.setPointSize(cFontSize);
     pLabelItem->setFont(font);
     if (type == Type_InputPort) {
         pLabelItem->setPos(-pLabelItem->boundingRect().width() - cRadius, -pLabelItem->boundingRect().height());

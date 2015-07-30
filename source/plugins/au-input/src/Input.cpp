@@ -16,8 +16,8 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pLeftBuffer = new AudioBuffer(BUFFER_SIZE * 2);
     m_pRightBuffer = new AudioBuffer(BUFFER_SIZE * 2);
 
-    m_outputLeftPtr = OutputPortPtr(new OutputPort("Left", QVariant::Double));
-    m_outputRightPtr = OutputPortPtr(new OutputPort("Right", QVariant::Double));
+    m_outputLeftPtr = OutputPortPtr(new OutputPort("L", QVariant::Double));
+    m_outputRightPtr = OutputPortPtr(new OutputPort("R", QVariant::Double));
 
     addOutput(m_outputLeftPtr);
     addOutput(m_outputRightPtr);

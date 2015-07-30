@@ -16,7 +16,8 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
+    QGraphicsItem* graphicsItem() override;
+    int flags() const override;
 
 private:
 

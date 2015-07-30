@@ -14,6 +14,13 @@ class QMUSIC_FRAMEWORK_API IAudioUnit : public ISerializable
 {
 public:
 
+    enum Flag {
+        Flag_NoFlags = 0,
+        Flag_NoTitle = 1,
+        Flag_NoFrame = 2
+    };
+
+
     virtual ~IAudioUnit() {}
 
     /**
@@ -52,6 +59,12 @@ public:
      * @return
      */
     virtual QGraphicsItem* graphicsItem() = 0;
+
+    /**
+     * Returns audio unit flags.
+     * @return
+     */
+    virtual int flags() const = 0;
 
     /**
      * @brief Change control value of this unit.

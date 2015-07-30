@@ -18,8 +18,8 @@ Envelope::Envelope(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_noteOnInputPtr = addInput("NoteOn", QVariant::Bool);
-    m_outputPtr = addOutput("Out", QVariant::Double);
+    m_noteOnInputPtr = addInput("on", QVariant::Bool);
+    m_outputPtr = addOutput("gain", QVariant::Double);
 
     createProperties();
 }

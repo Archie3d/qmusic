@@ -28,6 +28,7 @@ public:
     bool isStarted() const override final { return m_started; }   
     void reset() override {}
     QGraphicsItem* graphicsItem() override { return nullptr; }
+    int flags() const override { return Flag_NoFlags; }
     void control(const QString &name, const QVariant &value) override;
 
     AudioUnitPlugin* plugin() const { return m_pPlugin; }

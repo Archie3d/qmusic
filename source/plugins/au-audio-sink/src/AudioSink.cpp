@@ -17,8 +17,8 @@ AudioSink::AudioSink(AudioUnitPlugin *pPlugin)
       m_inputLeftPtr(nullptr),
       m_inputRightPtr(nullptr)
 {
-    m_inputLeftPtr = InputPortPtr(new InputPort("Left", QVariant::Double));
-    m_inputRightPtr = InputPortPtr(new InputPort("Right", QVariant::Double));
+    m_inputLeftPtr = InputPortPtr(new InputPort("L", QVariant::Double));
+    m_inputRightPtr = InputPortPtr(new InputPort("R", QVariant::Double));
     addInput(m_inputLeftPtr);
     addInput(m_inputRightPtr);
 

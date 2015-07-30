@@ -11,10 +11,10 @@ LHPFilter::LHPFilter(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_filter()
 {
-    m_inputPtr = addInput("In", QVariant::Double);
+    m_inputPtr = addInput("in", QVariant::Double);
     m_inputCutOffFreqPtr = addInput("f", QVariant::Double);
 
-    m_outputPtr = addOutput("Out", QVariant::Double);
+    m_outputPtr = addOutput("out", QVariant::Double);
 
     createProperties();
 }

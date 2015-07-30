@@ -10,7 +10,7 @@ Constant::Constant(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_outputPtr(nullptr)
 {
-    m_outputPtr = addOutput("Out", QVariant::Double);
+    m_outputPtr = addOutput("", QVariant::Double);
     createProperties();
 
     m_pValueItem = nullptr;
@@ -48,6 +48,11 @@ QGraphicsItem* Constant::graphicsItem()
         m_pValueItem->setText(m_pPropConstant->valueText());
     }
     return m_pValueItem;
+}
+
+int Constant::flags() const
+{
+    return Flag_NoTitle;
 }
 
 void Constant::createProperties()

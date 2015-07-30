@@ -8,9 +8,9 @@
 Mixer::Mixer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_inputAPtr = InputPortPtr(new InputPort("InA", QVariant::Double));
-    m_inputBPtr = InputPortPtr(new InputPort("InB", QVariant::Double));
-    m_outputPtr = OutputPortPtr(new OutputPort("Out", QVariant::Double));
+    m_inputAPtr = InputPortPtr(new InputPort("", QVariant::Double));
+    m_inputBPtr = InputPortPtr(new InputPort("", QVariant::Double));
+    m_outputPtr = OutputPortPtr(new OutputPort("", QVariant::Double));
 
     addInput(m_inputAPtr);
     addInput(m_inputBPtr);
@@ -41,18 +41,23 @@ QGraphicsItem* Mixer::graphicsItem()
     QGraphicsPathItem *pItem = new QGraphicsPathItem();
     QPainterPath path;
     path.moveTo(0, 0);
-    path.lineTo(64, 32);
-    path.lineTo(0, 64);
+    path.lineTo(38, 24);
+    path.lineTo(0, 48);
     path.closeSubpath();
     pItem->setPath(path);
-    pItem->setBrush(QBrush(Qt::white));
+    pItem->setBrush(QBrush(QColor(0xFF, 0xFF, 0xE0)));
 
     QGraphicsSimpleTextItem *pPlus = new QGraphicsSimpleTextItem(pItem);
     pPlus->setText("+");
     QFont font = pPlus->font();
-    font.setPixelSize(32);
+    font.setPixelSize(24);
     pPlus->setFont(font);
-    pPlus->setPos(8, 8);
+    pPlus->setPos(4, 7);
 
     return pItem;
+}
+
+int Mixer::flags() const
+{
+    return Flag_NoTitle | Flag_NoFrame;
 }

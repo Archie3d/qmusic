@@ -1,6 +1,6 @@
 {
     "uid":          "ad85e0efec6db8017bb4328a948ddc37",
     "name":         "Amplifier",
-    "category":     "Filters",
+    "category":     "Signal flow",
     "version":      "1.0.0"
 }

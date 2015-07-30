@@ -20,8 +20,8 @@ Generator::Generator(AudioUnitPlugin *pPlugin)
       m_phase(0.0),
       m_outputPtr(nullptr)
 {
-    m_inputFreqPtr = addInput("Freq", QVariant::Double);
-    m_outputPtr = addOutput("Out", QVariant::Double);
+    m_inputFreqPtr = addInput("f", QVariant::Double);
+    m_outputPtr = addOutput("out", QVariant::Double);
 
     //addControlInput("Freq", QVariant::Double);
     //addControlOutput("Freq", QVariant::Double);

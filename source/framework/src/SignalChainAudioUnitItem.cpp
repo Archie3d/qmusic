@@ -9,11 +9,9 @@
 #include "SignalChainAudioUnitItem.h"
 
 const qreal cBorderWidth = 1.0;
-const qreal cHeaderMargin = 6.0;
-const qreal cPortMargin = 15.0;
+const qreal cHeaderMargin = 5.0;
+const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
-const qreal cControlMargin = 15.0;
-const qreal cControlSpacing = 40.0;
 const QSize cIconSize(16, 16);
 
 SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent)
@@ -27,9 +25,13 @@ SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraph
     setFlag(QGraphicsItem::ItemIsSelectable);
 
     m_pTitleTextItem = nullptr;
-    m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
-    m_pTitleTextItem->setText(pAudioUnit->plugin()->name());
-    m_pTitleTextItem->setBrush(QBrush(QColor(0, 0, 128)));
+
+    if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoTitle) == 0) {
+        m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
+        m_pTitleTextItem->setText(pAudioUnit->plugin()->name());
+        m_pTitleTextItem->setBrush(QBrush(QColor(0, 0, 128)));
+    }
+
     m_pAudioUnitGraphicsItem = m_pAudioUnit->graphicsItem();
     if (m_pAudioUnitGraphicsItem != nullptr) {
         m_pAudioUnitGraphicsItem->setParentItem(this);
@@ -122,29 +124,34 @@ void SignalChainAudioUnitItem::updateView()
 
 void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
 {
-    QColor color(220, 220, 220);
-    QColor contourColor = color.dark(150);
-    QColor colorLight = color.lighter(110);
-    QColor colorDark = color.darker(110);
-    if (isSelected()) {
-        contourColor = QColor(255, 159, 40);
-    }
-
     updateView();
-
     QRectF rect = boundingRect();
-    QLinearGradient gradient(QPointF(0, rect.top()),
-                             QPointF(0, rect.bottom()));
-    gradient.setColorAt(0, colorLight);
-    gradient.setColorAt(1, colorDark);
 
-    QPen pen;
-    pen.setColor(contourColor);
-    pen.setWidthF(cBorderWidth);
-    pPainter->setPen(pen);
-    pPainter->setBrush(gradient);
+    if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoFrame) == 0) {
+        // Draw frame
 
-    pPainter->drawPath(path());
+        QColor color(220, 220, 220);
+        QColor contourColor = color.dark(150);
+        QColor colorLight = color.lighter(110);
+        QColor colorDark = color.darker(110);
+        if (isSelected()) {
+            contourColor = QColor(255, 159, 40);
+        }
+
+
+        QLinearGradient gradient(QPointF(0, rect.top()),
+                                 QPointF(0, rect.bottom()));
+        gradient.setColorAt(0, colorLight);
+        gradient.setColorAt(1, colorDark);
+
+        QPen pen;
+        pen.setColor(contourColor);
+        pen.setWidthF(cBorderWidth);
+        pPainter->setPen(pen);
+        pPainter->setBrush(gradient);
+
+        pPainter->drawPath(path());
+    }
 
     // Draw icon if there is header present
     if (m_pTitleTextItem != nullptr) {

@@ -11,11 +11,9 @@ Amplifier::Amplifier(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_inputPtr = addInput("In", QVariant::Double);
-    m_gainPtr = addInput("Gain", QVariant::Double);
-    m_outputPtr = addOutput("Out", QVariant::Double);
-
-    createProperties();
+    m_inputPtr = addInput("", QVariant::Double);
+    m_gainPtr = addInput("", QVariant::Double);
+    m_outputPtr = addOutput("", QVariant::Double);
 }
 
 Amplifier::~Amplifier()
@@ -41,10 +39,29 @@ void Amplifier::reset()
 {
 }
 
-void Amplifier::control(const QString &name, const QVariant &value)
+QGraphicsItem* Amplifier::graphicsItem()
 {
+    QGraphicsPathItem *pItem = new QGraphicsPathItem();
+    QPainterPath path;
+
+    path.addEllipse(0, 4, 32, 32);
+
+    pItem->setPath(path);
+    pItem->setBrush(QBrush(QColor(0xFF, 0xFF, 0xE0)));
+
+    QGraphicsSimpleTextItem *pPlus = new QGraphicsSimpleTextItem(pItem);
+    pPlus->setText(QChar(0xD7));
+    QFont font = pPlus->font();
+    font.setPixelSize(24);
+    pPlus->setFont(font);
+    pPlus->setPos(7, 3);
+
+    return pItem;
+
 }
 
-void Amplifier::createProperties()
+int Amplifier::flags() const
 {
+    return Flag_NoTitle | Flag_NoFrame;
 }
+

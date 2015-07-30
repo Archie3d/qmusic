@@ -18,6 +18,7 @@ protected:
     void processStop();
     void process();
     QGraphicsItem* graphicsItem() override;
+    int flags() const override;
 
 private:
 
