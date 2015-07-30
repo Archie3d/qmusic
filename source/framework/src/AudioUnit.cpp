@@ -113,43 +113,6 @@ QList<OutputPortPtr> AudioUnit::outputs() const
     return m_outputs;
 }
 
-ControlInputPortPtr AudioUnit::addControlInput(const QString &name, QVariant::Type type)
-{
-    ControlInputPortPtr inputPtr(new ControlInputPort(this, name, type));
-    addControlInput(inputPtr);
-    return inputPtr;
-}
-
-void AudioUnit::addControlInput(const ControlInputPortPtr &inputPtr)
-{
-    Q_ASSERT(!inputPtr.isNull());
-    inputPtr->setAudioUnit(this);
-    m_controlInputs.append(inputPtr);
-}
-
-QList<ControlInputPortPtr> AudioUnit::controlInputs() const
-{
-    return m_controlInputs;
-}
-
-ControlOutputPortPtr AudioUnit::addControlOutput(const QString &name, QVariant::Type type)
-{
-    ControlOutputPortPtr outputPtr(new ControlOutputPort(name, type));
-    addControlOutput(outputPtr);
-    return outputPtr;
-}
-
-void AudioUnit::addControlOutput(const ControlOutputPortPtr &outputPtr)
-{
-    Q_ASSERT(!outputPtr.isNull());
-    m_controlOutputs.append(outputPtr);
-}
-
-QList<ControlOutputPortPtr> AudioUnit::controlOutputs() const
-{
-    return m_controlOutputs;
-}
-
 void AudioUnit::removeAllInputs()
 {
     m_inputs.clear();

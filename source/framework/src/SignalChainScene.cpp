@@ -11,9 +11,7 @@
 #include "SignalChain.h"
 #include "SignalChainItem.h"
 #include "SignalChainPortItem.h"
-#include "SignalChainControlItem.h"
 #include "SignalChainConnectionItem.h"
-#include "SignalChainControlConnectionItem.h"
 #include "SignalChainAudioUnitItem.h"
 #include "SignalChainScene.h"
 
@@ -25,7 +23,6 @@ SignalChainScene::SignalChainScene(QObject *pParent)
     m_pSignalChain = new SignalChain();
     m_pDraggedAudioUnitPlugin = nullptr;
     m_pConnectionItem = nullptr;
-    m_pControlConnectionItem = nullptr;
 
     connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
@@ -57,7 +54,6 @@ void SignalChainScene::selectAll()
 void SignalChainScene::deleteSelected()
 {
     QSet<SignalChainConnectionItem*> connectionsToDelete;
-    QSet<SignalChainControlConnectionItem*> controlConnectionsToDelete;
     QSet<SignalChainAudioUnitItem*> audioUnitsToDelete;
 
     foreach (QGraphicsItem *pItem, selectedItems()) {
@@ -67,23 +63,13 @@ void SignalChainScene::deleteSelected()
             foreach (SignalChainConnectionItem *pConnItem, pAuItem->connectionItems()) {
                 connectionsToDelete.insert(pConnItem);
             }
-            foreach (SignalChainControlConnectionItem *pConnItem, pAuItem->controlConnectionItems()) {
-                controlConnectionsToDelete.insert(pConnItem);
-            }
         } else if (pItem->type() == SignalChainItem::Type_Connection) {
             SignalChainConnectionItem *pConnectionItem = dynamic_cast<SignalChainConnectionItem*>(pItem);
             connectionsToDelete.insert(pConnectionItem);
-        } else if (pItem->type() == SignalChainItem::Type_ControlConnection) {
-            SignalChainControlConnectionItem *pControlConnectionItem = dynamic_cast<SignalChainControlConnectionItem*>(pItem);
-            controlConnectionsToDelete.insert(pControlConnectionItem);
         }
     }
 
     foreach (SignalChainConnectionItem *pItem, connectionsToDelete) {
-        delete pItem;
-    }
-
-    foreach (SignalChainControlConnectionItem *pItem, controlConnectionsToDelete) {
         delete pItem;
     }
 
@@ -110,16 +96,6 @@ void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)
                     emit beginConnection();
                     return;
                 }
-            } else if (pItem->type() == SignalChainItem::Type_ControlInput ||
-                       pItem->type() == SignalChainItem::Type_ControlOutput) {
-                SignalChainControlItem *pControlItem = dynamic_cast<SignalChainControlItem*>(pItem);
-                Q_ASSERT(pControlItem != nullptr);
-                m_pControlConnectionItem = new SignalChainControlConnectionItem();
-                addItem(m_pControlConnectionItem);
-                m_pControlConnectionItem->setControl(pControlItem);
-                m_pControlConnectionItem->updatePath();
-                emit beginConnection();
-                return;
             }
         }
     }
@@ -138,13 +114,6 @@ void SignalChainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *pEvent)
         }
         m_pConnectionItem->updatePath();
         return;
-    } else if (m_pControlConnectionItem != nullptr) {
-        if (m_pControlConnectionItem->controlInputItem() != nullptr) {
-            m_pControlConnectionItem->setSourcePoint(m_mousePos);
-        } else if (m_pControlConnectionItem->controlOutputItem() != nullptr) {
-            m_pControlConnectionItem->setTargetPoint(m_mousePos);
-        }
-        m_pControlConnectionItem->updatePath();
     }
 
     QGraphicsScene::mouseMoveEvent(pEvent);
@@ -176,31 +145,6 @@ void SignalChainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *pEvent)
 
             delete m_pConnectionItem;
             m_pConnectionItem = nullptr;
-            emit endConnection();
-            return;
-        } else if (m_pControlConnectionItem != nullptr) {
-            SignalChainItem *pItem = signalChainItemAtPos(pEvent->scenePos());
-            if (pItem != nullptr) {
-                if (pItem->type() == SignalChainItem::Type_ControlInput) {
-                    SignalChainControlInputItem *pInputItem = dynamic_cast<SignalChainControlInputItem*>(pItem);
-                    if (m_pControlConnectionItem->controlInputItem() == nullptr &&
-                            m_pControlConnectionItem->controlOutputItem()->parentItem() != pInputItem->parentItem()) {
-                        establishControlConnection(pInputItem);
-                        return;
-                    }
-                } else if (pItem->type() == SignalChainItem::Type_ControlOutput) {
-                    SignalChainControlOutputItem *pOutputItem = dynamic_cast<SignalChainControlOutputItem*>(pItem);
-                    if (m_pControlConnectionItem->controlOutputItem() == nullptr &&
-                            m_pControlConnectionItem->controlInputItem()->parentItem() != pOutputItem->parentItem()) {
-                        establishControlConnection(pOutputItem);
-                        return;
-                    }
-                }
-
-            }
-
-            delete m_pControlConnectionItem;
-            m_pControlConnectionItem = nullptr;
             emit endConnection();
             return;
         }
@@ -329,24 +273,5 @@ void SignalChainScene::establishConnection(SignalChainPortItem *pFinalPort)
     inputPtr->connect(outputPtr);
 
     m_pConnectionItem = nullptr;
-    emit endConnection();
-}
-
-void SignalChainScene::establishControlConnection(SignalChainControlItem *pFinalControl)
-{
-    Q_ASSERT(m_pControlConnectionItem != nullptr);
-    Q_ASSERT(pFinalControl != nullptr);
-
-    m_pControlConnectionItem->setControl(pFinalControl);
-    m_pControlConnectionItem->updatePath();
-
-    // Establish control connection at signal chain level
-    ControlInputPortPtr inputPtr = m_pControlConnectionItem->controlInputItem()->controlInput();
-    ControlOutputPortPtr outputPtr = m_pControlConnectionItem->controlOutputItem()->controlOutput();
-    Q_ASSERT(!inputPtr.isNull());
-    Q_ASSERT(!outputPtr.isNull());
-    outputPtr->connect(inputPtr);
-
-    m_pControlConnectionItem = nullptr;
     emit endConnection();
 }

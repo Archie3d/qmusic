@@ -8,8 +8,6 @@ class SignalChain;
 class SignalChainItem;
 class SignalChainPortItem;
 class SignalChainConnectionItem;
-class SignalChainControlItem;
-class SignalChainControlConnectionItem;
 class AudioUnit;
 class AudioUnitPlugin;
 
@@ -63,13 +61,11 @@ private slots:
 private:
 
     void establishConnection(SignalChainPortItem *pFinalPort);
-    void establishControlConnection(SignalChainControlItem *pFinalControl);
 
     SignalChain *m_pSignalChain;
 
     AudioUnitPlugin *m_pDraggedAudioUnitPlugin;
     SignalChainConnectionItem *m_pConnectionItem;
-    SignalChainControlConnectionItem *m_pControlConnectionItem;
     QPointF m_mousePos; ///< Track of mouse position.
 };
 

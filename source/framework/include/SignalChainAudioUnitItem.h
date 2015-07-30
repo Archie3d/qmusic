@@ -28,8 +28,6 @@ public:
      */
     QList<SignalChainConnectionItem*> connectionItems() const;
 
-    QList<SignalChainControlConnectionItem*> controlConnectionItems() const;
-
 protected:
 
     void updateView();
@@ -39,7 +37,6 @@ protected:
 private:
 
     void createPortItems();
-    void createControlItems();
 
     /// Pointer to associated audio unit.
     AudioUnit *m_pAudioUnit;

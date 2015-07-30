@@ -6,8 +6,6 @@
 #include "IAudioUnit.h"
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "ControlInputPort.h"
-#include "ControlOutputPort.h"
 
 class ISignalChain;
 class QtVariantPropertyManager;
@@ -41,14 +39,6 @@ public:
     OutputPortPtr addOutput(const QString &name, QVariant::Type type);
     void addOutput(const OutputPortPtr &outputPtr);
     QList<OutputPortPtr> outputs() const;
-
-    ControlInputPortPtr addControlInput(const QString &name, QVariant::Type type);
-    void addControlInput(const ControlInputPortPtr &inputPtr);
-    QList<ControlInputPortPtr> controlInputs() const;
-
-    ControlOutputPortPtr addControlOutput(const QString &name, QVariant::Type type);
-    void addControlOutput(const ControlOutputPortPtr &outputPtr);
-    QList<ControlOutputPortPtr> controlOutputs() const;
 
     void removeAllInputs();
     void removeAllOutputs();
@@ -105,12 +95,6 @@ private:
 
     /// Output ports.
     QList<OutputPortPtr> m_outputs;
-
-    /// Control inputs.
-    QList<ControlInputPortPtr> m_controlInputs;
-
-    /// Control outputs.
-    QList<ControlOutputPortPtr> m_controlOutputs;
 
     /// Flag telling that this unit has been already updated.
     bool m_updated;

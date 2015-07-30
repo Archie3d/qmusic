@@ -5,8 +5,6 @@
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 #include "SignalChainPortItem.h"
-#include "SignalChainControlItem.h"
-#include "SignalChainControlItem.h"
 #include "SignalChainConnectionItem.h"
 #include "SignalChainAudioUnitItem.h"
 
@@ -24,7 +22,6 @@ SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraph
 {
     Q_ASSERT(pAudioUnit != nullptr);
     createPortItems();
-    createControlItems();
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -51,25 +48,6 @@ QList<SignalChainConnectionItem*> SignalChainAudioUnitItem::connectionItems() co
 
     foreach (SignalChainOutputPortItem *pOutputItem, m_outputPortItems) {
         foreach (SignalChainConnectionItem *pConnectionItem, pOutputItem->connections()) {
-            connections.insert(pConnectionItem);
-        }
-    }
-
-    return connections.toList();
-}
-
-QList<SignalChainControlConnectionItem*> SignalChainAudioUnitItem::controlConnectionItems() const
-{
-    QSet<SignalChainControlConnectionItem*> connections;
-
-    foreach (SignalChainControlInputItem *pInputItem, m_controlInputItems) {
-        foreach (SignalChainControlConnectionItem *pConnectionItem, pInputItem->connections()) {
-            connections.insert(pConnectionItem);
-        }
-    }
-
-    foreach (SignalChainControlOutputItem *pOutputItem, m_controlOutputItems) {
-        foreach (SignalChainControlConnectionItem *pConnectionItem, pOutputItem->connections()) {
             connections.insert(pConnectionItem);
         }
     }
@@ -189,20 +167,5 @@ void SignalChainAudioUnitItem::createPortItems()
     foreach (const OutputPortPtr &output, m_pAudioUnit->outputs()) {
         SignalChainOutputPortItem *pOutputItem = new SignalChainOutputPortItem(output, this);
         m_outputPortItems.append(pOutputItem);
-    }
-}
-
-void SignalChainAudioUnitItem::createControlItems()
-{
-    Q_ASSERT(m_pAudioUnit != nullptr);
-
-    foreach (const ControlInputPortPtr &input, m_pAudioUnit->controlInputs()) {
-        SignalChainControlInputItem *pInputItem = new SignalChainControlInputItem(input, this);
-        m_controlInputItems.append(pInputItem);
-    }
-
-    foreach (const ControlOutputPortPtr &output, m_pAudioUnit->controlOutputs()) {
-        SignalChainControlOutputItem *pOutputItem = new SignalChainControlOutputItem(output, this);
-        m_controlOutputItems.append(pOutputItem);
     }
 }
