@@ -13,11 +13,11 @@ set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL}
 )
 
-add_definitions(-DIDYLLA_STUDIO_VERSION="${${PROJECT_NAME}_VERSION}")
+add_definitions(-DQMUSIC_VERSION="${${PROJECT_NAME}_VERSION}")
 
-# Components and protocols API version
+# API version
 set(${PROJECT_NAME}_API_VERSION "1.0.0")
-add_definitions(-DIDYLLA_STUDIO_API_VERSION="${${PROJECT_NAME}_API_VERSION}")
+add_definitions(-DQMUSIC_API_VERSION="${${PROJECT_NAME}_API_VERSION}")
 
 # Unit tests flag
 set(CMAKE_BUILD_TESTS ON CACHE BOOL "Build unit tests")
@@ -30,8 +30,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 # Installation destination
 set(INSTALL_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin)
 set(INSTALL_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib)
-set(INSTALL_COMPONENTS_PATH ${INSTALL_BIN_PATH}/components)
-set(INSTALL_HELP_PATH ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Path to look for custom CMake scripts
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -54,7 +52,6 @@ if(WIN32)
 
     set(QT_DIR $ENV{QT5_PATH})
     set(WINSDK_LIB_DIR $ENV{WINSDK_PATH})
-#    set(WINSDK_LIB_DIR "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64")
     set(CMAKE_LIBRARY_PATH "${QT_DIR};${WINSDK_LIB_DIR}")
 endif()
 
