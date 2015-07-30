@@ -17,6 +17,13 @@ const QSize cIconSize(16, 16);
 
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
 
+SignalChainAudioUnitItem::SignalChainAudioUnitItem(QGraphicsItem *pParent)
+    : SignalChainItem(Type_AudioUnit, pParent)
+{
+    m_pTitleTextItem = nullptr;
+    m_pAudioUnitGraphicsItem = nullptr;
+}
+
 SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent)
     : SignalChainItem(Type_AudioUnit, pParent),
       m_pAudioUnit(pAudioUnit)
@@ -28,17 +35,9 @@ SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraph
     setFlag(QGraphicsItem::ItemIsSelectable);
 
     m_pTitleTextItem = nullptr;
+    m_pAudioUnitGraphicsItem = nullptr;
 
-    if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoTitle) == 0) {
-        m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
-        m_pTitleTextItem->setText(pAudioUnit->plugin()->name());
-        m_pTitleTextItem->setBrush(QBrush(QColor(0, 0, 128)));
-    }
-
-    m_pAudioUnitGraphicsItem = m_pAudioUnit->graphicsItem();
-    if (m_pAudioUnitGraphicsItem != nullptr) {
-        m_pAudioUnitGraphicsItem->setParentItem(this);
-    }
+    createDecoration();
 }
 
 QList<SignalChainConnectionItem*> SignalChainAudioUnitItem::connectionItems() const
@@ -74,8 +73,16 @@ void SignalChainAudioUnitItem::deserialize(const QVariantMap &data, Serializatio
 
     ISerializable *pSerializable = pContext->deserialize(data["audioUnit"]);
     m_pAudioUnit = dynamic_cast<AudioUnit*>(pSerializable);
+    Q_ASSERT(m_pAudioUnit);
 
     SignalChainItem::deserialize(data, pContext);
+
+    // Recreate title and graphics item
+    delete m_pTitleTextItem;
+    delete m_pAudioUnitGraphicsItem;
+    m_pTitleTextItem = nullptr;
+    m_pAudioUnitGraphicsItem = nullptr;
+    createDecoration();
 }
 
 void SignalChainAudioUnitItem::updateView()
@@ -181,6 +188,25 @@ void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraph
                              cIconSize.width(), cIconSize.height(),
                              pixmap);
     }
+}
+
+void SignalChainAudioUnitItem::createDecoration()
+{
+    Q_ASSERT(m_pTitleTextItem == nullptr);
+    Q_ASSERT(m_pAudioUnitGraphicsItem == nullptr);
+    Q_ASSERT(m_pAudioUnit != nullptr);
+
+    if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoTitle) == 0) {
+        m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
+        m_pTitleTextItem->setText(m_pAudioUnit->plugin()->name());
+        m_pTitleTextItem->setBrush(QBrush(QColor(0, 0, 128)));
+    }
+
+    m_pAudioUnitGraphicsItem = m_pAudioUnit->graphicsItem();
+    if (m_pAudioUnitGraphicsItem != nullptr) {
+        m_pAudioUnitGraphicsItem->setParentItem(this);
+    }
+
 }
 
 void SignalChainAudioUnitItem::createPortItems()

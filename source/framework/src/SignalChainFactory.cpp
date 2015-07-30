@@ -2,6 +2,8 @@
 #include "AudioUnitsManager.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
+#include "InputPort.h"
+#include "OutputPort.h"
 #include "SignalChain.h"
 #include "SignalChainScene.h"
 #include "SignalChainPortItem.h"
@@ -35,4 +37,6 @@ void SignalChainFactory::registerCreators()
     m_creators[SignalChainInputPortItem::UID] = SignalChainInputPortItem::create;
     m_creators[SignalChainOutputPortItem::UID] = SignalChainOutputPortItem::create;
     m_creators[SignalChainConnectionItem::UID] = SignalChainConnectionItem::create;
+    m_creators[InputPort::UID] = InputPort::create;
+    m_creators[OutputPort::UID] = OutputPort::create;
 }

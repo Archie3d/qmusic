@@ -59,9 +59,20 @@ void SignalChainScene::serialize(QVariantMap &data, SerializationContext *pConte
     Q_ASSERT(pContext != nullptr);
 
     // Serialize audio units
-    m_pSignalChain->serialize(data, pContext);
+    data["signalChain"] = pContext->serialize(m_pSignalChain);
 
-    // TODO: Serialize connections
+    // Serialize signal chain items
+    QVariantList list;
+    foreach (QGraphicsItem *pItem, items()) {
+        if (pItem->type() >= SignalChainItem::Type_First) {
+            SignalChainItem *pSignalChainItem = dynamic_cast<SignalChainItem*>(pItem);
+            Q_ASSERT(pSignalChainItem != nullptr);
+            QVariant handle = pContext->serialize(pSignalChainItem);
+            list.append(handle);
+        }
+    }
+
+    data["signalChainItems"] = list;
 }
 
 void SignalChainScene::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -72,9 +83,16 @@ void SignalChainScene::deserialize(const QVariantMap &data, SerializationContext
     deleteAll();
 
     // Deserialize audio units
-    m_pSignalChain->deserialize(data, pContext);
+    delete m_pSignalChain;
+    m_pSignalChain = pContext->deserialize<SignalChain>(data["signalChain"]);
 
-    // TODO: Deserialize connections
+    // Deserialize signal chain items
+    QVariantList list = data["signalChainItems"].toList();
+    foreach (const QVariant &handle, list) {
+        SignalChainItem *pItem = pContext->deserialize<SignalChainItem>(handle);
+        Q_ASSERT(pItem != nullptr);
+        addItem(pItem);
+    }
 }
 
 void SignalChainScene::deleteSelected()

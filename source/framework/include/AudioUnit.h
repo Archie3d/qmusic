@@ -35,11 +35,11 @@ public:
 
     InputPort* addInput(const QString &name, QVariant::Type type);
     void addInput(InputPort *pInput);
-    QList<InputPort*> inputs() const;
+    const QList<InputPort*>& inputs() const { return m_inputs; }
 
     OutputPort* addOutput(const QString &name, QVariant::Type type);
     void addOutput(OutputPort *pOutput);
-    QList<OutputPort*> outputs() const;
+    const QList<OutputPort*>& outputs() const { return m_outputs; }
 
     void removeAllInputs();
     void removeAllOutputs();

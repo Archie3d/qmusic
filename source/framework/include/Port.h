@@ -2,9 +2,10 @@
 #define PORT_H
 
 #include <QVariant>
+#include "ISerializable.h"
 #include "FrameworkApi.h"
 
-class QMUSIC_FRAMEWORK_API Port
+class QMUSIC_FRAMEWORK_API Port : public ISerializable
 {
 public:
 
@@ -41,6 +42,10 @@ public:
      * @brief Update signal chain.
      */
     virtual void update() = 0;
+
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
 
 private:
 

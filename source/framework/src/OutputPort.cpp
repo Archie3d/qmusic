@@ -1,4 +1,7 @@
-#include "../include/OutputPort.h"
+#include "SerializationContext.h"
+#include "OutputPort.h"
+
+const QString OutputPort::UID("OutputPort");
 
 OutputPort::OutputPort()
     : Port(Direction_Output),
@@ -32,4 +35,20 @@ void OutputPort::update()
     if (m_pAudioUnit != nullptr) {
         m_pAudioUnit->update();
     }
+}
+
+void OutputPort::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+
+    Port::serialize(data, pContext);
+    data["audioUnit"] = pContext->serialize(m_pAudioUnit);
+}
+
+void OutputPort::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+
+    Port::deserialize(data, pContext);
+    m_pAudioUnit = pContext->deserialize<IAudioUnit>(data["audioUnit"]);
 }

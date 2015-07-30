@@ -1,5 +1,6 @@
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
+#include "SerializationContext.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 
@@ -89,11 +90,6 @@ void AudioUnit::addInput(InputPort *pInput)
     m_inputs.append(pInput);
 }
 
-QList<InputPort *> AudioUnit::inputs() const
-{
-    return m_inputs;
-}
-
 OutputPort *AudioUnit::addOutput(const QString &name, QVariant::Type type)
 {
     OutputPort *pOutput = new OutputPort(name, type);
@@ -106,11 +102,6 @@ void AudioUnit::addOutput(OutputPort *pOutput)
     Q_ASSERT(pOutput != nullptr);
     pOutput->setAudioUnit(this);
     m_outputs.append(pOutput);
-}
-
-QList<OutputPort *> AudioUnit::outputs() const
-{
-    return m_outputs;
 }
 
 void AudioUnit::removeAllInputs()
@@ -133,9 +124,34 @@ QString AudioUnit::uid() const
 void AudioUnit::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
+
+    // Serialize ports
+    QVariantList listInputs;
+    foreach (InputPort *pPort, m_inputs) {
+        listInputs.append(pContext->serialize(pPort));
+    }
+
+    QVariantList listOutputs;
+    foreach (OutputPort *pPort, m_outputs) {
+        listOutputs.append(pContext->serialize(pPort));
+    }
+
+    data["inputPortsList"] = listInputs;
+    data["outputPortsList"] = listOutputs;
 }
 
 void AudioUnit::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
+
+    // Deserialize ports
+    QVariantList listInputs = data["inputPortsList"].toList();
+    foreach (const QVariant &handle, listInputs) {
+        m_inputs.append(pContext->deserialize<InputPort>(handle));
+    }
+
+    QVariantList listOutputs = data["outputPortsList"].toList();
+    foreach (const QVariant &handle, listOutputs) {
+        m_outputs.append(pContext->deserialize<OutputPort>(handle));
+    }
 }

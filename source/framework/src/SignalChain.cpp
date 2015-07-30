@@ -100,9 +100,6 @@ void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) c
         units.append(pContext->serialize(pAu));
     }
     data["audioUnits"] = units;
-
-    // TODO: Serialize connections
-    // Or should they be serialized with SignalChainScene?
 }
 
 void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -118,9 +115,6 @@ void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pCo
         IAudioUnit *pAu = dynamic_cast<IAudioUnit*>(pSer);
         addAudioUnit(pAu);
     }
-
-    // TODO: Deserialize connections
-    // Or should they be deserialized with SignalChainScene?
 }
 
 void SignalChain::stopAudioDevice()

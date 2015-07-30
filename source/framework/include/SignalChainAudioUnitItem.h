@@ -17,6 +17,7 @@ public:
 
     const static QString UID;
 
+    SignalChainAudioUnitItem(QGraphicsItem *pParent = nullptr);
     SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent = nullptr);
 
     AudioUnit* audioUnit() const { return m_pAudioUnit; }
@@ -31,6 +32,7 @@ public:
     QString uid() const { return UID; }
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChainAudioUnitItem(); }
 
 protected:
 
@@ -40,6 +42,7 @@ protected:
 
 private:
 
+    void createDecoration();
     void createPortItems();
 
     /// Pointer to associated audio unit.

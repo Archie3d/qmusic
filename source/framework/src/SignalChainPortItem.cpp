@@ -88,8 +88,8 @@ void SignalChainPortItem::removeConnection(SignalChainConnectionItem *pConnectio
 void SignalChainPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
-    // TODO: serialize connection items
 
+    // Serialize connection items
     QVariantList list;
     foreach (SignalChainConnectionItem *pItem, m_connections) {
         list.append(pContext->serialize(pItem));
@@ -162,7 +162,7 @@ void SignalChainInputPortItem::serialize(QVariantMap &data, SerializationContext
     Q_ASSERT(pContext != nullptr);
     SignalChainPortItem::serialize(data, pContext);
 
-    // TODO: serialize InputPortPtr
+    data["inputPort"] = pContext->serialize(m_pInputPort);
 }
 
 void SignalChainInputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -170,7 +170,7 @@ void SignalChainInputPortItem::deserialize(const QVariantMap &data, Serializatio
     Q_ASSERT(pContext != nullptr);
     SignalChainPortItem::deserialize(data, pContext);
 
-    // TODO: deserialize InputPortPtr
+    m_pInputPort = pContext->deserialize<InputPort>(data["inputPort"]);
 }
 
 /*
@@ -205,12 +205,14 @@ void SignalChainOutputPortItem::serialize(QVariantMap &data, SerializationContex
 {
     Q_ASSERT(pContext != nullptr);
     SignalChainPortItem::serialize(data, pContext);
-    // TODO: serialize OutputPortPtr
+
+    data["outputPort"] = pContext->serialize(m_pOutputPort);
 }
 
 void SignalChainOutputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
     SignalChainPortItem::deserialize(data, pContext);
-    // TODO: deserialize OutputPortPtr
+
+    m_pOutputPort = pContext->deserialize<OutputPort>(data["outputPort"]);
 }
