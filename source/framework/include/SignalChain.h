@@ -32,6 +32,7 @@ public:
     QString uid() const override final { return UID; }
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChain(); }
 
 private:
 

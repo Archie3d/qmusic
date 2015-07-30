@@ -21,6 +21,18 @@ public:
     QVariant serialize(ISerializable *pObject);
     ISerializable* deserialize();
     ISerializable* deserialize(const QVariant &handle);
+
+    template<typename T> T* deserialize()
+    {
+        return dynamic_cast<T*>(deserialize());
+    }
+
+    template<typename T> T* deserialize(const QVariant &handle)
+    {
+        return dynamic_cast<T*>(deserialize(handle));
+    }
+
+
     QByteArray toByteArray() const;
     void fromByteArray(const QByteArray &data);
     bool isError() const { return m_error; }

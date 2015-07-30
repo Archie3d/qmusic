@@ -109,6 +109,9 @@ void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pCo
 {
     Q_ASSERT(pContext != nullptr);
 
+    // Delete all existing audio units
+    qDeleteAll(m_audioUnits);
+
     QVariantList units = data["audioUnits"].toList();
     foreach (const QVariant &v, units) {
         ISerializable *pSer = pContext->deserialize(v);

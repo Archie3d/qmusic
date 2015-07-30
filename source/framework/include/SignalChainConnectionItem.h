@@ -13,6 +13,8 @@ class QMUSIC_FRAMEWORK_API SignalChainConnectionItem : public SignalChainItem
 {
 public:
 
+    const static QString UID;
+
     SignalChainConnectionItem(QGraphicsItem *pParent = nullptr);
     ~SignalChainConnectionItem();
 
@@ -30,6 +32,12 @@ public:
     void updatePath();
 
     bool isConnected() const;
+
+    // ISerializable interface
+    QString uid() const override final { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChainConnectionItem(); }
 
 protected:
 

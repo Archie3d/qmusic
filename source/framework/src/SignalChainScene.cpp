@@ -5,6 +5,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QKeyEvent>
 #include "Application.h"
+#include "SerializationContext.h"
 #include "AudioUnitsManager.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
@@ -16,6 +17,8 @@
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
+
+const QString SignalChainScene::UID("SignalChainScene");
 
 SignalChainScene::SignalChainScene(QObject *pParent)
     : QGraphicsScene(pParent)
@@ -51,6 +54,29 @@ void SignalChainScene::selectAll()
     }
 }
 
+void SignalChainScene::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+
+    // Serialize audio units
+    m_pSignalChain->serialize(data, pContext);
+
+    // TODO: Serialize connections
+}
+
+void SignalChainScene::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+
+    // Remove all existing items
+    deleteAll();
+
+    // Deserialize audio units
+    m_pSignalChain->deserialize(data, pContext);
+
+    // TODO: Deserialize connections
+}
+
 void SignalChainScene::deleteSelected()
 {
     QSet<SignalChainConnectionItem*> connectionsToDelete;
@@ -76,6 +102,11 @@ void SignalChainScene::deleteSelected()
     foreach (SignalChainAudioUnitItem *pItem, audioUnitsToDelete) {
         delete pItem;
     }
+}
+
+void SignalChainScene::deleteAll()
+{
+    clear();
 }
 
 void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)

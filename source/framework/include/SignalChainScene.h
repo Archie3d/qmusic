@@ -2,6 +2,7 @@
 #define SIGNALCHAINSCENE_H
 
 #include <QGraphicsScene>
+#include "ISerializable.h"
 #include "FrameworkApi.h"
 
 class SignalChain;
@@ -11,10 +12,13 @@ class SignalChainConnectionItem;
 class AudioUnit;
 class AudioUnitPlugin;
 
-class QMUSIC_FRAMEWORK_API SignalChainScene : public QGraphicsScene
+class QMUSIC_FRAMEWORK_API SignalChainScene : public QGraphicsScene,
+                                              public ISerializable
 {
     Q_OBJECT
 public:
+
+    const static QString UID;
 
     SignalChainScene(QObject *pParent = nullptr);
     ~SignalChainScene();
@@ -28,10 +32,17 @@ public:
      */
     SignalChainItem* signalChainItemAtPos(const QPointF &pos) const;
 
+    // ISerializable interface
+    QString uid() const override final { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChainScene(); }
+
 public slots:
 
     void selectAll();
     void deleteSelected();
+    void deleteAll();
 
 signals:
 

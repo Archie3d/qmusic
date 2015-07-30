@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QGraphicsSimpleTextItem>
 #include <QGraphicsProxyWidget>
+#include "SerializationContext.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 #include "SignalChainPortItem.h"
@@ -13,6 +14,8 @@ const qreal cHeaderMargin = 5.0;
 const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
+
+const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
 
 SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent)
     : SignalChainItem(Type_AudioUnit, pParent),
@@ -55,6 +58,24 @@ QList<SignalChainConnectionItem*> SignalChainAudioUnitItem::connectionItems() co
     }
 
     return connections.toList();
+}
+
+void SignalChainAudioUnitItem::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["audioUnit"] = pContext->serialize(m_pAudioUnit);
+
+    SignalChainItem::serialize(data, pContext);
+}
+
+void SignalChainAudioUnitItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+
+    ISerializable *pSerializable = pContext->deserialize(data["audioUnit"]);
+    m_pAudioUnit = dynamic_cast<AudioUnit*>(pSerializable);
+
+    SignalChainItem::deserialize(data, pContext);
 }
 
 void SignalChainAudioUnitItem::updateView()

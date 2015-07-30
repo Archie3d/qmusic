@@ -8,15 +8,14 @@ class QGraphicsSimpleTextItem;
 class QGraphicsProxyWidget;
 class AudioUnit;
 class SignalChainConnectionItem;
-class SignalChainControlConnectionItem;
 class SignalChainInputPortItem;
 class SignalChainOutputPortItem;
-class SignalChainControlInputItem;
-class SignalChainControlOutputItem;
 
 class QMUSIC_FRAMEWORK_API SignalChainAudioUnitItem : public SignalChainItem
 {
 public:
+
+    const static QString UID;
 
     SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent = nullptr);
 
@@ -27,6 +26,11 @@ public:
      * @return
      */
     QList<SignalChainConnectionItem*> connectionItems() const;
+
+    // ISerializable interface
+    QString uid() const { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
 
 protected:
 
@@ -44,12 +48,8 @@ private:
     QGraphicsItem *m_pAudioUnitGraphicsItem;
     QGraphicsSimpleTextItem *m_pTitleTextItem;
 
-
     QList<SignalChainInputPortItem*> m_inputPortItems;
     QList<SignalChainOutputPortItem*> m_outputPortItems;
-
-    QList<SignalChainControlInputItem*> m_controlInputItems;
-    QList<SignalChainControlOutputItem*> m_controlOutputItems;
 };
 
 #endif // SIGNALCHAINAUDIOUNITITEM_H

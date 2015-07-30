@@ -1,6 +1,7 @@
 #ifndef ISERIALIZABLEFACTORY_H
 #define ISERIALIZABLEFACTORY_H
 
+#include <QString>
 #include "FrameworkApi.h"
 
 class ISerializable;

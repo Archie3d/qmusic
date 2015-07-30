@@ -41,6 +41,10 @@ public:
     QList<SignalChainConnectionItem*> connections() const { return m_connections; }
     bool hasConnections() const { return !m_connections.isEmpty(); }
 
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+
 protected:
 
     void paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget) override;
@@ -55,10 +59,21 @@ private:
 class QMUSIC_FRAMEWORK_API SignalChainInputPortItem : public SignalChainPortItem
 {
 public:
+
+    const static QString UID;
+
+    SignalChainInputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainInputPortItem(const InputPortPtr &input, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return false; }
     QVariant::Type dataType() const override { return m_inputPortPtr->dataType(); }
     InputPortPtr inputPort() const { return m_inputPortPtr; }
+
+    // ISerializable interface
+    QString uid() const { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChainInputPortItem(); }
+
 private:
     InputPortPtr m_inputPortPtr;
 };
@@ -66,10 +81,21 @@ private:
 class QMUSIC_FRAMEWORK_API SignalChainOutputPortItem : public SignalChainPortItem
 {
 public:
+
+    const static QString UID;
+
+    SignalChainOutputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainOutputPortItem(const OutputPortPtr &output, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return true; }
     QVariant::Type dataType() const override { return m_outputPortPtr->dataType(); }
     OutputPortPtr outputPort() const { return m_outputPortPtr; }
+
+    // ISerializable interface
+    QString uid() const { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    static ISerializable* create() { return new SignalChainOutputPortItem(); }
+
 private:
     OutputPortPtr m_outputPortPtr;
 };
