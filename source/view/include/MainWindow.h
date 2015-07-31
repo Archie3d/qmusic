@@ -23,6 +23,7 @@ private slots:
     void newSignalChain();
     void saveSignalChain();
     void saveAsSignalChain();
+    void openSignalChain();
 
     void startSignalChain();
     void stopSignalChain();

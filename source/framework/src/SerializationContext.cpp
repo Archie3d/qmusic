@@ -78,7 +78,7 @@ ISerializable* SerializationContext::deserialize(const QVariant &handle)
     }
 
     if (pObject == nullptr) {
-        qCritical() << "No factory create object with uid" << record.uid;
+        qCritical() << "No factory to create object with uid" << record.uid;
     }
     Q_ASSERT(pObject);
 

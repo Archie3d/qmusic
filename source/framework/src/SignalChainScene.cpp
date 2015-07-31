@@ -6,6 +6,8 @@
 #include <QKeyEvent>
 #include "Application.h"
 #include "SerializationContext.h"
+#include "SerializationFile.h"
+#include "SignalChainFactory.h"
 #include "AudioUnitsManager.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
@@ -19,6 +21,7 @@
 const QSizeF cGridSize(8, 8);
 
 const QString SignalChainScene::UID("SignalChainScene");
+const quint32 SignalChainScene_Magic(0x7af98ed8);
 
 SignalChainScene::SignalChainScene(QObject *pParent)
     : QGraphicsScene(pParent)
@@ -45,6 +48,38 @@ SignalChainItem* SignalChainScene::signalChainItemAtPos(const QPointF &pos) cons
         }
     }
     return nullptr;
+}
+
+bool SignalChainScene::saveToFile(const QString &path)
+{
+    SerializationContext context;
+    context.serialize(this);
+
+    SerializationFile file(path);
+    file.setMagic(SignalChainScene_Magic);
+    file.setBuffer(context.toByteArray());
+
+    return file.save();
+}
+
+SignalChainScene* SignalChainScene::loadFromFile(const QString &path)
+{
+    SerializationFile file(path);
+    if (!file.load()) {
+        qCritical() << "Unable to load" << path;
+        return nullptr;
+    }
+
+    SignalChainFactory factory;
+    SerializationContext context(&factory);
+    context.fromByteArray(file.buffer());
+    SignalChainScene *pScene = context.deserialize<SignalChainScene>();
+    if (pScene == nullptr) {
+        qCritical() << "Unable to load signal chain from file" << path;
+        return nullptr;
+    }
+
+    return pScene;
 }
 
 void SignalChainScene::selectAll()

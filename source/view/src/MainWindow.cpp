@@ -74,6 +74,20 @@ void MainWindow::saveAsSignalChain()
     m_pSignalChainWidget->save(fileName);
 }
 
+void MainWindow::openSignalChain()
+{
+    QString proposedPath = Application::instance()->applicationDirPath();
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open signal chain"),
+                                                    proposedPath,
+                                                    tr("QMusic signalchain (*.sch)"));
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    m_pSignalChainWidget->load(fileName);
+}
+
 void MainWindow::startSignalChain()
 {
     m_pSignalChainWidget->scene()->signalChain()->start();
@@ -104,6 +118,7 @@ void MainWindow::createActions()
     connect(m_pNewSignalChainAction, SIGNAL(triggered()), this, SLOT(newSignalChain()));
 
     m_pOpenSignalChainAction = new QAction(tr("&Open..."), this);
+    connect(m_pOpenSignalChainAction, SIGNAL(triggered()), this, SLOT(openSignalChain()));
 
     m_pSaveSignalChainAction = new QAction(tr("&Save"), this);
     connect(m_pSaveSignalChainAction, SIGNAL(triggered()), this, SLOT(saveSignalChain()));

@@ -11,7 +11,8 @@ InputPort::InputPort()
 }
 
 InputPort::InputPort(const QString &name, QVariant::Type type)
-    : Port(Direction_Input, name, type)
+    : Port(Direction_Input, name, type),
+      m_pConnectedOutputPort(nullptr)
 {
 }
 

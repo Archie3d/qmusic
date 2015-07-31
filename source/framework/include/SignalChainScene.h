@@ -32,6 +32,14 @@ public:
      */
     SignalChainItem* signalChainItemAtPos(const QPointF &pos) const;
 
+    /**
+     * Save this scene to a file.
+     * @param path File path.
+     * @return true if saved OK.
+     */
+    bool saveToFile(const QString &path);
+    static SignalChainScene* loadFromFile(const QString &path);
+
     // ISerializable interface
     QString uid() const override final { return UID; }
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
