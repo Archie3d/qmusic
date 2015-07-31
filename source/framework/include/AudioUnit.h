@@ -43,6 +43,7 @@ public:
 
     void removeAllInputs();
     void removeAllOutputs();
+    void removeAllPorts();
 
     ISignalChain* signalChain() const { return m_pSignalChain; }
 

@@ -11,7 +11,7 @@ void SignalChainItem::serialize(QVariantMap &data, SerializationContext *pContex
 {
     Q_ASSERT(pContext != nullptr);
 
-    data["position"] = scenePos();
+    data["position"] = pos();
 }
 
 void SignalChainItem::deserialize(const QVariantMap &data, SerializationContext *pContext)

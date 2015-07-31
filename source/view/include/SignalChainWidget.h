@@ -26,6 +26,10 @@ public slots:
 
     void newSignalChainScene();
 
+signals:
+
+    void audioUnitSelected(AudioUnit* pAu);
+
 private slots:
 
     void onBeginConnection();

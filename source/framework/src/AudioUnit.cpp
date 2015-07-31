@@ -116,6 +116,12 @@ void AudioUnit::removeAllOutputs()
     m_outputs.clear();
 }
 
+void AudioUnit::removeAllPorts()
+{
+    removeAllInputs();
+    removeAllOutputs();
+}
+
 QString AudioUnit::uid() const
 {
     return m_pPlugin->uid();
@@ -143,6 +149,8 @@ void AudioUnit::serialize(QVariantMap &data, SerializationContext *pContext) con
 void AudioUnit::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
+
+    removeAllPorts();
 
     // Deserialize ports
     QVariantList listInputs = data["inputPortsList"].toList();

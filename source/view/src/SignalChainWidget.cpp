@@ -65,6 +65,8 @@ void SignalChainWidget::setScene(SignalChainScene *pScene)
     connect(m_pSignalChainScene, SIGNAL(beginConnection()), this, SLOT(onBeginConnection()));
     connect(m_pSignalChainScene, SIGNAL(endConnection()), this, SLOT(onEndConnection()));
 
+    connect(m_pSignalChainScene, SIGNAL(audioUnitSelected(AudioUnit*)), this, SIGNAL(audioUnitSelected(AudioUnit*)));
+
     if (pOldScene != nullptr) {
         pOldScene->deleteLater();
     }

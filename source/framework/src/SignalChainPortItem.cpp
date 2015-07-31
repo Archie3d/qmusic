@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QPainter>
 #include <QFont>
 #include <QGraphicsSimpleTextItem>
@@ -40,15 +41,16 @@ SignalChainPortItem::SignalChainPortItem(Type type, const QString &labelText, QG
     setPath(path);
 
     // Add port label
-    QGraphicsSimpleTextItem *pLabelItem = new QGraphicsSimpleTextItem(labelText, this);
-    QFont font = pLabelItem->font();
+    m_pLabelItem = new QGraphicsSimpleTextItem(this);
+    QFont font = m_pLabelItem->font();
     font.setFamily(cFontFamily);
     font.setPointSize(cFontSize);
-    pLabelItem->setFont(font);
+    m_pLabelItem->setFont(font);
+    m_pLabelItem->setText(labelText);
     if (type == Type_InputPort) {
-        pLabelItem->setPos(-pLabelItem->boundingRect().width() - cRadius, -pLabelItem->boundingRect().height());
+        m_pLabelItem->setPos(-m_pLabelItem->boundingRect().width() - cRadius, -m_pLabelItem->boundingRect().height());
     } else {
-        pLabelItem->setPos(cRadius, -pLabelItem->boundingRect().height());
+        m_pLabelItem->setPos(cRadius, -m_pLabelItem->boundingRect().height());
     }
 }
 
@@ -85,6 +87,18 @@ void SignalChainPortItem::removeConnection(SignalChainConnectionItem *pConnectio
     update();
 }
 
+void SignalChainPortItem::setLabel(const QString &text)
+{
+    m_pLabelItem->setText(text);
+    if (type() == Type_InputPort) {
+        qDebug() << "Width" << m_pLabelItem->boundingRect().width();
+        m_pLabelItem->setPos(-m_pLabelItem->boundingRect().width() - cRadius, -m_pLabelItem->boundingRect().height());
+    } else {
+        m_pLabelItem->setPos(cRadius, -m_pLabelItem->boundingRect().height());
+    }
+
+}
+
 void SignalChainPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
@@ -95,6 +109,7 @@ void SignalChainPortItem::serialize(QVariantMap &data, SerializationContext *pCo
         list.append(pContext->serialize(pItem));
     }
 
+    data["label"] = m_pLabelItem->text();
     data["connections"] = list;
 }
 
@@ -103,6 +118,7 @@ void SignalChainPortItem::deserialize(const QVariantMap &data, SerializationCont
     Q_ASSERT(pContext != nullptr);
 
     m_connections.clear();
+    setLabel(data["label"].toString());
     QVariantList list = data["connections"].toList();
     foreach (const QVariant &v, list) {
         auto pItem = pContext->deserialize<SignalChainConnectionItem>(v);
@@ -160,17 +176,16 @@ QVariant::Type SignalChainInputPortItem::dataType() const
 void SignalChainInputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
-    SignalChainPortItem::serialize(data, pContext);
-
     data["inputPort"] = pContext->serialize(m_pInputPort);
+    SignalChainPortItem::serialize(data, pContext);
 }
 
 void SignalChainInputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
-    SignalChainPortItem::deserialize(data, pContext);
-
     m_pInputPort = pContext->deserialize<InputPort>(data["inputPort"]);
+    Q_ASSERT(m_pInputPort != nullptr);
+    SignalChainPortItem::deserialize(data, pContext);
 }
 
 /*
@@ -204,15 +219,14 @@ QVariant::Type SignalChainOutputPortItem::dataType() const
 void SignalChainOutputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
-    SignalChainPortItem::serialize(data, pContext);
-
     data["outputPort"] = pContext->serialize(m_pOutputPort);
+    SignalChainPortItem::serialize(data, pContext);
 }
 
 void SignalChainOutputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
-    SignalChainPortItem::deserialize(data, pContext);
-
     m_pOutputPort = pContext->deserialize<OutputPort>(data["outputPort"]);
+    Q_ASSERT(m_pOutputPort != nullptr);
+    SignalChainPortItem::deserialize(data, pContext);
 }

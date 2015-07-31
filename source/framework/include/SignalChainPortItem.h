@@ -41,6 +41,8 @@ public:
     QList<SignalChainConnectionItem*> connections() const { return m_connections; }
     bool hasConnections() const { return !m_connections.isEmpty(); }
 
+    void setLabel(const QString &text);
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
@@ -51,6 +53,8 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
+
+    QGraphicsSimpleTextItem *m_pLabelItem;
 
     /// List of connection to this port.
     QList<SignalChainConnectionItem*> m_connections;

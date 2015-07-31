@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     m_pSignalChainWidget = new SignalChainWidget();
     setCentralWidget(m_pSignalChainWidget);
 
-    connect(m_pSignalChainWidget->scene(), SIGNAL(audioUnitSelected(AudioUnit*)),
+    connect(m_pSignalChainWidget, SIGNAL(audioUnitSelected(AudioUnit*)),
             m_pAudioUnitPropertiesWindow, SLOT(handleAudioUnitSelected(AudioUnit*)));
 
     updateActions();
@@ -46,7 +46,7 @@ void MainWindow::newSignalChain()
                 QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::No);
 
-    if (ret == QMessageBox::No) {
+    if (ret == QMessageBox::Yes) {
         m_pSignalChainWidget->newSignalChainScene();
     }
 }

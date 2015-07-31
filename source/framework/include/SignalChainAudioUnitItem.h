@@ -42,6 +42,7 @@ protected:
 
 private:
 
+    void init();
     void createDecoration();
     void createPortItems();
 
