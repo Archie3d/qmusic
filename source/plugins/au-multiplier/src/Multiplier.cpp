@@ -3,11 +3,11 @@
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "Amplifier.h"
+#include "Multiplier.h"
 
 const double cDefaultGain = 1.0;
 
-Amplifier::Amplifier(AudioUnitPlugin *pPlugin)
+Multiplier::Multiplier(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
@@ -16,30 +16,30 @@ Amplifier::Amplifier(AudioUnitPlugin *pPlugin)
     m_pOutput = addOutput("", QVariant::Double);
 }
 
-Amplifier::~Amplifier()
+Multiplier::~Multiplier()
 {
 }
 
-void Amplifier::processStart()
+void Multiplier::processStart()
 {
 }
 
-void Amplifier::processStop()
+void Multiplier::processStop()
 {
 }
 
-void Amplifier::process()
+void Multiplier::process()
 {
     double v = m_pInput->value().toDouble();
     double gain = m_pGain->value().toDouble();
     m_pOutput->setValue(v * gain);
 }
 
-void Amplifier::reset()
+void Multiplier::reset()
 {
 }
 
-QGraphicsItem* Amplifier::graphicsItem()
+QGraphicsItem* Multiplier::graphicsItem()
 {
     QGraphicsPathItem *pItem = new QGraphicsPathItem();
     QPainterPath path;
@@ -60,7 +60,7 @@ QGraphicsItem* Amplifier::graphicsItem()
 
 }
 
-int Amplifier::flags() const
+int Multiplier::flags() const
 {
     return Flag_NoTitle | Flag_NoFrame;
 }

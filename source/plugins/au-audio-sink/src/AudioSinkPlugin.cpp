@@ -8,7 +8,7 @@ AudioSinkPlugin::AudioSinkPlugin(QObject *pParent)
 
 QIcon AudioSinkPlugin::icon() const
 {
-    return QIcon(":/au-audio-sink/speaker.png");
+    return QIcon(":/au-audio-sink/icon.png");
 }
 
 AudioUnit* AudioSinkPlugin::createInstance()

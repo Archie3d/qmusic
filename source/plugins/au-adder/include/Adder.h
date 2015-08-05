@@ -1,16 +1,16 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_ADDER_H
+#define AU_ADDER_H
 
 #include "AudioUnit.h"
 
 class QtVariantProperty;
 
-class Mixer : public AudioUnit
+class Adder : public AudioUnit
 {
 public:
 
-    Mixer(AudioUnitPlugin *pPlugin);
-    ~Mixer();
+    Adder(AudioUnitPlugin *pPlugin);
+    ~Adder();
 
 protected:
 
@@ -27,5 +27,5 @@ private:
     OutputPort *m_pOutput;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_ADDER_H
 

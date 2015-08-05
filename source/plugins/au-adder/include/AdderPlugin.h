@@ -1,15 +1,15 @@
 #include <QtPlugin>
 #include "AudioUnitPlugin.h"
 
-class AmplifierPlugin : public AudioUnitPlugin
+class AdderPlugin : public AudioUnitPlugin
 {
     Q_OBJECT
     Q_INTERFACES(AudioUnitPlugin)
-    Q_PLUGIN_METADATA(IID "qmusic.audiounits.plugin" FILE "AmplifierPlugin.json")
+    Q_PLUGIN_METADATA(IID "qmusic.audiounits.plugin" FILE "AdderPlugin.json")
 
 public:
 
-    AmplifierPlugin(QObject *pParent = nullptr);
+    AdderPlugin(QObject *pParent = nullptr);
 
     QIcon icon() const override;
 

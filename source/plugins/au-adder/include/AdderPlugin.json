@@ -1,6 +1,6 @@
 {
     "uid":          "81afefb54970e99e8113a181d8853282",
-    "name":         "Mixer",
+    "name":         "Adder",
     "category":     "Signal flow",
     "version":      "1.0.0"
 }

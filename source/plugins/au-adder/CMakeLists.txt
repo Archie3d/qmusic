@@ -1,4 +1,4 @@
-project(au-amplifier)
+project(au-adder)
 
 set(USE_QT TRUE)
 set(DEPENDS_QT Widgets)

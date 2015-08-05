@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/au-audio-sink">
-        <file>speaker.png</file>
+        <file>icon.png</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/au-mixer">
+    <qresource prefix="/au-multiplier">
         <file>icon.png</file>
     </qresource>
 </RCC>

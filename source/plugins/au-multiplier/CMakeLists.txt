@@ -1,4 +1,4 @@
-project(au-mixer)
+project(au-multiplier)
 
 set(USE_QT TRUE)
 set(DEPENDS_QT Widgets)

@@ -3,9 +3,9 @@
 #include <QGraphicsSimpleTextItem>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "../include/Mixer.h"
+#include "Adder.h"
 
-Mixer::Mixer(AudioUnitPlugin *pPlugin)
+Adder::Adder(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
     m_pInputA = addInput("", QVariant::Double);
@@ -13,26 +13,26 @@ Mixer::Mixer(AudioUnitPlugin *pPlugin)
     m_pOutput = addOutput("", QVariant::Double);
 }
 
-Mixer::~Mixer()
+Adder::~Adder()
 {
 }
 
-void Mixer::processStart()
+void Adder::processStart()
 {
 }
 
-void Mixer::processStop()
+void Adder::processStop()
 {
 }
 
-void Mixer::process()
+void Adder::process()
 {
     double a = m_pInputA->value().toDouble();
     double b = m_pInputB->value().toDouble();
     m_pOutput->setValue(a + b);
 }
 
-QGraphicsItem* Mixer::graphicsItem()
+QGraphicsItem* Adder::graphicsItem()
 {
     QGraphicsPathItem *pItem = new QGraphicsPathItem();
     QPainterPath path;
@@ -53,7 +53,7 @@ QGraphicsItem* Mixer::graphicsItem()
     return pItem;
 }
 
-int Mixer::flags() const
+int Adder::flags() const
 {
     return Flag_NoTitle | Flag_NoFrame;
 }

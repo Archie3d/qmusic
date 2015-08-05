@@ -1,14 +1,14 @@
-#ifndef AMPLIFIER_H
-#define AMPLIFIER_H
+#ifndef MULTIPLIER_H
+#define MULTIPLIER_H
 
 #include "AudioUnit.h"
 
-class Amplifier : public AudioUnit
+class Multiplier : public AudioUnit
 {
 public:
 
-    Amplifier(AudioUnitPlugin *pPlugin);
-    ~Amplifier();
+    Multiplier(AudioUnitPlugin *pPlugin);
+    ~Multiplier();
 
 protected:
 
@@ -28,5 +28,5 @@ private:
     OutputPort *m_pOutput;
 };
 
-#endif // AMPLIFIER_H
+#endif // MULTIPLIER_H
 

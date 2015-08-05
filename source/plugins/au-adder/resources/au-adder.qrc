@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/au-amplifier">
+    <qresource prefix="/au-adder">
         <file>icon.png</file>
     </qresource>
 </RCC>
