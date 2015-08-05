@@ -100,6 +100,11 @@ void MainWindow::stopSignalChain()
     updateActions();
 }
 
+void MainWindow::editSettings()
+{
+
+}
+
 void MainWindow::createDockingWindows()
 {
     m_pLogWindow = new LogWindow(this);
@@ -133,6 +138,9 @@ void MainWindow::createActions()
 
     m_pStopSignalChainAction = new QAction(QIcon(":/icons/stop.png"), tr("Stop"), this);
     connect(m_pStopSignalChainAction, SIGNAL(triggered()), this, SLOT(stopSignalChain()));
+
+    m_pSettingsAction = new QAction(QIcon(":/icons/settings.png"), tr("Settings..."), this);
+    connect(m_pSettingsAction, SIGNAL(triggered()), this, SLOT(editSettings()));
 }
 
 void MainWindow::createMenu()
@@ -149,6 +157,8 @@ void MainWindow::createMenu()
     m_pSoundMenu = menuBar()->addMenu(tr("&Sound"));
     m_pSoundMenu->addAction(m_pStartSignalChainAction);
     m_pSoundMenu->addAction(m_pStopSignalChainAction);
+    m_pSoundMenu->addSeparator();
+    m_pSoundMenu->addAction(m_pSettingsAction);
 }
 
 void MainWindow::createToolBars()
@@ -168,4 +178,5 @@ void MainWindow::updateActions()
 
     m_pStartSignalChainAction->setVisible(!isStarted);
     m_pStopSignalChainAction->setVisible(isStarted);
+    m_pSettingsAction->setEnabled(!isStarted);
 }

@@ -27,6 +27,7 @@ private slots:
 
     void startSignalChain();
     void stopSignalChain();
+    void editSettings();
 
 private:
 
@@ -53,6 +54,7 @@ private:
 
     QAction *m_pStartSignalChainAction;
     QAction *m_pStopSignalChainAction;
+    QAction *m_pSettingsAction;
 
     // Menus
     QMenu *m_pFileMenu;

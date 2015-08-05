@@ -397,6 +397,8 @@ QVariant SignalChainScene::serializeConnections(SerializationContext *pContext) 
             SignalChainAudioUnitItem *pTargetAu = dynamic_cast<SignalChainAudioUnitItem*>(pSignalChainConnectionItem->inputPortItem()->parentItem());
             int sourceIndex = pSignalChainConnectionItem->outputPortItem()->outputPort()->index();
             int targetIndex = pSignalChainConnectionItem->inputPortItem()->inputPort()->index();
+            Q_ASSERT(sourceIndex >= 0);
+            Q_ASSERT(targetIndex >= 0);
 
             QVariantMap map;
             map["sourceAudioUnit"] = pContext->serialize(pSourceAu);
@@ -433,8 +435,11 @@ void SignalChainScene::deserializeConnections(const QVariant &data, Serializatio
 
         SignalChainAudioUnitItem *pSourceAu = pContext->deserialize<SignalChainAudioUnitItem>(map["sourceAudioUnit"]);
         SignalChainAudioUnitItem *pTargetAu = pContext->deserialize<SignalChainAudioUnitItem>(map["targetAudioUnit"]);
-        int sourceIndex = map["sourceIndex"].toInt();
-        int targetIndex = map["targetIndex"].toInt();
+        bool ok = false;
+        int sourceIndex = map["sourcePortIndex"].toInt(&ok); Q_ASSERT(ok);
+        int targetIndex = map["targetPortIndex"].toInt(&ok); Q_ASSERT(ok);
+        Q_ASSERT(sourceIndex >= 0);
+        Q_ASSERT(targetIndex >= 0);
         SignalChainOutputPortItem *pOutputPortItem = pSourceAu->outputPortItems().at(sourceIndex);
         SignalChainInputPortItem *pInputPortItem = pTargetAu->inputPortItems().at(targetIndex);
 

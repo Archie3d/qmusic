@@ -5,6 +5,9 @@
 #include "AudioUnitsManager.h"
 #include "Application.h"
 
+const QString Application::Company("Archie3d");
+const QString Application::Product("QMusic");
+
 // Application instamce
 static Application* s_pApplicationInstance = nullptr;
 

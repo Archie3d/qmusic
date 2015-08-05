@@ -11,6 +11,9 @@ class QMUSIC_FRAMEWORK_API Application : public QApplication
     Q_OBJECT
 public:
 
+    const static QString Company;
+    const static QString Product;
+
     static Application* instance();
 
     Application(int argc, char **argv);

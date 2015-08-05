@@ -31,8 +31,7 @@ void OutputPort::update()
 
 int OutputPort::index() const
 {
-    AudioUnit *pAu = dynamic_cast<AudioUnit*>(audioUnit());
-    Q_ASSERT(pAu != nullptr);
+    AudioUnit *pAu = static_cast<AudioUnit*>(audioUnit());
 
     const QList<OutputPort*> &outputs = pAu->outputs();
     for (int i = 0; i < outputs.count(); ++i) {

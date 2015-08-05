@@ -7,7 +7,7 @@ FIRFilter::FIRFilter()
     m_coefs.append(1.0);
     reset();
 }
-k
+
 FIRFilter::FIRFilter(const QVector<double> &coefs)
     : m_coefs(coefs),
       m_pBuffer(nullptr)
