@@ -15,6 +15,7 @@ const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
 
+const QColot cTitleColor(0, 0, 128);
 const QColor cSelectionColor(255, 159, 40);
 
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
@@ -224,7 +225,7 @@ void SignalChainAudioUnitItem::createDecoration()
     if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoTitle) == 0) {
         m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
         m_pTitleTextItem->setText(m_pAudioUnit->plugin()->name());
-        m_pTitleTextItem->setBrush(QBrush(QColor(0, 0, 128)));
+        m_pTitleTextItem->setBrush(QBrush(cTitleColor));
     }
 
     m_pAudioUnitGraphicsItem = m_pAudioUnit->graphicsItem();
