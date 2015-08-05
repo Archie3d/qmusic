@@ -3,6 +3,6 @@ project(au-lhpfilter)
 set(USE_QT TRUE)
 set(DEPENDS_QT Widgets)
 
-set(DEPENDS framework qtpropertybrowser)
+set(DEPENDS framework dsp qtpropertybrowser)
 
 include(build_plugin)

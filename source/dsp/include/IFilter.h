@@ -1,12 +1,12 @@
 #ifndef IFILTER_H
 #define IFILTER_H
 
-#include "FrameworkApi.h"
+#include "DspApi.h"
 
 /**
  * @brief Interface to a filter.
  */
-class QMUSIC_FRAMEWORK_API IFilter
+class QMUSIC_DSP_API IFilter
 {
 public:
 

@@ -1,13 +1,13 @@
 #ifndef VAONEPOLEFILTER_H
 #define VAONEPOLEFILTER_H
 
-#include "FrameworkApi.h"
+#include "DspApi.h"
 #include "FilterAbstractImpl.h"
 
 /**
  * @brief Virtual analogue single pole filter
  */
-class QMUSIC_FRAMEWORK_API VAOnePoleFilter : public FilterAbstractImpl
+class QMUSIC_DSP_API VAOnePoleFilter : public FilterAbstractImpl
 {
 public:
 

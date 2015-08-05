@@ -1,10 +1,10 @@
 #ifndef FILTERABSTRACTIMPL_H
 #define FILTERABSTRACTIMPL_H
 
-#include "FrameworkApi.h"
+#include "DspApi.h"
 #include "IFilter.h"
 
-class QMUSIC_FRAMEWORK_API FilterAbstractImpl : public IFilter
+class QMUSIC_DSP_API FilterAbstractImpl : public IFilter
 {
 public:
 
