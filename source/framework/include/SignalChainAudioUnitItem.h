@@ -11,7 +11,8 @@ class SignalChainConnectionItem;
 class SignalChainInputPortItem;
 class SignalChainOutputPortItem;
 
-class QMUSIC_FRAMEWORK_API SignalChainAudioUnitItem : public SignalChainItem
+class QMUSIC_FRAMEWORK_API SignalChainAudioUnitItem : public SignalChainItem,
+                                                      public ISerializable
 {
 public:
 
@@ -27,6 +28,9 @@ public:
      * @return
      */
     QList<SignalChainConnectionItem*> connectionItems() const;
+
+    const QList<SignalChainInputPortItem*> inputPortItems() const { return m_inputPortItems; }
+    const QList<SignalChainOutputPortItem*> outputPortItems() const { return m_outputPortItems; }
 
     // ISerializable interface
     QString uid() const { return UID; }

@@ -4,7 +4,6 @@
 #include <QGraphicsSimpleTextItem>
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "SerializationContext.h"
 #include "SignalChainAudioUnitItem.h"
 #include "SignalChainConnectionItem.h"
 #include "SignalChainPortItem.h"
@@ -99,33 +98,6 @@ void SignalChainPortItem::setLabel(const QString &text)
 
 }
 
-void SignalChainPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
-{
-    Q_ASSERT(pContext != nullptr);
-
-    // Serialize connection items
-    QVariantList list;
-    foreach (SignalChainConnectionItem *pItem, m_connections) {
-        list.append(pContext->serialize(pItem));
-    }
-
-    data["label"] = m_pLabelItem->text();
-    data["connections"] = list;
-}
-
-void SignalChainPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext != nullptr);
-
-    m_connections.clear();
-    setLabel(data["label"].toString());
-    QVariantList list = data["connections"].toList();
-    foreach (const QVariant &v, list) {
-        auto pItem = pContext->deserialize<SignalChainConnectionItem>(v);
-        addConnection(pItem);
-    }
-}
-
 void SignalChainPortItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
 {
     QVariant::Type type = dataType();
@@ -150,8 +122,6 @@ QVariant SignalChainPortItem::itemChange(GraphicsItemChange change, const QVaria
  *  class SignalChainInputPortItem implementation
  */
 
-const QString SignalChainInputPortItem::UID("SignalChainInputPortItem");
-
 SignalChainInputPortItem::SignalChainInputPortItem(QGraphicsItem *pParent)
     : SignalChainPortItem(Type_InputPort, "", pParent),
       m_pInputPort(nullptr)
@@ -162,6 +132,7 @@ SignalChainInputPortItem::SignalChainInputPortItem(InputPort *pInput, QGraphicsI
     : SignalChainPortItem(Type_InputPort, pInput->name(), pParent),
       m_pInputPort(pInput)
 {
+    Q_ASSERT(pInput != nullptr);
 }
 
 QVariant::Type SignalChainInputPortItem::dataType() const
@@ -173,26 +144,9 @@ QVariant::Type SignalChainInputPortItem::dataType() const
     return QVariant::Invalid;
 }
 
-void SignalChainInputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
-{
-    Q_ASSERT(pContext != nullptr);
-    data["inputPort"] = pContext->serialize(m_pInputPort);
-    SignalChainPortItem::serialize(data, pContext);
-}
-
-void SignalChainInputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext != nullptr);
-    m_pInputPort = pContext->deserialize<InputPort>(data["inputPort"]);
-    Q_ASSERT(m_pInputPort != nullptr);
-    SignalChainPortItem::deserialize(data, pContext);
-}
-
 /*
  *  class SignalChainOutputPortItem implementation
  */
-
-const QString SignalChainOutputPortItem::UID("SignalChainOutputPortItem");
 
 SignalChainOutputPortItem::SignalChainOutputPortItem(QGraphicsItem *pParent)
     : SignalChainPortItem(Type_OutputPort, "", pParent),
@@ -205,6 +159,7 @@ SignalChainOutputPortItem::SignalChainOutputPortItem(OutputPort *pOutput, QGraph
     : SignalChainPortItem(Type_OutputPort, pOutput->name(), pParent),
       m_pOutputPort(pOutput)
 {
+    Q_ASSERT(pOutput != nullptr);
 }
 
 QVariant::Type SignalChainOutputPortItem::dataType() const
@@ -214,19 +169,4 @@ QVariant::Type SignalChainOutputPortItem::dataType() const
     }
 
     return QVariant::Invalid;
-}
-
-void SignalChainOutputPortItem::serialize(QVariantMap &data, SerializationContext *pContext) const
-{
-    Q_ASSERT(pContext != nullptr);
-    data["outputPort"] = pContext->serialize(m_pOutputPort);
-    SignalChainPortItem::serialize(data, pContext);
-}
-
-void SignalChainOutputPortItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext != nullptr);
-    m_pOutputPort = pContext->deserialize<OutputPort>(data["outputPort"]);
-    Q_ASSERT(m_pOutputPort != nullptr);
-    SignalChainPortItem::deserialize(data, pContext);
 }

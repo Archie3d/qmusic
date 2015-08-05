@@ -28,13 +28,6 @@ Envelope::~Envelope()
 {
 }
 
-void Envelope::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    AudioUnit::deserialize(data, pContext);
-    m_pNoteOnInput = inputs()[0];
-    m_pOutput = outputs()[0];
-}
-
 void Envelope::processStart()
 {
     m_state = State_Off;

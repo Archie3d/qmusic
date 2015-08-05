@@ -86,7 +86,7 @@ private:
      */
     void setSignalChain(ISignalChain *pSignalChain) { m_pSignalChain = pSignalChain; }
 
-
+    /// Pointer to corresponding plugin
     AudioUnitPlugin *m_pPlugin;
 
     /// Pointer to signal chain this unit belongs to.

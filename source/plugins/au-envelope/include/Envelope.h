@@ -22,8 +22,6 @@ public:
     Envelope(AudioUnitPlugin *pPlugin);
     ~Envelope();
 
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
-
 protected:
 
     void processStart();

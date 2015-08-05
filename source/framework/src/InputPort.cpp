@@ -1,8 +1,7 @@
 #include "SerializationContext.h"
+#include "AudioUnit.h"
 #include "OutputPort.h"
 #include "InputPort.h"
-
-const QString InputPort::UID("InputPort");
 
 InputPort::InputPort()
     : Port(Direction_Input),
@@ -28,6 +27,20 @@ void InputPort::update()
     }
 }
 
+int InputPort::index() const
+{
+    AudioUnit *pAu = dynamic_cast<AudioUnit*>(audioUnit());
+    Q_ASSERT(pAu != nullptr);
+
+    const QList<InputPort*> &inputs = pAu->inputs();
+    for (int i = 0; i < inputs.count(); ++i) {
+        if (inputs[i] == this) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void InputPort::connect(OutputPort *pOutput)
 {
     m_pConnectedOutputPort = pOutput;
@@ -36,19 +49,4 @@ void InputPort::connect(OutputPort *pOutput)
 void InputPort::disconnect()
 {
     m_pConnectedOutputPort = nullptr;
-}
-
-void InputPort::serialize(QVariantMap &data, SerializationContext *pContext) const
-{
-    Q_ASSERT(pContext != nullptr);
-
-    Port::serialize(data, pContext);
-    data["connectedOutputPort"] = pContext->serialize(m_pConnectedOutputPort);
-}
-
-void InputPort::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext != nullptr);
-    Port::deserialize(data, pContext);
-    m_pConnectedOutputPort = pContext->deserialize<OutputPort>(data["connectedOutputPort"]);
 }

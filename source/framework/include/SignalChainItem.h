@@ -6,8 +6,7 @@
 #include "ISerializable.h"
 #include "FrameworkApi.h"
 
-class QMUSIC_FRAMEWORK_API SignalChainItem : public QGraphicsPathItem,
-                                             public ISerializable
+class QMUSIC_FRAMEWORK_API SignalChainItem : public QGraphicsPathItem
 {
 public:
 
@@ -23,10 +22,6 @@ public:
     SignalChainItem(Type type = Type_Invalid, QGraphicsItem *pParent = nullptr);
 
     int type() const override { return m_type; }
-
-    // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
 private:
 

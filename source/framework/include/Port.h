@@ -2,10 +2,11 @@
 #define PORT_H
 
 #include <QVariant>
-#include "ISerializable.h"
 #include "FrameworkApi.h"
 
-class QMUSIC_FRAMEWORK_API Port : public ISerializable
+class IAudioUnit;
+
+class QMUSIC_FRAMEWORK_API Port
 {
 public:
 
@@ -33,6 +34,15 @@ public:
     QVariant::Type dataType() const { return m_dataType; }
 
     /**
+     * Returns index of this port within the set of audio unit ports.
+     * @return
+     */
+    virtual int index() const = 0;
+
+    void setAudioUnit(IAudioUnit *pAudioUnit) { m_pAudioUnit = pAudioUnit; }
+    IAudioUnit* audioUnit() const { return m_pAudioUnit; }
+
+    /**
      * @brief Returns value currently set on this port.
      * @return Signal data value.
      */
@@ -43,15 +53,15 @@ public:
      */
     virtual void update() = 0;
 
-    // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
-
 private:
 
     Direction m_direction;      ///< Data flow direction.
     QString m_name;             ///< Port name.
     QVariant::Type m_dataType;  ///< Data type.
+
+    /// Pointer to the audio unit this port belongs to.
+    IAudioUnit *m_pAudioUnit;
+
 };
 
 #endif // PORT_H

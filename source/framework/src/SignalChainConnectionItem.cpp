@@ -4,6 +4,7 @@
 #include <QGraphicsPathItem>
 #include <QStyleOptionGraphicsItem>
 #include "InputPort.h"
+#include "OutputPort.h"
 #include "SerializationContext.h"
 #include "SignalChainPortItem.h"
 #include "SignalChainConnectionItem.h"
@@ -11,8 +12,6 @@
 QColor cDefaultColor(128, 128, 128);
 QColor cSelectColor(255, 159, 40);
 qreal cWidth(1.5);
-
-const QString SignalChainConnectionItem::UID("SignalChainConnectionItem");
 
 SignalChainConnectionItem::SignalChainConnectionItem(QGraphicsItem *pParent)
     : SignalChainItem(Type_Connection, pParent),
@@ -84,11 +83,13 @@ void SignalChainConnectionItem::setPort(SignalChainPortItem *pPort)
 }
 
 void SignalChainConnectionItem::removePort(SignalChainPortItem *pPortItem)
-{
-    if (m_pSourcePortItem == dynamic_cast<SignalChainOutputPortItem*>(pPortItem)) {
+{    
+    // This method may be called by destructor of the port item.
+    // dynamic cast must not be used here.
+    if (m_pSourcePortItem == static_cast<SignalChainOutputPortItem*>(pPortItem)) {
         m_pSourcePortItem = nullptr;
     }
-    if (m_pTargetPortItem == dynamic_cast<SignalChainInputPortItem*>(pPortItem)) {
+    if (m_pTargetPortItem == static_cast<SignalChainInputPortItem*>(pPortItem)) {
         m_pTargetPortItem = nullptr;
     }
 }
@@ -125,28 +126,6 @@ void SignalChainConnectionItem::updatePath()
 bool SignalChainConnectionItem::isConnected() const
 {
     return (m_pSourcePortItem != nullptr) && (m_pTargetPortItem != nullptr);
-}
-
-void SignalChainConnectionItem::serialize(QVariantMap &data, SerializationContext *pContext) const
-{
-    Q_ASSERT(pContext);
-    data["sourcePortItem"] = pContext->serialize(m_pSourcePortItem);
-    data["targetPortItem"] = pContext->serialize(m_pTargetPortItem);
-    data["sourcePoint"] = m_sourcePoint;
-    data["targetPoint"] = m_targetPoint;
-}
-
-void SignalChainConnectionItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext);
-
-    delete m_pSourcePortItem;
-    delete m_pTargetPortItem;
-
-    m_pSourcePortItem = pContext->deserialize<SignalChainOutputPortItem>(data["sourcePortItem"]);
-    m_pTargetPortItem = pContext->deserialize<SignalChainInputPortItem>(data["targetPortItem"]);
-    m_sourcePoint = data["sourcePoint"].toPointF();
-    m_targetPoint = data["targetPoint"].toPointF();
 }
 
 void SignalChainConnectionItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)

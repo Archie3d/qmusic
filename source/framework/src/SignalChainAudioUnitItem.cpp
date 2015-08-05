@@ -58,20 +58,7 @@ void SignalChainAudioUnitItem::serialize(QVariantMap &data, SerializationContext
 {
     Q_ASSERT(pContext != nullptr);
     data["audioUnit"] = pContext->serialize(m_pAudioUnit);
-
-    QVariantList listInputs;
-    foreach (SignalChainInputPortItem *pPort, m_inputPortItems) {
-        listInputs.append(pContext->serialize(pPort));
-    }
-    QVariantList listOutputs;
-    foreach (SignalChainOutputPortItem *pPort, m_outputPortItems) {
-        listOutputs.append(pContext->serialize(pPort));
-    }
-
-    data["inputs"] = listInputs;
-    data["outputs"] = listOutputs;
-
-    SignalChainItem::serialize(data, pContext);
+    data["position"] = pos();
 }
 
 void SignalChainAudioUnitItem::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -82,21 +69,9 @@ void SignalChainAudioUnitItem::deserialize(const QVariantMap &data, Serializatio
     m_pAudioUnit = dynamic_cast<AudioUnit*>(pSerializable);
     Q_ASSERT(m_pAudioUnit);
 
-    QVariantList list = data["inputs"].toList();
-    foreach (const QVariant &handle, list) {
-        SignalChainInputPortItem *pPort = pContext->deserialize<SignalChainInputPortItem>(handle);
-        pPort->setParentItem(this);
-        m_inputPortItems.append(pPort);
-    }
-
-    list = data["outputs"].toList();
-    foreach (const QVariant &handle, list) {
-        SignalChainOutputPortItem *pPort = pContext->deserialize<SignalChainOutputPortItem>(handle);
-        pPort->setParentItem(this);
-        m_outputPortItems.append(pPort);
-    }
-
-    SignalChainItem::deserialize(data, pContext);
+    // Restore item's position
+    QPointF pos = data["position"].toPointF();
+    setPos(pos);
 
     // Recreate title and graphics item
     delete m_pTitleTextItem;
@@ -104,6 +79,7 @@ void SignalChainAudioUnitItem::deserialize(const QVariantMap &data, Serializatio
     m_pTitleTextItem = nullptr;
     m_pAudioUnitGraphicsItem = nullptr;
 
+    createPortItems();
     createDecoration();
 }
 
@@ -134,12 +110,8 @@ void SignalChainAudioUnitItem::updateView()
         contentHeight = m_pAudioUnitGraphicsItem->boundingRect().height();
     }
 
-    qDebug() << "ContetHeight" << contentHeight;
-
     int nInputs = m_pAudioUnit->inputs().count();
     int nOutputs = m_pAudioUnit->outputs().count();
-
-    qDebug() << "Inputs:" << nInputs << "Outputs:" << nOutputs;
 
     qreal inputsHeight = nInputs * cPortSpacing;
     qreal outputsHeight = nOutputs * cPortSpacing;
@@ -147,8 +119,6 @@ void SignalChainAudioUnitItem::updateView()
 
     portsHeight = qMax(portsHeight, contentHeight);
     contentHeight = qMax(contentHeight, portsHeight);
-
-    qDebug() << "ContentHeight after ports" << contentHeight;
 
     qreal width = qMax(headerWidth, contentWidth) + 2*cHeaderMargin;
     qreal height = cHeaderMargin + (headerHeight > 0.0 ? (headerHeight + cHeaderMargin) : 0.0);
@@ -169,7 +139,6 @@ void SignalChainAudioUnitItem::updateView()
         pPortItem->setPos(width, ypos);
         ypos += step;
     }
-
 
     QSizeF size(width, height);
     QPainterPath path;

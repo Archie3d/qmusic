@@ -36,6 +36,8 @@ SignalChainScene::SignalChainScene(QObject *pParent)
 SignalChainScene::~SignalChainScene()
 {
     m_pSignalChain->stop();
+    deleteAll();
+
     delete m_pSignalChain;
 }
 
@@ -93,21 +95,9 @@ void SignalChainScene::serialize(QVariantMap &data, SerializationContext *pConte
 {
     Q_ASSERT(pContext != nullptr);
 
-    // Serialize audio units
     data["signalChain"] = pContext->serialize(m_pSignalChain);
-
-    // Serialize signal chain items
-    QVariantList list;
-    foreach (QGraphicsItem *pItem, items()) {
-        if (pItem->type() >= SignalChainItem::Type_First) {
-            SignalChainItem *pSignalChainItem = dynamic_cast<SignalChainItem*>(pItem);
-            Q_ASSERT(pSignalChainItem != nullptr);
-            QVariant handle = pContext->serialize(pSignalChainItem);
-            list.append(handle);
-        }
-    }
-
-    data["signalChainItems"] = list;
+    data["audioUnitItems"] = serializeAudioUnitItems(pContext);
+    data["connections"] = serializeConnections(pContext);
 }
 
 void SignalChainScene::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -121,13 +111,11 @@ void SignalChainScene::deserialize(const QVariantMap &data, SerializationContext
     delete m_pSignalChain;
     m_pSignalChain = pContext->deserialize<SignalChain>(data["signalChain"]);
 
-    // Deserialize signal chain items
-    QVariantList list = data["signalChainItems"].toList();
-    foreach (const QVariant &handle, list) {
-        SignalChainItem *pItem = pContext->deserialize<SignalChainItem>(handle);
-        Q_ASSERT(pItem != nullptr);
-        addItem(pItem);
-    }
+    // Deserialize audio unit items
+    deserializeAudioUnitItems(data["audioUnitItems"], pContext);
+
+    // Deserialize connections
+    deserializeConnections(data["connections"], pContext);
 }
 
 void SignalChainScene::deleteSelected()
@@ -172,7 +160,6 @@ void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)
                 SignalChainPortItem *pPortItem = dynamic_cast<SignalChainPortItem*>(pItem);
                 Q_ASSERT(pPortItem != nullptr);
                 if (pPortItem->isOutput() || (pPortItem->isInput() && !pPortItem->hasConnections())) {
-                //if (!pPortItem->hasConnections()) {
                     m_pConnectionItem = new SignalChainConnectionItem();
                     addItem(m_pConnectionItem);
                     m_pConnectionItem->setPort(pPortItem);
@@ -214,14 +201,14 @@ void SignalChainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *pEvent)
                     if (!pInputItem->hasConnections() &&
                             m_pConnectionItem->inputPortItem() == nullptr &&
                             m_pConnectionItem->outputPortItem()->parentItem() != pInputItem->parentItem()) {
-                        establishConnection(pInputItem);
+                        finilizeConnection(pInputItem);
                         return;
                     }
                 } else if (pItem->type() == SignalChainItem::Type_OutputPort) {
                     SignalChainOutputPortItem *pOutputItem = dynamic_cast<SignalChainOutputPortItem*>(pItem);
                     if (m_pConnectionItem->outputPortItem() == nullptr &&
                             m_pConnectionItem->inputPortItem()->parentItem() != pOutputItem->parentItem()) {
-                        establishConnection(pOutputItem);
+                        finilizeConnection(pOutputItem);
                         return;
                     }
                 }
@@ -341,7 +328,26 @@ void SignalChainScene::onSelectionChanged()
     emit audioUnitSelected(nullptr);
 }
 
-void SignalChainScene::establishConnection(SignalChainPortItem *pFinalPort)
+void SignalChainScene::connectPorts(SignalChainOutputPortItem *pOutputPort, SignalChainInputPortItem *pInputPort)
+{
+    Q_ASSERT(pOutputPort != nullptr);
+    Q_ASSERT(pInputPort != nullptr);
+
+    if (pInputPort->hasConnections()) {
+        // Input ports can have only one incoming connection
+        return;
+    }
+
+    // Create connection path and connect ports
+    SignalChainConnectionItem *pConnectionItem = new SignalChainConnectionItem();
+    addItem(pConnectionItem);
+    pConnectionItem->setSourcePort(pOutputPort);
+    pConnectionItem->setTargetPort(pInputPort);
+    pInputPort->inputPort()->connect(pOutputPort->outputPort());
+    pConnectionItem->updatePathFromPorts();
+}
+
+void SignalChainScene::finilizeConnection(SignalChainPortItem *pFinalPort)
 {
     Q_ASSERT(m_pConnectionItem != nullptr);
     Q_ASSERT(pFinalPort != nullptr);
@@ -358,4 +364,80 @@ void SignalChainScene::establishConnection(SignalChainPortItem *pFinalPort)
 
     m_pConnectionItem = nullptr;
     emit endConnection();
+}
+
+QVariant SignalChainScene::serializeAudioUnitItems(SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+
+    QVariantList list;
+    foreach (QGraphicsItem *pItem, items()) {
+        if (pItem->type() == SignalChainItem::Type_AudioUnit) {
+            SignalChainAudioUnitItem *pSignalChainAuItem = dynamic_cast<SignalChainAudioUnitItem*>(pItem);
+            Q_ASSERT(pSignalChainAuItem != nullptr);
+            QVariant handle = pContext->serialize(pSignalChainAuItem);
+            list.append(handle);
+        }
+    }
+
+    return list;
+}
+
+QVariant SignalChainScene::serializeConnections(SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+
+    QVariantList list;
+    foreach (QGraphicsItem *pItem, items()) {
+        if (pItem->type() == SignalChainItem::Type_Connection) {
+            SignalChainConnectionItem *pSignalChainConnectionItem = dynamic_cast<SignalChainConnectionItem*>(pItem);
+            Q_ASSERT(pSignalChainConnectionItem != nullptr);
+
+            SignalChainAudioUnitItem *pSourceAu = dynamic_cast<SignalChainAudioUnitItem*>(pSignalChainConnectionItem->outputPortItem()->parentItem());
+            SignalChainAudioUnitItem *pTargetAu = dynamic_cast<SignalChainAudioUnitItem*>(pSignalChainConnectionItem->inputPortItem()->parentItem());
+            int sourceIndex = pSignalChainConnectionItem->outputPortItem()->outputPort()->index();
+            int targetIndex = pSignalChainConnectionItem->inputPortItem()->inputPort()->index();
+
+            QVariantMap map;
+            map["sourceAudioUnit"] = pContext->serialize(pSourceAu);
+            map["targetAudioUnit"] = pContext->serialize(pTargetAu);
+            map["sourcePortIndex"] = sourceIndex;
+            map["targetPortIndex"] = targetIndex;
+
+            list.append(map);
+        }
+    }
+
+    return list;
+}
+
+void SignalChainScene::deserializeAudioUnitItems(const QVariant &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+
+    QVariantList list = data.toList();
+    foreach (const QVariant &handle, list) {
+        SignalChainAudioUnitItem *pAuItem = pContext->deserialize<SignalChainAudioUnitItem>(handle);
+        Q_ASSERT(pAuItem != nullptr);
+        addItem(pAuItem);
+    }
+}
+
+void SignalChainScene::deserializeConnections(const QVariant &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+
+    QVariantList list = data.toList();
+    foreach (const QVariant &vMap, list) {
+        QVariantMap map = vMap.toMap();
+
+        SignalChainAudioUnitItem *pSourceAu = pContext->deserialize<SignalChainAudioUnitItem>(map["sourceAudioUnit"]);
+        SignalChainAudioUnitItem *pTargetAu = pContext->deserialize<SignalChainAudioUnitItem>(map["targetAudioUnit"]);
+        int sourceIndex = map["sourceIndex"].toInt();
+        int targetIndex = map["targetIndex"].toInt();
+        SignalChainOutputPortItem *pOutputPortItem = pSourceAu->outputPortItems().at(sourceIndex);
+        SignalChainInputPortItem *pInputPortItem = pTargetAu->inputPortItems().at(targetIndex);
+
+        connectPorts(pOutputPortItem, pInputPortItem);
+    }
 }

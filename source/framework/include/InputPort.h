@@ -11,24 +11,17 @@ class QMUSIC_FRAMEWORK_API InputPort : public Port
 {
 public:
 
-    const static QString UID;
-
     InputPort();
     InputPort(const QString &name, QVariant::Type type);
 
     QVariant value() const override;
     void update() override;
+    int index() const override final;
 
     void connect(OutputPort *pOutput);
     void disconnect();
 
     OutputPort* connectedOutputPort() const { return m_pConnectedOutputPort; }
-
-    // ISerializable interface
-    QString uid() const { return UID; }
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
-    static ISerializable* create() { return new InputPort(); }
 
 private:
 

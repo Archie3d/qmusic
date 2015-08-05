@@ -8,6 +8,8 @@
 class SignalChain;
 class SignalChainItem;
 class SignalChainPortItem;
+class SignalChainOutputPortItem;
+class SignalChainInputPortItem;
 class SignalChainConnectionItem;
 class AudioUnit;
 class AudioUnitPlugin;
@@ -79,7 +81,18 @@ private slots:
 
 private:
 
-    void establishConnection(SignalChainPortItem *pFinalPort);
+    void connectPorts(SignalChainOutputPortItem *pOutputPort,
+                      SignalChainInputPortItem *pInputPort);
+
+    void finilizeConnection(SignalChainPortItem *pFinalPort);
+
+    QVariant serializeAudioUnitItems(SerializationContext *pContext) const;
+
+    QVariant serializeConnections(SerializationContext *pContext) const;
+
+    void deserializeAudioUnitItems(const QVariant &data, SerializationContext *pContext);
+
+    void deserializeConnections(const QVariant &data, SerializationContext *pContext);
 
     SignalChain *m_pSignalChain;
 
