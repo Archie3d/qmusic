@@ -3,8 +3,6 @@
 
 #include "AudioUnit.h"
 
-class QtVariantProperty;
-
 class Adder : public AudioUnit
 {
 public:

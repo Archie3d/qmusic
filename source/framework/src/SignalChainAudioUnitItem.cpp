@@ -15,6 +15,8 @@ const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
 
+const QColor cSelectionColor(255, 159, 40);
+
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
 
 SignalChainAudioUnitItem::SignalChainAudioUnitItem(QGraphicsItem *pParent)
@@ -122,22 +124,28 @@ void SignalChainAudioUnitItem::updateView()
 
     qreal width = qMax(headerWidth, contentWidth) + 2*cHeaderMargin;
     qreal height = cHeaderMargin + (headerHeight > 0.0 ? (headerHeight + cHeaderMargin) : 0.0);
-    height += contentHeight > 0.0 ? (contentHeight + cHeaderMargin) : 0.0;
+
+    height += contentHeight;
+
+    qreal portsLevel = cHeaderMargin + (headerHeight > 0.0 ? (headerHeight + cHeaderMargin) : 0.0);
 
     // Reposition ports
-    qreal portsLevel = cHeaderMargin + (headerHeight > 0.0 ? (headerHeight + cHeaderMargin) : 0.0);
-    qreal step = portsHeight / (nInputs + 1);
-    qreal ypos = portsLevel + step;
-    foreach (SignalChainInputPortItem *pPortItem, m_inputPortItems) {
-        pPortItem->setPos(0, ypos);
-        ypos += step;
+    if (nInputs > 0) {
+        qreal step = portsHeight / nInputs;
+        qreal ypos = portsLevel + step / 2;
+        foreach (SignalChainInputPortItem *pPortItem, m_inputPortItems) {
+            pPortItem->setPos(0, ypos);
+            ypos += step;
+        }
     }
 
-    step = portsHeight / (nOutputs + 1);
-    ypos = portsLevel + step;
-    foreach (SignalChainOutputPortItem *pPortItem, m_outputPortItems) {
-        pPortItem->setPos(width, ypos);
-        ypos += step;
+    if (nOutputs > 0) {
+        qreal step = portsHeight / nOutputs;
+        qreal ypos = portsLevel + step / 2;
+        foreach (SignalChainOutputPortItem *pPortItem, m_outputPortItems) {
+            pPortItem->setPos(width, ypos);
+            ypos += step;
+        }
     }
 
     QSizeF size(width, height);
@@ -149,20 +157,22 @@ void SignalChainAudioUnitItem::updateView()
 
 void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
 {
+    Q_UNUSED(pOption);
+    Q_UNUSED(pWidget);
+
     updateView();
     QRectF rect = boundingRect();
 
     if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoFrame) == 0) {
         // Draw frame
 
-        QColor color(220, 220, 220);
+        QColor color = m_pAudioUnit->color();
         QColor contourColor = color.dark(150);
         QColor colorLight = color.lighter(110);
         QColor colorDark = color.darker(110);
         if (isSelected()) {
-            contourColor = QColor(255, 159, 40);
+            contourColor = cSelectionColor;
         }
-
 
         QLinearGradient gradient(QPointF(0, rect.top()),
                                  QPointF(0, rect.bottom()));
@@ -176,6 +186,15 @@ void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraph
         pPainter->setBrush(gradient);
 
         pPainter->drawPath(path());
+    } else {
+        if (isSelected()) {
+            // Draw selection frame
+            QPen pen;
+            pen.setColor(cSelectionColor);
+            pen.setStyle(Qt::DashLine);
+            pPainter->setPen(pen);
+            pPainter->drawPath(path());
+        }
     }
 
     // Draw icon if there is header present

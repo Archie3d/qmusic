@@ -61,6 +61,12 @@ public:
     virtual QGraphicsItem* graphicsItem() = 0;
 
     /**
+     * @brief Audio unit representation color.
+     * @return
+     */
+    virtual QColor color() const = 0;
+
+    /**
      * Returns audio unit flags.
      * @return
      */

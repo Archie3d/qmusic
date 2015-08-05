@@ -21,6 +21,7 @@ protected:
     void reset();
     void control(const QString &name, const QVariant &value);
     QGraphicsItem* graphicsItem();
+    QColor color() const override;
     int flags() const;
 
     // ISerializable interface

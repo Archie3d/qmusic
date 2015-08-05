@@ -6,6 +6,8 @@
 #include "ISignalChain.h"
 #include "../include/Constant.h"
 
+const QColor cItemColor(255, 220, 255);
+
 Constant::Constant(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
@@ -49,6 +51,11 @@ QGraphicsItem* Constant::graphicsItem()
     return m_pValueItem;
 }
 
+QColor Constant::color() const
+{
+    return cItemColor;
+}
+
 int Constant::flags() const
 {
     return Flag_NoTitle;
@@ -73,7 +80,9 @@ void Constant::createProperties()
     QtVariantProperty *pRoot = rootProperty();
     m_pPropConstant = propertyManager()->addProperty(QVariant::Double, "Value");
     m_pPropConstant->setValue(0.0);
+
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        // Update text item with the value for the property.
         QtVariantProperty *pV = dynamic_cast<QtVariantProperty*>(pProperty);
         if (pV == m_pPropConstant) {
             if (m_pValueItem != nullptr) {

@@ -4,6 +4,9 @@
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 
+/// Default color used for audio units representation
+const QColor cDefaultColor(220, 220, 220);
+
 AudioUnit::AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent)
     : m_pSignalChain(nullptr),
       m_pPlugin(pPlugin),
@@ -75,6 +78,11 @@ void AudioUnit::control(const QString &name, const QVariant &value)
     Q_UNUSED(name);
     Q_UNUSED(value);
     // Ignore controls by default.
+}
+
+QColor AudioUnit::color() const
+{
+    return cDefaultColor;
 }
 
 InputPort *AudioUnit::addInput(const QString &name, QVariant::Type type)
