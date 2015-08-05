@@ -27,6 +27,20 @@ MidiIn::~MidiIn()
     delete m_pMidiInputDevice;
 }
 
+void MidiIn::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["midiChannel"] = m_pPropChannel->value();
+    AudioUnit::serialize(data, pContext);
+}
+
+void MidiIn::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    m_pPropChannel->setValue(data["midiChannel"]);
+    AudioUnit::deserialize(data, pContext);
+}
+
 void MidiIn::processStart()
 {
     int midiDevIndex = m_pPropMidiDevice->value().toInt();

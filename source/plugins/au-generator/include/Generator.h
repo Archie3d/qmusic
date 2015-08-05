@@ -12,6 +12,10 @@ public:
     Generator(AudioUnitPlugin *pPlugin);
     ~Generator();
 
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+
 protected:
 
     void processStart();

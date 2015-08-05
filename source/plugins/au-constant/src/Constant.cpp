@@ -54,6 +54,20 @@ int Constant::flags() const
     return Flag_NoTitle;
 }
 
+void Constant::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    AudioUnit::serialize(data, pContext);
+    data["value"] = m_pPropConstant->value();
+}
+
+void Constant::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    m_pPropConstant->setValue(data["value"]);
+    AudioUnit::deserialize(data, pContext);
+}
+
 void Constant::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();

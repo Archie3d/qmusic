@@ -47,6 +47,13 @@ public:
     virtual double timeStep() const = 0;
 
     /**
+     * @brief Returns sample rate.
+     * @note Sample rate is normally 1/time step.
+     * @return Signal chain processing sample rate.
+     */
+    virtual double sampleRate() const = 0;
+
+    /**
      * @brief Set synth time step
      * @param dt Time step in seconds.
      */

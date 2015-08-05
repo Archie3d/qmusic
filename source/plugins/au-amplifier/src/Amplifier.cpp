@@ -3,7 +3,7 @@
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "../include/Amplifier.h"
+#include "Amplifier.h"
 
 const double cDefaultGain = 1.0;
 

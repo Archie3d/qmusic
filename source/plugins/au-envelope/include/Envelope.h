@@ -22,6 +22,10 @@ public:
     Envelope(AudioUnitPlugin *pPlugin);
     ~Envelope();
 
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
+
 protected:
 
     void processStart();

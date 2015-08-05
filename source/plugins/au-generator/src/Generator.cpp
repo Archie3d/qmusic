@@ -29,6 +29,20 @@ Generator::~Generator()
 {
 }
 
+void Generator::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["waveform"] = m_pPropWaveform->value();
+    AudioUnit::serialize(data, pContext);
+}
+
+void Generator::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    m_pPropWaveform->setValue(data["waveform"]);
+    AudioUnit::deserialize(data, pContext);
+}
+
 void Generator::processStart()
 {
 }

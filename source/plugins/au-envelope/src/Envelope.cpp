@@ -28,6 +28,26 @@ Envelope::~Envelope()
 {
 }
 
+void Envelope::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    AudioUnit::serialize(data, pContext);
+    data["attackTime"] = m_pAttackTimeMs->value();
+    data["decayTime"] = m_pDecayTimeMs->value();
+    data["sustainLevel"] = m_pSustainLevel->value();
+    data["releaseTime"] = m_pReleaseTimeMs->value();
+}
+
+void Envelope::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    m_pAttackTimeMs->setValue(data["attackTime"]);
+    m_pDecayTimeMs->setValue(data["decayTime"]);
+    m_pSustainLevel->setValue(data["sustainLevel"]);
+    m_pReleaseTimeMs->setValue(data["releaseTime"]);
+    AudioUnit::deserialize(data, pContext);
+}
+
 void Envelope::processStart()
 {
     m_state = State_Off;

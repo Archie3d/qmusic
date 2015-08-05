@@ -23,6 +23,10 @@ protected:
     QGraphicsItem* graphicsItem();
     int flags() const;
 
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+
 private:
 
     void createProperties();

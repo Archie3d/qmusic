@@ -23,9 +23,23 @@ LHPFilter::~LHPFilter()
 {
 }
 
+void LHPFilter::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["filterType"] = m_pFilterType->value();
+    AudioUnit::serialize(data, pContext);
+}
+
+void LHPFilter::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    m_pFilterType->setValue(data["filterTime"]);
+    AudioUnit::deserialize(data, pContext);
+}
+
 void LHPFilter::processStart()
 {
-    m_filter.setSampleRate(44100.0);
+    m_filter.setSampleRate(signalChain()->sampleRate());
     m_filter.reset();
 }
 

@@ -24,6 +24,7 @@ public:
     void reset() override;
     double timeStep() const override { return m_timeStep; }
     void setTimeStep(double dt) override { m_timeStep = dt; }
+    double sampleRate() const override { return 1.0 / m_timeStep; }
     void addAudioUnit(IAudioUnit *pAudioUnit) override;
     void removeAudioUnit(IAudioUnit *pAudioUnit) override;
     void prepareUpdate() override;
