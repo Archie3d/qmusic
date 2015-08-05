@@ -1,5 +1,6 @@
 cmake_policy(PUSH)
-cmake_policy(SET CMP0020 NEW)
+cmake_policy(SET CMP0020 OLD)
+cmake_policy(SET CMP0043 OLD)
 
 # Parse target source code
 include(parse_src)
