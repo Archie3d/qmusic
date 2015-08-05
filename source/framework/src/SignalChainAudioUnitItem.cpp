@@ -15,7 +15,7 @@ const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
 
-const QColot cTitleColor(0, 0, 128);
+const QColor cTitleColor(0, 0, 128);
 const QColor cSelectionColor(255, 159, 40);
 
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
