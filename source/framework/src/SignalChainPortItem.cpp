@@ -11,6 +11,7 @@
 const int cRadius = 3;
 const int cFontSize = 7;
 const char *cFontFamily = "Verdana";
+const QColor cPortNameColor(64, 0, 128);
 
 QMap<QVariant::Type, QColor> cTypeToColorMap = []() {
     QMap<QVariant::Type, QColor> map;
@@ -46,6 +47,7 @@ SignalChainPortItem::SignalChainPortItem(Type type, const QString &labelText, QG
     font.setPointSize(cFontSize);
     m_pLabelItem->setFont(font);
     m_pLabelItem->setText(labelText);
+    m_pLabelItem->setBrush(QBrush(cPortNameColor));
     if (type == Type_InputPort) {
         m_pLabelItem->setPos(-m_pLabelItem->boundingRect().width() - cRadius, -m_pLabelItem->boundingRect().height());
     } else {
@@ -90,7 +92,6 @@ void SignalChainPortItem::setLabel(const QString &text)
 {
     m_pLabelItem->setText(text);
     if (type() == Type_InputPort) {
-        qDebug() << "Width" << m_pLabelItem->boundingRect().width();
         m_pLabelItem->setPos(-m_pLabelItem->boundingRect().width() - cRadius, -m_pLabelItem->boundingRect().height());
     } else {
         m_pLabelItem->setPos(cRadius, -m_pLabelItem->boundingRect().height());

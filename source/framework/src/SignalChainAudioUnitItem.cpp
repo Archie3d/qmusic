@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QGraphicsSimpleTextItem>
-#include <QGraphicsProxyWidget>
+#include <QGraphicsDropShadowEffect>
 #include "SerializationContext.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
@@ -10,12 +10,12 @@
 #include "SignalChainAudioUnitItem.h"
 
 const qreal cBorderWidth = 1.0;
-const qreal cHeaderMargin = 5.0;
+const qreal cHeaderMargin = 3.0;
 const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
 
-const QColor cTitleColor(0, 0, 128);
+const QColor cTitleColor(0, 64, 128);
 const QColor cSelectionColor(255, 159, 40);
 
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
@@ -154,6 +154,14 @@ void SignalChainAudioUnitItem::updateView()
     path.addRoundedRect(0, 0, size.width(), size.height(), 3, 3);
 
     setPath(path);
+
+    // Drop shadow effect if not yet created
+    if (graphicsEffect() == nullptr) {
+        QGraphicsDropShadowEffect *pShadowEffect = new QGraphicsDropShadowEffect();
+        pShadowEffect->setOffset(3.0);
+        pShadowEffect->setBlurRadius(15.0);
+        setGraphicsEffect(pShadowEffect);
+    }
 }
 
 void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
@@ -162,6 +170,7 @@ void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraph
     Q_UNUSED(pWidget);
 
     updateView();
+
     QRectF rect = boundingRect();
 
     if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoFrame) == 0) {
@@ -233,6 +242,11 @@ void SignalChainAudioUnitItem::createDecoration()
         m_pAudioUnitGraphicsItem->setParentItem(this);
     }
 
+    // Drop shadow effect
+    //QGraphicsDropShadowEffect *pShadowEffect = new QGraphicsDropShadowEffect();
+    //pShadowEffect->setOffset(3.0);
+    //pShadowEffect->setBlurRadius(15.0);
+    //setGraphicsEffect(pShadowEffect);
 }
 
 void SignalChainAudioUnitItem::createPortItems()

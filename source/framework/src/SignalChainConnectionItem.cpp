@@ -3,15 +3,16 @@
 #include <QGraphicsScene>
 #include <QGraphicsPathItem>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsDropShadowEffect>
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "SerializationContext.h"
 #include "SignalChainPortItem.h"
 #include "SignalChainConnectionItem.h"
 
-QColor cDefaultColor(128, 128, 128);
+QColor cDefaultColor(64, 64, 64);
 QColor cSelectColor(255, 159, 40);
-qreal cWidth(1.5);
+qreal cWidth(1.25);
 
 SignalChainConnectionItem::SignalChainConnectionItem(QGraphicsItem *pParent)
     : SignalChainItem(Type_Connection, pParent),
@@ -23,6 +24,11 @@ SignalChainConnectionItem::SignalChainConnectionItem(QGraphicsItem *pParent)
     setZValue(-1);
 
     setFlag(QGraphicsItem::ItemIsSelectable);
+
+    QGraphicsDropShadowEffect *pShadowEffect = new QGraphicsDropShadowEffect();
+    pShadowEffect->setOffset(3.0);
+    pShadowEffect->setBlurRadius(15.0);
+    setGraphicsEffect(pShadowEffect);
 }
 
 SignalChainConnectionItem::~SignalChainConnectionItem()
