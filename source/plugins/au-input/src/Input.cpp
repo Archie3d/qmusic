@@ -19,12 +19,12 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pOutputLeft = addOutput("L", QVariant::Double);
     m_pOutputRight = addOutput("R", QVariant::Double);
 
-    Application::instance()->audioDevice()->addListener(this);
+    Application::instance()->audioInputDevice()->addListener(this);
 }
 
 Input::~Input()
 {
-    Application::instance()->audioDevice()->removeListener(this);
+    Application::instance()->audioInputDevice()->removeListener(this);
 
     delete m_pLeftBuffer;
     delete m_pRightBuffer;

@@ -1,5 +1,6 @@
 #include <QThread>
 #include "Application.h"
+#include "Settings.h"
 #include "AudioDevice.h"
 #include "AudioUnit.h"
 #include "SerializationContext.h"
@@ -24,7 +25,7 @@ void SignalChain::start()
     if (isStarted()) {
         return;
     }
-    startAudioDevice();
+    startAudioDevices();
     startAllAudioUnits();
     m_started = true;
 }
@@ -36,7 +37,7 @@ void SignalChain::stop()
     }
 
     stopAllAudioUnits();
-    stopAudioDevice();
+    stopAudioDevices();
     m_started = false;
 }
 
@@ -80,16 +81,6 @@ void SignalChain::prepareUpdate()
     }
 }
 
-void SignalChain::startAudioDevice()
-{
-    AudioDevice* pDev = Application::instance()->audioDevice();
-    if (pDev != nullptr) {
-        if (pDev->open(0, 2, 2, 44100.0)) {
-            setTimeStep(1.0 / pDev->openDeviceInfo().sampleRate);
-            pDev->start();
-        }
-    }
-}
 
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
@@ -117,12 +108,46 @@ void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pCo
     }
 }
 
-void SignalChain::stopAudioDevice()
+void SignalChain::startAudioDevices()
 {
-    AudioDevice* pDev = Application::instance()->audioDevice();
-    if (pDev != nullptr) {
-        pDev->stop();
-        pDev->close();
+    Settings settings;
+
+    AudioDevice* pInDev = Application::instance()->audioInputDevice();
+    AudioDevice* pOutDev = Application::instance()->audioOutputDevice();
+
+    int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
+    int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
+    double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
+    int bufferSize = settings.get(Settings::Setting_BufferSize).toInt();
+
+    setTimeStep(1.0 / sampleRate);
+
+    if (pInDev != nullptr) {
+        if (pInDev->open(waveInDeviceIndex, 2, 0, sampleRate, bufferSize)) {
+            pInDev->start();
+        }
+    }
+
+    if (pOutDev != nullptr) {
+        if (pOutDev->open(waveOutDeviceIndex, 0, 2, sampleRate, bufferSize)) {
+            pOutDev->start();
+        }
+    }
+}
+
+void SignalChain::stopAudioDevices()
+{
+    AudioDevice *pInDev = Application::instance()->audioInputDevice();
+    AudioDevice *pOutDev = Application::instance()->audioOutputDevice();
+
+    if (pInDev != nullptr) {
+        pInDev->stop();
+        pInDev->close();
+    }
+
+    if (pOutDev != nullptr) {
+        pOutDev->stop();
+        pOutDev->close();
     }
 }
 

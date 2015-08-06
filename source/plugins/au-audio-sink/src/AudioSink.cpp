@@ -24,13 +24,13 @@ AudioSink::AudioSink(AudioUnitPlugin *pPlugin)
     m_pThreadObject->moveToThread(m_pThread);
     m_pThread->start(QThread::TimeCriticalPriority);
 
-    Application::instance()->audioDevice()->addListener(this);
+    Application::instance()->audioOutputDevice()->addListener(this);
     connect(m_pThreadObject, SIGNAL(bufferReady()), this, SLOT(startPlayback()));
 }
 
 AudioSink::~AudioSink()
 {
-    Application::instance()->audioDevice()->removeListener(this);
+    Application::instance()->audioOutputDevice()->removeListener(this);
     m_pThreadObject->stop();
     m_pThread->quit();
     delete m_pThreadObject;

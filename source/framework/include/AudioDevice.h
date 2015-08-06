@@ -44,7 +44,8 @@ public:
     bool open(int index,
               int nInputs,
               int nOutputs,
-              double sampleRate);
+              double sampleRate,
+              int bufferSize);
 
     bool close();
 

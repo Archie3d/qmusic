@@ -40,7 +40,8 @@ Application::Application(int argc, char **argv)
     Q_ASSERT(s_pApplicationInstance == nullptr);
 
     m_pLogger = new Logger(this);
-    m_pAudioDevice = new AudioDevice();
+    m_pAudioInputDevice = new AudioDevice();
+    m_pAudioOutputDevice = new AudioDevice();
     m_pAudioUnitsManager = new AudioUnitsManager(this);
 
     s_pApplicationInstance = this;
@@ -52,7 +53,8 @@ Application::~Application()
         m_pAudioUnitsManager->cleanup();
     }
 
-    delete m_pAudioDevice;
+    delete m_pAudioInputDevice;
+    delete m_pAudioOutputDevice;
 
     s_pApplicationInstance = nullptr;
 }

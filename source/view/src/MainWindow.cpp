@@ -10,6 +10,7 @@
 #include "SignalChainWidget.h"
 #include "SignalChainScene.h"
 #include "SignalChain.h"
+#include "SettingsDialog.h"
 #include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
@@ -102,7 +103,13 @@ void MainWindow::stopSignalChain()
 
 void MainWindow::editSettings()
 {
+    SettingsDialog settingsDialog;
 
+    settingsDialog.loadSettings();
+
+    if (settingsDialog.exec() == QDialog::Accepted) {
+        settingsDialog.saveSettings();
+    }
 }
 
 void MainWindow::createDockingWindows()

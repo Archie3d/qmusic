@@ -22,7 +22,8 @@ public:
         Setting_WaveOutIndex,   ///< Index of wave output device.
         Setting_MidiInIndex,    ///< Index of MIDI input device.
         Setting_MidiOutIndex,   ///< Index of MIDI output device.
-        Setting_SampleRate      ///< Processing sample rate.
+        Setting_SampleRate,     ///< Processing sample rate.
+        Setting_BufferSize      ///< Audio buffer size.
     };
 
     Settings();

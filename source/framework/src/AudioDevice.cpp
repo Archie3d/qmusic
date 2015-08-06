@@ -3,8 +3,6 @@
 #include "Application.h"
 #include "AudioDevice.h"
 
-#define BUFFER_SIZE (1024)
-
 static int audioDeviceCallback(const void *pInputBuffer,
                                void *pOutputBuffer,
                                unsigned long framesPerBuffer,
@@ -36,12 +34,6 @@ AudioDevice::AudioDevice()
     m_openDeviceInfo.nInputs = 0;
     m_openDeviceInfo.nOutputs = 0;
     m_openDeviceInfo.sampleRate = 0.0f;
-
-    foreach(const Info &info, enumarate()) {
-        qDebug() << info.name << "inputs:" << info.nInputs
-                 << "outputs:" << info.nOutputs
-                 << "sample rate:" << info.sampleRate;
-    }
 }
 
 AudioDevice::~AudioDevice()
@@ -61,7 +53,7 @@ QList<AudioDevice::Info> AudioDevice::enumarate() const
     return devices;
 }
 
-bool AudioDevice::open(int index, int nInputs, int nOutputs, double sampleRate)
+bool AudioDevice::open(int index, int nInputs, int nOutputs, double sampleRate, int bufferSize)
 {
     if (isOpen()) {
         if (!close()) {
@@ -76,6 +68,8 @@ bool AudioDevice::open(int index, int nInputs, int nOutputs, double sampleRate)
     inputParameters.suggestedLatency = Pa_GetDeviceInfo(index)->defaultLowInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
+    PaStreamParameters *pInputParamaters = nInputs > 0 ? &inputParameters : NULL;
+
     PaStreamParameters outputParameters;
     outputParameters.device = index;
     outputParameters.channelCount = nOutputs;
@@ -83,23 +77,25 @@ bool AudioDevice::open(int index, int nInputs, int nOutputs, double sampleRate)
     outputParameters.suggestedLatency = Pa_GetDeviceInfo(index)->defaultLowInputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
 
+    PaStreamParameters *pOutputParameters = nOutputs > 0 ? &outputParameters : NULL;
+
     m_openDeviceInfo = getInfo(index);
     m_openDeviceInfo.nInputs = nInputs;
     m_openDeviceInfo.nOutputs = nOutputs;
     m_openDeviceInfo.sampleRate = sampleRate;
 
     int err = Pa_OpenStream(&m_pStream,
-                            &inputParameters,
-                            &outputParameters,
+                            pInputParamaters,
+                            pOutputParameters,
                             sampleRate,
-                            BUFFER_SIZE,
+                            bufferSize,
                             0, // paClipOff
                             audioDeviceCallback,
                             this
                            );
 
     if (err != paNoError) {
-        qCritical() << "Unable to open audio device" << index
+        qCritical() << "Unable to open audio device (" << m_openDeviceInfo.name << ")"
                     << Pa_GetErrorText(err);
         return false;
     }

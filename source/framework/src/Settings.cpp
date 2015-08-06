@@ -6,21 +6,23 @@
 // Settings default values
 const QMap<Settings::Setting, QVariant> cDefaultSettings = []() {
     QMap<Settings::Setting, QVariant> map;
-    map[Settings::Setting_WaveInIndex] = 0;
-    map[Settings::Setting_MidiOutIndex] = 0;
-    map[Settings::Setting_MidiInIndex] = 0;
-    map[Settings::Setting_MidiOutIndex] = 0;
+    map[Settings::Setting_WaveInIndex] = -1;
+    map[Settings::Setting_WaveOutIndex] = -1;
+    map[Settings::Setting_MidiInIndex] = -1;
+    map[Settings::Setting_MidiOutIndex] = -1;
     map[Settings::Setting_SampleRate] = 44100.0;
+    map[Settings::Setting_BufferSize] = 1024;
     return map;
 }();
 
 const QMap<Settings::Setting, QString> cSettingsNameMap = []() {
     QMap<Settings::Setting, QString> map;
     map[Settings::Setting_WaveInIndex] = "waveInIndex";
-    map[Settings::Setting_MidiOutIndex] = "waveOutIndex";
+    map[Settings::Setting_WaveOutIndex] = "waveOutIndex";
     map[Settings::Setting_MidiInIndex] = "midiInIndex";
     map[Settings::Setting_MidiOutIndex] = "midiOutIndex";
     map[Settings::Setting_SampleRate] = "sampleRate";
+    map[Settings::Setting_BufferSize] = "bufferSize";
     return map;
 }();
 

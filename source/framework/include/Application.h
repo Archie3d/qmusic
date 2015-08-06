@@ -20,7 +20,8 @@ public:
     ~Application();
 
     Logger* logger() const { return m_pLogger; }
-    AudioDevice* audioDevice() const { return m_pAudioDevice; }
+    AudioDevice* audioInputDevice() const { return m_pAudioInputDevice; }
+    AudioDevice* audioOutputDevice() const {return m_pAudioOutputDevice; }
     AudioUnitsManager* audioUnitsManager() const { return m_pAudioUnitsManager; }
 
     void setMainWindow(QMainWindow *pMainWindow);
@@ -45,8 +46,11 @@ private:
     /// Logger.
     Logger *m_pLogger;
 
-    /// Pointer to audio device.
-    AudioDevice *m_pAudioDevice;
+    /// Pointer to audio input device.
+    AudioDevice *m_pAudioInputDevice;
+
+    /// Pointer to audio output device;
+    AudioDevice *m_pAudioOutputDevice;
 
     /// Pointer to audio units manager (single instance per application).
     AudioUnitsManager *m_pAudioUnitsManager;

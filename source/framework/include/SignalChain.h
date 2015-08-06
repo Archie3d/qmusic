@@ -37,8 +37,8 @@ public:
 
 private:
 
-    void startAudioDevice();
-    void stopAudioDevice();
+    void startAudioDevices();
+    void stopAudioDevices();
     void startAllAudioUnits();
     void stopAllAudioUnits();
     void resetAllAudioUnits();
