@@ -1,6 +1,3 @@
-cmake_policy(PUSH)
-cmake_policy(SET CMP0020 OLD)
-
 # Parse target source code
 include(parse_src)
 
@@ -16,5 +13,3 @@ include(link_libs)
 
 # Process unit tests
 include(parse_tests)
-
-cmake_policy(POP)

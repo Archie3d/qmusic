@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.10)
 
-cmake_policy(SET CMP0043 OLD)
-cmake_policy(SET CMP0054 OLD)
+if(${CMAKE_MAJOR_VERSION} GREATER 2)
+    cmake_policy(SET CMP0043 OLD)
+    cmake_policy(SET CMP0054 OLD)
+endif()
+cmake_policy(SET CMP0020 OLD)
 
 project(QMusic)
 
