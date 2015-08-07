@@ -45,12 +45,14 @@ void AudioUnit::update()
         return;
     }
 
+    // Activate already the updated flag to prevent loop recursion
+    m_updated = true;
+
     foreach (InputPort *pInput, m_inputs) {
         pInput->update();
     }
 
     process();
-    m_updated = true;
 }
 
 void AudioUnit::start()
