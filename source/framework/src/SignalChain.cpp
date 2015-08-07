@@ -1,6 +1,7 @@
 #include <QThread>
 #include "Application.h"
 #include "Settings.h"
+#include "MidiInputDevice.h"
 #include "AudioDevice.h"
 #include "AudioUnit.h"
 #include "SerializationContext.h"
@@ -112,6 +113,7 @@ void SignalChain::startAudioDevices()
 {
     Settings settings;
 
+    MidiInputDevice *pMidiInDev = Application::instance()->midiInputDevice();
     AudioDevice* pInDev = Application::instance()->audioInputDevice();
     AudioDevice* pOutDev = Application::instance()->audioOutputDevice();
 
@@ -120,6 +122,9 @@ void SignalChain::startAudioDevices()
 
     int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
     int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
+    int midiInDeviceIndex = settings.get(Settings::Setting_MidiInIndex).toInt();
+    int midiInChannel = settings.get(Settings::Setting_MidiInChannel).toInt();
+
     double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
     int bufferSize = settings.get(Settings::Setting_BufferSize).toInt();
 
@@ -139,10 +144,21 @@ void SignalChain::startAudioDevices()
             pOutDev->start();
         }
     }
+
+    if (midiInDeviceIndex >= 0) {
+        pMidiInDev->setNumber(midiInDeviceIndex);
+        pMidiInDev->setChannel(midiInChannel);
+        if (pMidiInDev->open()) {
+            pMidiInDev->start();
+        } else {
+            qCritical() << "Failed to open MIDI input device";
+        }
+    }
 }
 
 void SignalChain::stopAudioDevices()
 {
+    MidiInputDevice *pMidiInDev = Application::instance()->midiInputDevice();
     AudioDevice *pInDev = Application::instance()->audioInputDevice();
     AudioDevice *pOutDev = Application::instance()->audioOutputDevice();
 
@@ -154,6 +170,11 @@ void SignalChain::stopAudioDevices()
     if (pOutDev != nullptr) {
         pOutDev->stop();
         pOutDev->close();
+    }
+
+    if (pMidiInDev != nullptr) {
+        pMidiInDev->stop();
+        pMidiInDev->close();
     }
 }
 

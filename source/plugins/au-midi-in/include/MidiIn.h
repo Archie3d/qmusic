@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_MIDIIN_H
+#define AU_MIDIIN_H
 
 #include "AudioUnit.h"
 #include "MidiInputDevice.h"
@@ -15,9 +15,7 @@ public:
     MidiIn(AudioUnitPlugin *pPlugin);
     ~MidiIn();
 
-    // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    QColor color() const override;
 
 protected:
 
@@ -34,8 +32,6 @@ private:
 
     void createProperties();
 
-    MidiInputDevice *m_pMidiInputDevice;
-
     bool m_noteOn;
     double m_frequency;
     double m_velocity;
@@ -43,10 +39,7 @@ private:
     OutputPort *m_pOutputNoteOn;
     OutputPort *m_pOutputFreq;
     OutputPort *m_pOutputVelocity;
-
-    QtVariantProperty *m_pPropMidiDevice;
-    QtVariantProperty *m_pPropChannel;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_MIDIIN_H
 

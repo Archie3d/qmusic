@@ -25,6 +25,8 @@ public:
     Speaker(AudioUnitPlugin *pPlugin);
     ~Speaker();
 
+    QColor color() const override;
+
     void processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples) override;
 
     AudioBuffer* leftBuffer() const;

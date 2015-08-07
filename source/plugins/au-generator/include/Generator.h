@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_GENERATOR_H
+#define AU_GENERATOR_H
 
 #include "AudioUnit.h"
 
@@ -37,5 +37,5 @@ private:
     QtVariantProperty *m_pPropFrequency;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_GENERATOR_H
 

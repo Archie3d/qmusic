@@ -6,9 +6,11 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QLabel>
 #include "Settings.h"
 #include "AudioDevice.h"
-#include "SettingsDialog.h"
+#include "MidiInputDevice.h"
+#include "../include/SettingsDialog.h"
 
 SettingsDialog::SettingsDialog(QWidget *pParent)
     : QDialog(pParent)
@@ -51,6 +53,12 @@ void SettingsDialog::loadSettings()
         m_pBufferSizeSpinBox->setValue(bufferSize);
     }
 
+    index = m_pMidiInComboBox->findData(settings.get(Settings::Setting_MidiInIndex).toInt());
+    if (index >= 0) {
+        m_pMidiInComboBox->setCurrentIndex(index);
+    }
+
+    m_pMidiInChannelSpinBox->setValue(settings.get(Settings::Setting_MidiInChannel).toInt());
 }
 
 void SettingsDialog::saveSettings()
@@ -64,6 +72,9 @@ void SettingsDialog::saveSettings()
         settings.set(Settings::Setting_SampleRate, sampleRate);
     }
     settings.set(Settings::Setting_BufferSize, m_pBufferSizeSpinBox->value());
+
+    settings.set(Settings::Setting_MidiInIndex, m_pMidiInComboBox->currentData().toInt());
+    settings.set(Settings::Setting_MidiInChannel, m_pMidiInChannelSpinBox->value());
 }
 
 void SettingsDialog::createLayout()
@@ -78,12 +89,18 @@ void SettingsDialog::createLayout()
     m_pBufferSizeSpinBox = new QSpinBox();
     m_pBufferSizeSpinBox->setMinimum(16);
     m_pBufferSizeSpinBox->setMaximum(16 * 1024);
+    m_pMidiInComboBox = new QComboBox();
+    m_pMidiInChannelSpinBox = new QSpinBox();
+    m_pMidiInChannelSpinBox->setMinimum(1);
+    m_pMidiInChannelSpinBox->setMaximum(16);
 
     pFormLayout->addRow(tr("Wave In"), m_pWaveInComboBox);
     pFormLayout->addRow(tr("Wave Out"), m_pWaveOutComboBox);
     pFormLayout->addRow(tr("Sample rate"), m_pSampleRateComboBox);
     pFormLayout->addRow(tr("Buffer size"), m_pBufferSizeSpinBox);
-
+    pFormLayout->addRow(new QLabel());
+    pFormLayout->addRow(tr("MIDI In"), m_pMidiInComboBox);
+    pFormLayout->addRow(tr("MIDI In channel"), m_pMidiInChannelSpinBox);
 
     // Create buttons
     QPushButton *pOkButton = new QPushButton(tr("OK"));
@@ -130,5 +147,13 @@ void SettingsDialog::enumerateDevices()
 
     foreach (double rate, sampleRates) {
         m_pSampleRateComboBox->addItem(QString::number(rate), QVariant(rate));
+    }
+
+    // Enumerate MIDI devices
+    QList<MidiDevice::Description> midiDevices = MidiDevice::enumerateInputDevices();
+    foreach (const MidiDevice::Description desc, midiDevices) {
+        if (desc.type == MidiDevice::Type_Input) {
+            m_pMidiInComboBox->addItem(desc.name, desc.number);
+        }
     }
 }

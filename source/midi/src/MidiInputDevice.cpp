@@ -76,6 +76,7 @@ bool MidiInputDevice::open()
 {
     if (isOpen()) {
         // Device is already open.
+        qWarning() << "MIDI In device is already open";
         return true;
     }
 
@@ -86,7 +87,7 @@ bool MidiInputDevice::open()
                             CALLBACK_FUNCTION);
 
     if (r != MMSYSERR_NOERROR) {
-        qDebug() << "MIDI In:" << cErrToString.value(r, "Unknown error");
+        qCritical() << "MIDI In:" << cErrToString.value(r, "Unknown error");
         return false;
     }
 
@@ -102,6 +103,7 @@ bool MidiInputDevice::isOpen() const
 bool MidiInputDevice::start()
 {
     if (!isOpen()) {
+        qCritical() << "MIDI In device is open open, unable to start";
         return false;
     }
     MMRESULT r = midiInStart(m->handle);
@@ -111,6 +113,7 @@ bool MidiInputDevice::start()
 bool MidiInputDevice::stop()
 {
     if (!isOpen()) {
+        qCritical() << "MIDI In device is not open, unable to stop";
         return false;
     }
     MMRESULT r = midiInStop(m->handle);
@@ -126,9 +129,11 @@ bool MidiInputDevice::close()
 
     MMRESULT r = midiInClose(m->handle);
     if (r != MMSYSERR_NOERROR) {
+        qCritical() << "Failed to close MIDI In device";
         return false;
     }
 
+    m->deviceIsOpen = false;
     return true;
 }
 
@@ -148,7 +153,11 @@ void MidiInputDevice::acceptMessage(unsigned int msg)
 {
     // Message received.
     MidiMessage midiMessage(msg);
-    notifyListeners(midiMessage);
+
+    // Pass the message in case of the channel match.
+    if (midiMessage.channel() == channel()) {
+        notifyListeners(midiMessage);
+    }
 }
 
 bool MidiInputDevice::validateDevice()

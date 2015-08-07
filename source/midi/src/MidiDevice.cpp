@@ -8,6 +8,7 @@
 MidiDevice::MidiDevice(Type type, int number)
     : m_valid(false),
       m_number(number),
+      m_channel(1),
       m_type(type),
       m_name(),
       m_manufacturerId(0),

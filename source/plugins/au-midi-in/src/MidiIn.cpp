@@ -9,72 +9,39 @@
 #include "ISignalChain.h"
 #include "../include/MidiIn.h"
 
+const QColor cDefaultColor(230, 240, 210);
 
 MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pMidiInputDevice = nullptr;
-
     m_pOutputFreq = addOutput("f", QVariant::Double);
     m_pOutputVelocity = addOutput("velocity", QVariant::Double);
     m_pOutputNoteOn = addOutput("note on", QVariant::Bool);
+
+    Application::instance()->midiInputDevice()->addListener(this);
 
     createProperties();
 }
 
 MidiIn::~MidiIn()
 {
-    delete m_pMidiInputDevice;
+    Application::instance()->midiInputDevice()->removeListener(this);
 }
 
-void MidiIn::serialize(QVariantMap &data, SerializationContext *pContext) const
+QColor MidiIn::color() const
 {
-    Q_ASSERT(pContext != nullptr);
-    data["midiChannel"] = m_pPropChannel->value();
-    AudioUnit::serialize(data, pContext);
-}
-
-void MidiIn::deserialize(const QVariantMap &data, SerializationContext *pContext)
-{
-    Q_ASSERT(pContext != nullptr);
-    m_pPropChannel->setValue(data["midiChannel"]);
-    AudioUnit::deserialize(data, pContext);
+    return cDefaultColor;
 }
 
 void MidiIn::processStart()
 {
-    int midiDevIndex = m_pPropMidiDevice->value().toInt();
-    if (midiDevIndex < 0) {
-        // Invalid index
-        return;
-    }
-    QList<MidiDevice::Description> midiInputs = MidiDevice::enumerateInputDevices();
-
-    if (midiInputs.count() <= midiDevIndex) {
-        // List of input devices does not correspond
-        return;
-    }
-
     m_noteOn = false;
     m_frequency = 0.0;
     m_velocity = 0.0;
-
-    m_pMidiInputDevice = new MidiInputDevice(midiInputs.at(midiDevIndex).number);
-    m_pMidiInputDevice->addListener(this);
-    if (!m_pMidiInputDevice->open()) {
-        qCritical() << "Failed to open MIDI device";
-    }
-    m_pMidiInputDevice->start();
 }
 
 void MidiIn::processStop()
 {
-    if (m_pMidiInputDevice != nullptr) {
-        m_pMidiInputDevice->stop();
-        m_pMidiInputDevice->close();
-        delete m_pMidiInputDevice;
-        m_pMidiInputDevice = nullptr;
-    }
 }
 
 void MidiIn::process()
@@ -114,24 +81,4 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
 
 void MidiIn::createProperties()
 {
-    QtVariantProperty *pRoot = rootProperty();
-
-    // Enumerate MIDI devices
-    QList<MidiDevice::Description> midiInputs = MidiDevice::enumerateInputDevices();
-
-    m_pPropMidiDevice = propertyManager()->addProperty(QtVariantPropertyManager::enumTypeId(), "MIDI Device");
-    QVariantList list;
-    foreach (const MidiDevice::Description &desc, midiInputs) {
-        list.append(desc.name);
-    }
-    m_pPropMidiDevice->setAttribute("enumNames", list);
-    m_pPropMidiDevice->setValue(0);
-
-    // MIDI channel
-    m_pPropChannel = propertyManager()->addProperty(QVariant::Int, "Channel");
-    m_pPropChannel->setAttribute("minimum", 1);
-    m_pPropChannel->setAttribute("maximum", 16);
-
-    pRoot->addSubProperty(m_pPropMidiDevice);
-    pRoot->addSubProperty(m_pPropChannel);
 }

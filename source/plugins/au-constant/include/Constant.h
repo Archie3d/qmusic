@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_CONSTANT_H
+#define AU_CONSTANT_H
 
 #include "AudioUnit.h"
 
@@ -38,5 +38,5 @@ private:
     QtVariantProperty *m_pPropConstant;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_CONSTANT_H
 

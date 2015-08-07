@@ -2,6 +2,7 @@
 #include <QTimer>
 #include "Logger.h"
 #include "AudioDevice.h"
+#include "MidiInputDevice.h"
 #include "AudioUnitsManager.h"
 #include "Application.h"
 
@@ -42,6 +43,7 @@ Application::Application(int argc, char **argv)
     m_pLogger = new Logger(this);
     m_pAudioInputDevice = new AudioDevice();
     m_pAudioOutputDevice = new AudioDevice();
+    m_pMidiInputDevice = new MidiInputDevice();
     m_pAudioUnitsManager = new AudioUnitsManager(this);
 
     s_pApplicationInstance = this;
@@ -55,6 +57,7 @@ Application::~Application()
 
     delete m_pAudioInputDevice;
     delete m_pAudioOutputDevice;
+    delete m_pMidiInputDevice;
 
     s_pApplicationInstance = nullptr;
 }

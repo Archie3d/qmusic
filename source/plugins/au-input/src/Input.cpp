@@ -1,23 +1,24 @@
 #include <QDebug>
 #include "portaudio.h"
 #include "Application.h"
+#include "Settings.h"
 #include "AudioBuffer.h"
 #include "ISignalChain.h"
 #include "../include/Input.h"
 
-#define BUFFER_SIZE (1024)
-
-float sLeft[BUFFER_SIZE];
-float sRight[BUFFER_SIZE];
+const QColor cDefaultColor(210, 230, 240);
 
 Input::Input(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pLeftBuffer = new AudioBuffer(BUFFER_SIZE * 2);
-    m_pRightBuffer = new AudioBuffer(BUFFER_SIZE * 2);
+    m_pLeftBuffer = nullptr;
+    m_pRightBuffer = nullptr;
 
     m_pOutputLeft = addOutput("L", QVariant::Double);
     m_pOutputRight = addOutput("R", QVariant::Double);
+
+    m_pLeft = nullptr;
+    m_pRight = nullptr;
 
     Application::instance()->audioInputDevice()->addListener(this);
 }
@@ -26,8 +27,12 @@ Input::~Input()
 {
     Application::instance()->audioInputDevice()->removeListener(this);
 
-    delete m_pLeftBuffer;
-    delete m_pRightBuffer;
+    releaseBuffers();
+}
+
+QColor Input::color() const
+{
+    return cDefaultColor;
 }
 
 void Input::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
@@ -41,16 +46,18 @@ void Input::processAudio(const float *pInputBuffer, float *pOutputBuffer, long n
     length = qMin(length, m_pRightBuffer->availableToWrite());
 
     for (long i = 0; i < length; i++) {
-        sLeft[i] = *pInputBuffer++;
-        sRight[i] = *pInputBuffer++;
+        m_pLeft[i] = *pInputBuffer++;
+        m_pRight[i] = *pInputBuffer++;
     }
 
-    m_pLeftBuffer->write(sLeft, length);
-    m_pRightBuffer->write(sRight, length);
+    m_pLeftBuffer->write(m_pLeft, length);
+    m_pRightBuffer->write(m_pRight, length);
 }
 
 void Input::processStart()
 {
+    allocateBuffers();
+
     m_pLeftBuffer->clear();
     m_pRightBuffer->clear();
 }
@@ -71,4 +78,33 @@ void Input::process()
 
     m_pOutputLeft->setValue(l);
     m_pOutputRight->setValue(r);
+}
+
+void Input::allocateBuffers()
+{
+    Settings settings;
+
+    releaseBuffers();
+
+    bool ok = false;
+    int bufferSize = settings.get(Settings::Setting_BufferSize).toInt(&ok);
+    if (!ok || bufferSize <= 0) {
+        bufferSize = 1024;
+    }
+    m_pLeftBuffer = new AudioBuffer(2 * bufferSize);
+    m_pRightBuffer = new AudioBuffer(2 * bufferSize);
+    m_pLeft = new float[2 * bufferSize];
+    m_pRight = new float[2 * bufferSize];
+}
+
+void Input::releaseBuffers()
+{
+    delete m_pLeftBuffer;
+    delete m_pRightBuffer;
+    delete[] m_pLeft;
+    delete[] m_pRight;
+    m_pLeftBuffer = nullptr;
+    m_pRightBuffer = nullptr;
+    m_pLeft = nullptr;
+    m_pRight = nullptr;
 }

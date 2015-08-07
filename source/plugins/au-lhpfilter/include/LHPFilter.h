@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_LHPFILTER_H
+#define AU_LHPFILTER_H
 
 #include "VAOnePoleFilter.h"
 #include "AudioUnit.h"
@@ -39,5 +39,5 @@ private:
     QtVariantProperty *m_pFilterType;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_LHPFILTER_H
 

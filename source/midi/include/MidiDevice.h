@@ -30,11 +30,14 @@ public:
         QString name;
     };
 
-    MidiDevice(Type type, int number);
+    MidiDevice(Type type, int number = 0);
     virtual ~MidiDevice() {}
 
     Type type() const { return m_type; }
     int number() const { return m_number; }
+    void setNumber(int n) { m_number = n; }
+    int channel() const { return m_channel; }
+    void setChannel(int ch) { m_channel = ch; }
     QString name() const { return m_name; }
     quint16 manufacturerId() const { return m_manufacturerId; }
     quint16 productId() const { return m_productId; }
@@ -67,6 +70,7 @@ private:
 
     bool m_valid;
     int m_number;   ///< Device number.
+    int m_channel;  ///< Midi channel.
     Type m_type;    ///< Device type.
     QString m_name; ///< Device name.
     quint16 m_manufacturerId;   ///< Device manufacturer ID.

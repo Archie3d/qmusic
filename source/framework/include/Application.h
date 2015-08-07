@@ -4,6 +4,7 @@
 
 class Logger;
 class AudioDevice;
+class MidiInputDevice;
 class AudioUnitsManager;
 
 class QMUSIC_FRAMEWORK_API Application : public QApplication
@@ -22,6 +23,7 @@ public:
     Logger* logger() const { return m_pLogger; }
     AudioDevice* audioInputDevice() const { return m_pAudioInputDevice; }
     AudioDevice* audioOutputDevice() const {return m_pAudioOutputDevice; }
+    MidiInputDevice* midiInputDevice() const { return m_pMidiInputDevice; }
     AudioUnitsManager* audioUnitsManager() const { return m_pAudioUnitsManager; }
 
     void setMainWindow(QMainWindow *pMainWindow);
@@ -51,6 +53,9 @@ private:
 
     /// Pointer to audio output device;
     AudioDevice *m_pAudioOutputDevice;
+
+    /// Pointer to MIDI input device;
+    MidiInputDevice *m_pMidiInputDevice;
 
     /// Pointer to audio units manager (single instance per application).
     AudioUnitsManager *m_pAudioUnitsManager;

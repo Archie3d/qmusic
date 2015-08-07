@@ -6,6 +6,8 @@
 #include "SpeakerThreadObject.h"
 #include "Speaker.h"
 
+const QColor cDefaultColor(240, 230, 210);
+
 Speaker::Speaker(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
@@ -32,6 +34,11 @@ Speaker::~Speaker()
     delete m_pThreadObject;
 
     releaseBuffers();
+}
+
+QColor Speaker::color() const
+{
+    return cDefaultColor;
 }
 
 void Speaker::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)

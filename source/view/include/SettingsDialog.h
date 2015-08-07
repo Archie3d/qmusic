@@ -38,6 +38,9 @@ private:
     QComboBox *m_pWaveOutComboBox;
     QComboBox *m_pSampleRateComboBox;
     QSpinBox *m_pBufferSizeSpinBox;
+
+    QComboBox *m_pMidiInComboBox;
+    QSpinBox *m_pMidiInChannelSpinBox;
 };
 
 #endif // SETTINGSDIALOG_H

@@ -24,7 +24,7 @@ public:
      * @brief Construct MIDI input device.
      * @param number Device number.
      */
-    MidiInputDevice(int number);
+    MidiInputDevice(int number = 0);
     ~MidiInputDevice();
 
     bool open();

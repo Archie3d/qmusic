@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_INPUT_H
+#define AU_INPUT_H
 
 #include "AudioDevice.h"
 #include "AudioUnit.h"
@@ -15,6 +15,8 @@ public:
     Input(AudioUnitPlugin *pPlugin);
     ~Input();
 
+    QColor color() const override;
+
     void processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples) override;
 
 protected:
@@ -25,12 +27,18 @@ protected:
 
 private:
 
+    void allocateBuffers();
+    void releaseBuffers();
+
     AudioBuffer *m_pLeftBuffer;
     AudioBuffer *m_pRightBuffer;
 
     OutputPort *m_pOutputLeft;
     OutputPort *m_pOutputRight;
+
+    float *m_pLeft;
+    float *m_pRight;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_INPUT_H
 
