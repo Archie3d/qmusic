@@ -115,6 +115,9 @@ void SignalChain::startAudioDevices()
     AudioDevice* pInDev = Application::instance()->audioInputDevice();
     AudioDevice* pOutDev = Application::instance()->audioOutputDevice();
 
+    Q_ASSERT(pInDev != nullptr);
+    Q_ASSERT(pOutDev != nullptr);
+
     int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
     int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
     double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
@@ -122,13 +125,16 @@ void SignalChain::startAudioDevices()
 
     setTimeStep(1.0 / sampleRate);
 
-    if (pInDev != nullptr) {
+    if (waveInDeviceIndex == waveOutDeviceIndex) {
+        // Open only one device
+        if (pOutDev->open(waveInDeviceIndex, 2, 2, sampleRate, bufferSize)) {
+            pOutDev->start();
+        }
+    } else {
+        // Different devices for input and output
         if (pInDev->open(waveInDeviceIndex, 2, 0, sampleRate, bufferSize)) {
             pInDev->start();
         }
-    }
-
-    if (pOutDev != nullptr) {
         if (pOutDev->open(waveOutDeviceIndex, 0, 2, sampleRate, bufferSize)) {
             pOutDev->start();
         }
