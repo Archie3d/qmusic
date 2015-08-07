@@ -12,6 +12,8 @@ public:
     Generator(AudioUnitPlugin *pPlugin);
     ~Generator();
 
+    QColor color() const;
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);

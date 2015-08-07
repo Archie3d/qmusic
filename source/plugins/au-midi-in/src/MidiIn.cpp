@@ -33,10 +33,25 @@ QColor MidiIn::color() const
     return cDefaultColor;
 }
 
+void MidiIn::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["pitchBendSemitones"] = m_pPropPitchBendSemitones->value();
+    AudioUnit::serialize(data, pContext);
+}
+
+void MidiIn::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    AudioUnit::deserialize(data, pContext);
+    m_pPropPitchBendSemitones->setValue(data["pitchBendSemitones"]);
+}
+
 void MidiIn::processStart()
 {
     m_noteOn = false;
     m_frequency = 0.0;
+    m_frequencyBend = 1.0;
     m_velocity = 0.0;
 }
 
@@ -47,8 +62,8 @@ void MidiIn::processStop()
 void MidiIn::process()
 {
     m_pOutputNoteOn->setValue(m_noteOn);
-    m_pOutputFreq->setValue(m_frequency);
-    m_pOutputVelocity->setValue(m_velocity);
+    m_pOutputFreq->setValue(m_frequency * m_frequencyBend);
+    m_pOutputVelocity->setValue(m_velocity);    
 }
 
 void MidiIn::reset()
@@ -72,8 +87,14 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
     case MidiMessage::Status_NoteOff:
         m_noteOn = false;
         m_frequency = MidiNote(msg.noteNumber()).frequency();
-        m_velocity = msg.velocity();
+        m_velocity = double(msg.velocity()) / 127.0;
         break;
+    case MidiMessage::Status_PitchBend: {
+        int bend = msg.pitchBend() - 8192;
+        double dBend = double(bend) / 8192.0;
+        dBend *= m_pPropPitchBendSemitones->value().toDouble();
+        m_frequencyBend = pow(2.0, dBend / 12.0);
+    }
     default:
         break;
     }
@@ -81,4 +102,15 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
 
 void MidiIn::createProperties()
 {
+    QtVariantProperty *pRoot = rootProperty();
+
+    QtVariantProperty *pPropPitchBend = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Pitch bend");
+
+    m_pPropPitchBendSemitones = propertyManager()->addProperty(QVariant::Int, "Semitones");
+    m_pPropPitchBendSemitones->setAttribute("minimum", 1);
+    m_pPropPitchBendSemitones->setAttribute("maximum", 24);
+    m_pPropPitchBendSemitones->setValue(1);
+
+    pPropPitchBend->addSubProperty(m_pPropPitchBendSemitones);
+    pRoot->addSubProperty(pPropPitchBend);
 }

@@ -69,10 +69,10 @@ unsigned int MidiMessage::dataSecondByte() const
 
 unsigned int MidiMessage::dataWord() const
 {
+    unsigned int lsb = (m_rawData & 0x00007F00) >> 8;
     unsigned int msb = m_rawData & 0x0000007F;
-    unsigned int lsb = m_rawData & 0x00007F00;
 
-    return (msb >> 1) | lsb;
+    return (msb << 7) | lsb;
 }
 
 bool MidiMessage::isValid() const

@@ -17,6 +17,10 @@ public:
 
     QColor color() const override;
 
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+
 protected:
 
     void processStart();
@@ -35,10 +39,13 @@ private:
     bool m_noteOn;
     double m_frequency;
     double m_velocity;
+    double m_frequencyBend;
 
     OutputPort *m_pOutputNoteOn;
     OutputPort *m_pOutputFreq;
     OutputPort *m_pOutputVelocity;
+
+    QtVariantProperty *m_pPropPitchBendSemitones;
 };
 
 #endif // AU_MIDIIN_H

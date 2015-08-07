@@ -5,7 +5,7 @@
 #include "ISignalChain.h"
 #include "../include/Generator.h"
 
-const double cDefaultFrequency = 440.0;
+const QColor cDefaultColor(140, 200, 180);
 
 double sawtooth(double phase) {
     return (phase - M_PI) / M_PI;
@@ -27,6 +27,11 @@ Generator::Generator(AudioUnitPlugin *pPlugin)
 
 Generator::~Generator()
 {
+}
+
+QColor Generator::color() const
+{
+    return cDefaultColor;
 }
 
 void Generator::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -103,10 +108,4 @@ void Generator::createProperties()
     m_pPropWaveform->setAttribute("enumNames", list);
     m_pPropWaveform->setValue(0);
     pRoot->addSubProperty(m_pPropWaveform);
-
-    /*
-    m_pPropFrequency = propertyManager()->addProperty(QVariant::Double, "Frequency");
-    m_pPropFrequency->setValue(cDefaultFrequency);
-    pRoot->addSubProperty(m_pPropFrequency);
-    */
 }
