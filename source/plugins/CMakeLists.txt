@@ -1,4 +1,4 @@
-add_subdirectory(au-audio-sink)
+add_subdirectory(au-speaker)
 add_subdirectory(au-midi-in)
 add_subdirectory(au-input)
 add_subdirectory(au-generator)

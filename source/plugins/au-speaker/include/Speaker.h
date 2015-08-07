@@ -1,5 +1,5 @@
-#ifndef AUDIOSINK_H
-#define AUDIOSINK_H
+#ifndef AU_SPEAKER_H
+#define AU_SPEAKER_H
 
 #include <QObject>
 #include "AudioBuffer.h"
@@ -8,11 +8,11 @@
 
 class QTimer;
 class QThread;
-class AudioSinkThreadObject;
+class SpeakerThreadObject;
 
-class AudioSink : public QObject,
-                  public AudioUnit,
-                  public IAudioDeviceListener
+class Speaker : public QObject,
+                public AudioUnit,
+                public IAudioDeviceListener
 {
     Q_OBJECT
 public:
@@ -22,8 +22,8 @@ public:
         Channel_Right
     };
 
-    AudioSink(AudioUnitPlugin *pPlugin);
-    ~AudioSink();
+    Speaker(AudioUnitPlugin *pPlugin);
+    ~Speaker();
 
     void processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples) override;
 
@@ -36,17 +36,20 @@ protected:
     void processStop();
     void process();
 
-private slots:
-
-    void startPlayback();
-
 private:
+
+    void allocateBuffers();
+    void releaseBuffers();
+    static int bufferSizeFropmSettings();
 
     InputPort *m_pInputLeft;
     InputPort *m_pInputRight;
     QThread *m_pThread;
-    AudioSinkThreadObject *m_pThreadObject;
+    SpeakerThreadObject *m_pThreadObject;
+
+    float *m_pLeftBuffer;
+    float *m_pRightBuffer;
 };
 
-#endif // AUDIOSINK_H
+#endif // AU_SPEAKER_H
 

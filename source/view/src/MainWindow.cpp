@@ -16,6 +16,8 @@
 MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     : QMainWindow(pParent, flags)
 {
+    setWindowIcon(QIcon(":/icons/qmusic.png"));
+
     createDockingWindows();
 
     createActions();
@@ -60,6 +62,7 @@ void MainWindow::saveSignalChain()
     }
 
     m_pSignalChainWidget->save(m_pSignalChainWidget->sceneFile());
+    setWindowTitle(m_pSignalChainWidget->sceneFile());
 }
 
 void MainWindow::saveAsSignalChain()
@@ -73,6 +76,7 @@ void MainWindow::saveAsSignalChain()
     }
 
     m_pSignalChainWidget->save(fileName);
+    setWindowTitle(fileName);
 }
 
 void MainWindow::openSignalChain()
@@ -87,6 +91,7 @@ void MainWindow::openSignalChain()
     }
 
     m_pSignalChainWidget->load(fileName);
+    setWindowTitle(fileName);
 }
 
 void MainWindow::startSignalChain()

@@ -1,5 +1,5 @@
-#ifndef AUDIOSINKTHREADOBJECT_H
-#define AUDIOSINKTHREADOBJECT_H
+#ifndef SPEAKERTHREADOBJECT_H
+#define SPEAKERTHREADOBJECT_H
 
 #include <QObject>
 #include <QMutex>
@@ -12,13 +12,13 @@ class AudioBuffer;
  * This object is used to trigger the signal chain and it should reside in a
  * seperate thread.
  */
-class AudioSinkThreadObject : public QObject
+class SpeakerThreadObject : public QObject
 {
     Q_OBJECT
 public:
 
-    AudioSinkThreadObject(long bufferSize, QObject *pParent = nullptr);
-    ~AudioSinkThreadObject();
+    SpeakerThreadObject(long bufferSize, QObject *pParent = nullptr);
+    ~SpeakerThreadObject();
 
     AudioBuffer* leftChannelBuffer() const { return m_pLeftBuffer; }
     AudioBuffer* rightChannelBuffer() const { return m_pRightBuffer; }
@@ -63,5 +63,5 @@ private:
     InputPort *m_pRightChannelInput;
 };
 
-#endif // AUDIOSINKTHREADOBJECT_H
+#endif // SPEAKERTHREADOBJECT_H
 

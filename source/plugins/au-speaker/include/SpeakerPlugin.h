@@ -1,15 +1,15 @@
 #include <QtPlugin>
 #include "AudioUnitPlugin.h"
 
-class AudioSinkPlugin : public AudioUnitPlugin
+class SpeakerPlugin : public AudioUnitPlugin
 {
     Q_OBJECT
     Q_INTERFACES(AudioUnitPlugin)
-    Q_PLUGIN_METADATA(IID "qmusic.audiounits.plugin" FILE "AudioSinkPlugin.json")
+    Q_PLUGIN_METADATA(IID "qmusic.audiounits.plugin" FILE "SpeakerPlugin.json")
 
 public:
 
-    AudioSinkPlugin(QObject *pParent = nullptr);
+    SpeakerPlugin(QObject *pParent = nullptr);
 
     QIcon icon() const override;
 

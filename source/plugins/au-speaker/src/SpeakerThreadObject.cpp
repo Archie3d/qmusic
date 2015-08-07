@@ -1,9 +1,9 @@
 #include <QTimer>
 #include "ISignalChain.h"
 #include "AudioBuffer.h"
-#include "AudioSinkThreadObject.h"
+#include "SpeakerThreadObject.h"
 
-AudioSinkThreadObject::AudioSinkThreadObject(long bufferSize, QObject *pParent)
+SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     : QObject(pParent),
       m_bufferSize(bufferSize)
 {
@@ -20,7 +20,7 @@ AudioSinkThreadObject::AudioSinkThreadObject(long bufferSize, QObject *pParent)
             this, SLOT(generateSamples()), Qt::QueuedConnection);
 }
 
-AudioSinkThreadObject::~AudioSinkThreadObject()
+SpeakerThreadObject::~SpeakerThreadObject()
 {
     delete m_pLeftBuffer;
     delete m_pRightBuffer;
@@ -28,21 +28,21 @@ AudioSinkThreadObject::~AudioSinkThreadObject()
     delete[] m_pRightData;
 }
 
-void AudioSinkThreadObject::setSignalChain(ISignalChain *pSignalChain)
+void SpeakerThreadObject::setSignalChain(ISignalChain *pSignalChain)
 {
     Q_ASSERT(pSignalChain != nullptr);
     QMutexLocker lock(&m_mutex);
     m_pSignalChain = pSignalChain;
 }
 
-void AudioSinkThreadObject::setInputPorts(InputPort *pLeft, InputPort *pRight)
+void SpeakerThreadObject::setInputPorts(InputPort *pLeft, InputPort *pRight)
 {
     QMutexLocker lock(&m_mutex);
     m_pLeftChannelInput = pLeft;
     m_pRightChannelInput = pRight;
 }
 
-void AudioSinkThreadObject::start()
+void SpeakerThreadObject::start()
 {
     QMutexLocker lock(&m_mutex);
     m_started = true;
@@ -52,25 +52,25 @@ void AudioSinkThreadObject::start()
     emit started();
 }
 
-void AudioSinkThreadObject::stop()
+void SpeakerThreadObject::stop()
 {
     QMutexLocker lock(&m_mutex);
     m_started = false;
 }
 
-float AudioSinkThreadObject::getNextLeftChannelSample()
+float SpeakerThreadObject::getNextLeftChannelSample()
 {
     m_pLeftChannelInput->update();
     return m_pLeftChannelInput->value().toDouble();
 }
 
-float AudioSinkThreadObject::getNextRightChannelSample()
+float SpeakerThreadObject::getNextRightChannelSample()
 {
     m_pRightChannelInput->update();
     return m_pRightChannelInput->value().toDouble();
 }
 
-void AudioSinkThreadObject::generateSamples()
+void SpeakerThreadObject::generateSamples()
 {
     // This method is always called from this object's thread
     if (!m_started) {

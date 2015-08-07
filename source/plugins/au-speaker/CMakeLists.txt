@@ -1,4 +1,4 @@
-project(au-audio-sink)
+project(au-speaker)
 
 set(USE_QT TRUE)
 set(DEPENDS_QT Widgets)

@@ -1,42 +1,40 @@
 #include <QDebug>
 #include <QThread>
 #include "Application.h"
+#include "Settings.h"
 #include "ISignalChain.h"
-#include "AudioSinkThreadObject.h"
-#include "AudioSink.h"
+#include "SpeakerThreadObject.h"
+#include "Speaker.h"
 
-#define BUFFER_SIZE (1024)
-
-// TODO: Move these buffers into class
-static float sLeftBuffer[2*BUFFER_SIZE];
-static float sRightBuffer[2*BUFFER_SIZE];
-
-
-AudioSink::AudioSink(AudioUnitPlugin *pPlugin)
+Speaker::Speaker(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
     m_pInputLeft = addInput("L", QVariant::Double);
     m_pInputRight = addInput("R", QVariant::Double);
 
     m_pThread = new QThread(this);
-    m_pThreadObject = new AudioSinkThreadObject(BUFFER_SIZE);
+    m_pThreadObject = new SpeakerThreadObject(bufferSizeFropmSettings());
     m_pThreadObject->setInputPorts(m_pInputLeft, m_pInputRight);
     m_pThreadObject->moveToThread(m_pThread);
     m_pThread->start(QThread::TimeCriticalPriority);
 
+    m_pLeftBuffer = nullptr;
+    m_pRightBuffer = nullptr;
+
     Application::instance()->audioOutputDevice()->addListener(this);
-    connect(m_pThreadObject, SIGNAL(bufferReady()), this, SLOT(startPlayback()));
 }
 
-AudioSink::~AudioSink()
+Speaker::~Speaker()
 {
     Application::instance()->audioOutputDevice()->removeListener(this);
     m_pThreadObject->stop();
     m_pThread->quit();
     delete m_pThreadObject;
+
+    releaseBuffers();
 }
 
-void AudioSink::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
+void Speaker::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
 {
     Q_UNUSED(pInputBuffer);
 
@@ -45,14 +43,14 @@ void AudioSink::processAudio(const float *pInputBuffer, float *pOutputBuffer, lo
     length = qMin(length, rightBuffer()->availableToRead());
     length = qMin(length, nSamples);
 
-    leftBuffer()->read(sLeftBuffer, length);
-    rightBuffer()->read(sRightBuffer, length);
+    leftBuffer()->read(m_pLeftBuffer, length);
+    rightBuffer()->read(m_pRightBuffer, length);
 
     long i = 0;
 
     while (i < length) {
-        *pOutputBuffer++ = sLeftBuffer[i];
-        *pOutputBuffer++ = sRightBuffer[i];
+        *pOutputBuffer++ = m_pLeftBuffer[i];
+        *pOutputBuffer++ = m_pRightBuffer[i];
         ++i;
     }
 
@@ -64,34 +62,54 @@ void AudioSink::processAudio(const float *pInputBuffer, float *pOutputBuffer, lo
     }
 }
 
-AudioBuffer* AudioSink::leftBuffer() const
+AudioBuffer* Speaker::leftBuffer() const
 {
     return m_pThreadObject->leftChannelBuffer();
 }
 
-AudioBuffer* AudioSink::rightBuffer() const
+AudioBuffer* Speaker::rightBuffer() const
 {
     return m_pThreadObject->rightChannelBuffer();
 }
 
-void AudioSink::processStart()
+void Speaker::processStart()
 {
+    // Delete buffers in case the size is changed
+    allocateBuffers();
+
     signalChain()->reset();
     m_pThreadObject->setSignalChain(signalChain());
 
     m_pThreadObject->start();
 }
 
-void AudioSink::processStop()
+void Speaker::processStop()
 {
     m_pThreadObject->stop();
 }
 
-void AudioSink::process()
+void Speaker::process()
 {
 }
 
-void AudioSink::startPlayback()
+void Speaker::allocateBuffers()
 {
-    //Application::instance()->audioDevice()->start();
+    releaseBuffers();
+    int bufferSize = bufferSizeFropmSettings();
+    m_pLeftBuffer = new float[2 * bufferSize];
+    m_pRightBuffer = new float[2 * bufferSize];
+}
+
+void Speaker::releaseBuffers()
+{
+    delete m_pLeftBuffer;
+    delete m_pRightBuffer;
+    m_pLeftBuffer = nullptr;
+    m_pRightBuffer = nullptr;
+}
+
+int Speaker::bufferSizeFropmSettings()
+{
+    Settings settings;
+    return settings.get(Settings::Setting_BufferSize).toInt();
 }

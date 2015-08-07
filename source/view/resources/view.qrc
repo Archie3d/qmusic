@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/qmusic.png</file>
         <file>icons/pause.png</file>
         <file>icons/play.png</file>
         <file>icons/stop.png</file>
