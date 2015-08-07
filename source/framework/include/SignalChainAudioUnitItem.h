@@ -20,6 +20,7 @@ public:
 
     SignalChainAudioUnitItem(QGraphicsItem *pParent = nullptr);
     SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraphicsItem *pParent = nullptr);
+    ~SignalChainAudioUnitItem();
 
     AudioUnit* audioUnit() const { return m_pAudioUnit; }
 

@@ -1,6 +1,7 @@
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
 #include "SerializationContext.h"
+#include "SignalChain.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 
@@ -22,6 +23,11 @@ AudioUnit::AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent)
 
 AudioUnit::~AudioUnit()
 {
+    if (m_pSignalChain != nullptr) {
+        // Detach audio unit
+        m_pSignalChain->removeAudioUnit(this);
+    }
+
     // Delete ports
     qDeleteAll(m_inputs);
     qDeleteAll(m_outputs);

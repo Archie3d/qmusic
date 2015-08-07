@@ -38,6 +38,11 @@ SignalChainAudioUnitItem::SignalChainAudioUnitItem(AudioUnit *pAudioUnit, QGraph
     createDecoration();
 }
 
+SignalChainAudioUnitItem::~SignalChainAudioUnitItem()
+{
+    delete m_pAudioUnit;
+}
+
 QList<SignalChainConnectionItem*> SignalChainAudioUnitItem::connectionItems() const
 {
     QSet<SignalChainConnectionItem*> connections;

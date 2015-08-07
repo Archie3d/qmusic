@@ -51,6 +51,7 @@ void MainWindow::newSignalChain()
 
     if (ret == QMessageBox::Yes) {
         m_pSignalChainWidget->newSignalChainScene();
+        setWindowTitle("New signal chain");
     }
 }
 

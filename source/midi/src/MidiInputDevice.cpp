@@ -4,9 +4,21 @@
 #   include <Windows.h>
 #   include <mmsystem.h>
 #endif
+#include <QMap>
 #include <QList>
 #include "../include/MidiMessage.h"
 #include "../include/MidiInputDevice.h"
+
+const QMap<MMRESULT, QString> cErrToString = []() {
+    QMap<MMRESULT, QString> map;
+    map[MMSYSERR_NOERROR] = "No error";
+    map[MMSYSERR_ALLOCATED] = "The specified resource is already allocated";
+    map[MMSYSERR_BADDEVICEID] = "The specified device identifier is out of range";
+    map[MMSYSERR_INVALFLAG] = "Invalid flag specified";
+    map[MMSYSERR_INVALPARAM] = "Invalid parameter specified";
+    map[MMSYSERR_NOMEM] = "The system is unable to allocate or lock memory";
+    return map;
+}();
 
 
 // can be used for short, unsigned short, word, unsigned word (2-byte types)
@@ -74,6 +86,7 @@ bool MidiInputDevice::open()
                             CALLBACK_FUNCTION);
 
     if (r != MMSYSERR_NOERROR) {
+        qDebug() << "MIDI In:" << cErrToString.value(r, "Unknown error");
         return false;
     }
 
