@@ -65,6 +65,9 @@ void MidiInCtrl::deserialize(const QVariantMap &data, SerializationContext *pCon
     AudioUnit::deserialize(data, pContext);
     m_pPropController->setValue(data["controller"]);
     m_pPropDefaultValue->setValue(data["controllerDefault"]);
+
+    m_controllerValue = m_pPropDefaultValue->value().toInt();
+    m_controllerValueNormalized = m_controllerValue / 127.0;
 }
 
 void MidiInCtrl::processStart()

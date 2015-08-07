@@ -18,6 +18,10 @@ public:
     MainWindow(QWidget *pParent = nullptr, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
+protected:
+
+    void closeEvent(QCloseEvent *pEvent);
+
 private slots:
 
     void newSignalChain();
@@ -61,6 +65,7 @@ private:
     QMenu *m_pSoundMenu;
 
     // Toolbars
+    QToolBar *m_pFileToolBar;
     QToolBar *m_pSignalChainToolBar;
 };
 
