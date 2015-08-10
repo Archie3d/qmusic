@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-generator-sine">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
