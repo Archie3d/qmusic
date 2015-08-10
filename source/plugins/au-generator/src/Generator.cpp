@@ -6,42 +6,48 @@
 #include "ISignalChain.h"
 #include "../include/Generator.h"
 
-
 const QColor cDefaultColor(140, 200, 180);
 
+// Naive sawtooth generator implementation
 double sawtooth(double phase)
 {
     return 2.0 * phase - 1.0;
 }
 
-#define N_SAW_HARMONICS 32
-double blep_sawtooth(double phase, double delta)
+// Bandpass-limited sawtooth using Fourier series
+double bpl_sawtooth(double phase, double delta)
 {
     int n = 0.5 / delta;
-    n = n > N_SAW_HARMONICS ? N_SAW_HARMONICS : n;
+    double k = M_PI / 2.0 / n;
+
     double x = phase * 2.0 * M_PI;
     double o = 0.0;
     for (int i = 1; i <= n; i++) {
-        o += (1.0 / double(i)) * sin(double(i) * x);
+        // Limit harmonics amplitude to prevent overflow
+        double a = cos((i - 1) * k);
+        o += a * a * (1.0 / double(i)) * sin(double(i) * x);
     }
-    return o;
+    return -o;
 }
 
+// Naive square waveform generator
 double square(double phase)
 {
     return phase - 0.5 > 0.0 ? 1.0 : -1.0;
 }
 
-#define N_SQUARE_HARMONICS  16
-double blep_square(double phase, double delta)
+// Bandpass limited square waveform using Fourier series
+double bpl_square(double phase, double delta)
 {
-    int n = 0.5 / delta;
-    n = n > N_SQUARE_HARMONICS ? N_SQUARE_HARMONICS : n;
+    int n = 0.25 / delta;
+    double k = M_PI / 2.0 / n;
 
     double x = phase * 2.0 * M_PI;
     double o = 0.0;
-    for (int i = 1; i < n; i+=2) {
-        o += (1 / double(i)) * sin(double(i) * x);
+    for (int i = 1; i <= n; i+=2) {
+        // Limit harmonics amplitude to prevent overflow
+        double a = cos((i - 1) * k);
+        o += a * a * (1 / double(i)) * sin(double(i) * x);
     }
     return o;
 }
@@ -69,6 +75,7 @@ void Generator::serialize(QVariantMap &data, SerializationContext *pContext) con
 {
     Q_ASSERT(pContext != nullptr);
     data["waveform"] = m_pPropWaveform->value();
+    data["BandPassLimit"] = m_pPropBandPassLimit->value();
     AudioUnit::serialize(data, pContext);
 }
 
@@ -76,6 +83,7 @@ void Generator::deserialize(const QVariantMap &data, SerializationContext *pCont
 {
     Q_ASSERT(pContext != nullptr);
     m_pPropWaveform->setValue(data["waveform"]);
+    m_pPropBandPassLimit->setValue(data["BandPassLimit"]);
     AudioUnit::deserialize(data, pContext);
 }
 
@@ -95,16 +103,18 @@ void Generator::process()
     double dPhase = f * dt;
 
     int waveform = m_pPropWaveform->value().toInt();
+    bool bpLimit = m_pPropBandPassLimit->value().toBool();
+
     double out = 0.0;
     switch (waveform) {
     case 0:
         out = sin(m_phase * 2 * M_PI);
         break;
     case 1:
-        out = blep_sawtooth(m_phase, dPhase);
+        out = bpLimit ? bpl_sawtooth(m_phase, dPhase) : sawtooth(m_phase);
         break;
     case 2:
-        out = blep_square(m_phase, dPhase);
+        out = bpLimit ? bpl_square(m_phase, dPhase) : square(m_phase);
         break;
     default:
         break;
@@ -122,9 +132,6 @@ void Generator::reset()
 
 void Generator::control(const QString &name, const QVariant &value)
 {
-    if (name == "Freq") {
-        m_pPropFrequency->setValue(value);
-    }
 }
 
 void Generator::createProperties()
@@ -136,5 +143,10 @@ void Generator::createProperties()
     list << "Sine" << "Sawtooth" << "Square";
     m_pPropWaveform->setAttribute("enumNames", list);
     m_pPropWaveform->setValue(0);
+
+    m_pPropBandPassLimit = propertyManager()->addProperty(QVariant::Bool, "Limit bandpass");
+    m_pPropBandPassLimit->setValue(false);
+
     pRoot->addSubProperty(m_pPropWaveform);
+    pRoot->addSubProperty(m_pPropBandPassLimit);
 }

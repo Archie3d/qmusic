@@ -36,7 +36,7 @@ private:
     OutputPort *m_pOutput;
 
     QtVariantProperty *m_pPropWaveform;
-    QtVariantProperty *m_pPropFrequency;
+    QtVariantProperty *m_pPropBandPassLimit;
 };
 
 #endif // AU_GENERATOR_H
