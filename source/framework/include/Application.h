@@ -7,14 +7,30 @@ class AudioDevice;
 class MidiInputDevice;
 class AudioUnitsManager;
 
+/**
+ * The application.
+ *
+ * This class is a singleton of the global aplpication object.
+ *
+ * The application holds other global objects, line audio devices (input and output),
+ * MIDI devices (input) and audio units manager. It also references the main window
+ * of the GUI.
+ */
 class QMUSIC_FRAMEWORK_API Application : public QApplication
 {
     Q_OBJECT
 public:
 
+    /// Company string.
     const static QString Company;
+
+    /// Product name.
     const static QString Product;
 
+    /**
+     * Returns the application instance.
+     * @return
+     */
     static Application* instance();
 
     Application(int argc, char **argv);
@@ -31,6 +47,10 @@ public:
 
 public slots:
 
+    /**
+     * Launch the application
+     * @return Exit code.
+     */
     int launch();
 
 private slots:

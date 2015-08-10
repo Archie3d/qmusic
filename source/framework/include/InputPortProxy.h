@@ -4,6 +4,9 @@
 #include "FrameworkApi.h"
 #include "InputPort.h"
 
+/**
+ * Input port that references another input port.
+ */
 class QMUSIC_FRAMEWORK_API InputPortProxy : public InputPort
 {
 public:

@@ -6,10 +6,14 @@
 #include "ISerializable.h"
 #include "FrameworkApi.h"
 
+/**
+ * Abstract base class for signal chain graphics items.
+ */
 class QMUSIC_FRAMEWORK_API SignalChainItem : public QGraphicsPathItem
 {
 public:
 
+    /// Item tyype.
     enum Type {
         Type_First = QGraphicsItem::UserType + 1,
         Type_Invalid = Type_First,

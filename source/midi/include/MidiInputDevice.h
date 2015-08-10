@@ -7,15 +7,26 @@
 
 struct MidiInputDevicePrivate;
 
+/**
+ * Interface to MIDI events listener.
+ */
 class IMidiInputListener
 {
 public:
 
+    /**
+     * Handle MIDI message.
+     * @param msg
+     */
     virtual void inputMidiMessage(const MidiMessage &msg) = 0;
+
     virtual ~IMidiInputListener() {}
 
 };
 
+/**
+ * MIDI inut device.
+ */
 class QMUSIC_MIDI_API MidiInputDevice : public MidiDevice
 {
 public:

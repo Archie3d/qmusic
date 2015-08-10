@@ -81,13 +81,6 @@ void AudioUnit::stop()
     m_started = false;
 }
 
-void AudioUnit::control(const QString &name, const QVariant &value)
-{
-    Q_UNUSED(name);
-    Q_UNUSED(value);
-    // Ignore controls by default.
-}
-
 QColor AudioUnit::color() const
 {
     return cDefaultColor;

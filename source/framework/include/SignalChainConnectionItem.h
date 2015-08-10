@@ -9,6 +9,10 @@ class SignalChainPortItem;
 class SignalChainInputPortItem;
 class SignalChainOutputPortItem;
 
+/**
+ * Graphics items that represents connection between two ports (input and output).
+ * It is drawn as cubic spline curve.
+ */
 class QMUSIC_FRAMEWORK_API SignalChainConnectionItem : public SignalChainItem
 {
 public:

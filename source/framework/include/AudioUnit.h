@@ -13,6 +13,18 @@ class QtVariantProperty;
 class QtProperty;
 class AudioUnitPlugin;
 
+/**
+ * @brief Abstract implementation of IAudioUnit interface.
+ *
+ * This is an abstract implementation that handles signal propagation
+ * and chain update.
+ *
+ * This implementation also defines the audio unit properties container.
+ * Though an audio unit does not have to define any properties, a root (hidden)
+ * property node is always created.
+ *
+ * An audio unit must handle its own serialization (icluding properties).
+ */
 class QMUSIC_FRAMEWORK_API AudioUnit : public IAudioUnit
 {
     friend class SignalChain;
@@ -21,6 +33,7 @@ public:
     AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent = nullptr);
     ~AudioUnit();
 
+    // IAudioUnit interface
     void prepareUpdate() override final;
     void update() override final;
     void start() override final;
@@ -30,25 +43,80 @@ public:
     QGraphicsItem* graphicsItem() override { return nullptr; }
     QColor color() const override;
     int flags() const override { return Flag_NoFlags; }
-    void control(const QString &name, const QVariant &value) override;
 
+    /**
+     * Returns pointer to the audio unit plugin.
+     * @return
+     */
     AudioUnitPlugin* plugin() const { return m_pPlugin; }
 
+    /**
+     * Register a new input port.
+     * New input port will be added to this audio unit. The port will be destroyed together
+     * with this audio unit object.
+     * @param name Port name.
+     * @param type Port data type.
+     * @return Pointer to created port.
+     */
     InputPort* addInput(const QString &name, QVariant::Type type);
+
+    /**
+     * Add an input port.
+     * The pointer will be retained.
+     * @param pInput Pointer to the input port to be added.
+     */
     void addInput(InputPort *pInput);
+
+    /**
+     * Returns the list of all input ports.
+     * @return
+     */
     const QList<InputPort*>& inputs() const { return m_inputs; }
 
+    /**
+     * Register a new output port.
+     * New output port will be added to this audio unit. The port will be destroyed together
+     * with this audio unit object.
+     * @param name Port name.
+     * @param type Port data type.
+     * @return Pointer to created port.
+     */
     OutputPort* addOutput(const QString &name, QVariant::Type type);
+
+    /**
+     * Add an output port.
+     * The pointer will be retained.
+     * @param pOutput Pointer to the output port to be added.
+     */
     void addOutput(OutputPort *pOutput);
+
+    /**
+     * Returns the list of all output ports.
+     * @return
+     */
     const QList<OutputPort*>& outputs() const { return m_outputs; }
 
+    // Remove ports
     void removeAllInputs();
     void removeAllOutputs();
     void removeAllPorts();
 
+    /**
+     * Returns pointer to a signal chain this audio unit is associated with.
+     * @return
+     */
     ISignalChain* signalChain() const { return m_pSignalChain; }
 
+    /**
+     * Returns pointer to this audio unit properties manager.
+     * @return
+     */
     QtVariantPropertyManager* propertyManager() const { return m_pPropertyManager; }
+
+    /**
+     * Returns pointer to the root property of this audio unit.
+     * @return
+     */
     QtVariantProperty* rootProperty() const { return m_pRootProperty; }
 
     // ISerializable interface

@@ -14,12 +14,19 @@ class SignalChainConnectionItem;
 class AudioUnit;
 class AudioUnitPlugin;
 
+/**
+ * Graphics scene used to visualize and edit signal chain.
+ *
+ * The scene handles drag-and-drop operations between the sudio units library
+ * and the signal chain canvas.
+ */
 class QMUSIC_FRAMEWORK_API SignalChainScene : public QGraphicsScene,
                                               public ISerializable
 {
     Q_OBJECT
 public:
 
+    /// Serialization UID.
     const static QString UID;
 
     SignalChainScene(QObject *pParent = nullptr);

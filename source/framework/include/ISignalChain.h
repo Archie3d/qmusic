@@ -8,6 +8,7 @@ class IAudioUnit;
 
 /**
  * @brief Interface to a signal chain.
+ *
  * Signal chain is an agglomeration of audio units connected together.
  * The chain keep track of the global time.
  */

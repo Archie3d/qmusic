@@ -7,6 +7,9 @@
 
 class SignalChainScene;
 
+/**
+ * Widget that display the signal chain graphics view.
+ */
 class QMUSIC_VIEW_API SignalChainWidget : public QWidget
 {
     Q_OBJECT
@@ -39,9 +42,9 @@ private:
 
     void setScene(SignalChainScene *pScene);
 
-    QString m_signalChainSceneFile;
-    QGraphicsView *m_pSignalChainView;
-    SignalChainScene *m_pSignalChainScene;
+    QString m_signalChainSceneFile;         ///< Saved signal chain file path.
+    QGraphicsView *m_pSignalChainView;      ///< Signal chain view.
+    SignalChainScene *m_pSignalChainScene;  ///< Signal chain scene.
 };
 
 #endif // SIGNALCHAINVIEW_H

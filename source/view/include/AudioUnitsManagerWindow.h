@@ -6,6 +6,9 @@
 
 class QToolBox;
 
+/**
+ * This window shows the categorized list of all available audio units.
+ */
 class QMUSIC_VIEW_API AudioUnitsManagerWindow : public QDockWidget
 {
     Q_OBJECT
@@ -15,6 +18,9 @@ public:
 
 public slots:
 
+    /**
+     * Populate the view with the audio units.
+     */
     void populate();
 
 private:

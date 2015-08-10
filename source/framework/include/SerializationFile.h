@@ -5,10 +5,22 @@
 #include <QByteArray>
 #include "FrameworkApi.h"
 
+/**
+ * This class handles storing serialized data into a file.
+ *
+ * A 'magic' number is added to the file header. As well the context
+ * if 'signed' with CRC32.
+ * Also the API version is stored. It is used to distinguish files crreated
+ * by different version of the application.
+ */
 class QMUSIC_FRAMEWORK_API SerializationFile
 {
 public:
 
+    /**
+     * Initialize serialization file, but do not create/open it.
+     * @param path Absolute file path.
+     */
     SerializationFile(const QString &path);
 
     quint32 magic() const { return m_magic; }
@@ -31,11 +43,11 @@ public:
 
 private:
 
-    QString m_path;
-    quint32 m_magic;
-    quint32 m_version;
-    quint32 m_crc;
-    QByteArray m_buffer;
+    QString m_path;         ///< File absolute path.
+    quint32 m_magic;        ///< File 'magic' number.
+    quint32 m_version;      ///< API version.
+    quint32 m_crc;          ///< Content CRC.
+    QByteArray m_buffer;    ///< Data buffer (serialization stream).
 };
 
 #endif // SERIALIZATIONFILE_H

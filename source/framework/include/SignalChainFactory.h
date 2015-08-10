@@ -5,6 +5,9 @@
 #include "ISerializableFactory.h"
 #include "FrameworkApi.h"
 
+/**
+ * Factory of signal chain items.
+ */
 class QMUSIC_FRAMEWORK_API SignalChainFactory : public ISerializableFactory
 {
 public:
@@ -16,8 +19,10 @@ public:
 
 private:
 
+    /// Register all creators.
     void registerCreators();
 
+    /// List of creators (mapped to serialization UIDs).
     QMap<QString, Creator> m_creators;
 };
 

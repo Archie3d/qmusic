@@ -4,6 +4,9 @@
 #include "DspApi.h"
 #include "IFilter.h"
 
+/**
+ * Absttract implementation of IFilter interface.
+ */
 class QMUSIC_DSP_API FilterAbstractImpl : public IFilter
 {
 public:

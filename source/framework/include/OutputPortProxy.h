@@ -4,6 +4,9 @@
 #include "FrameworkApi.h"
 #include "OutputPort.h"
 
+/**
+ * Output port that references another output port.
+ */
 class QMUSIC_FRAMEWORK_API OutputPortProxy : public OutputPort
 {
 public:

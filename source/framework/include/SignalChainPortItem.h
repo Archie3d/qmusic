@@ -11,6 +11,9 @@ class OutputPort;
 
 /**
  * @brief Absttract graphics item representing a signal port.
+ *
+ * Signal port item is drawn as a circle. The color is defined by
+ * the data type passed via thisport.
  */
 class QMUSIC_FRAMEWORK_API SignalChainPortItem : public SignalChainItem
 {

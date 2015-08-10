@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/au-generator">
-        <file>generator.png</file>
+        <file>icon.png</file>
     </qresource>
 </RCC>

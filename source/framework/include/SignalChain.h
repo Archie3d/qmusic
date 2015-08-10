@@ -8,6 +8,14 @@
 class QThread;
 class IAudioUnit;
 
+/**
+ * @brief Signal chain.
+ *
+ * This class implements a signal chain.
+ * This is a data model implementation, the view is implemented by
+ * signal chain scene.
+ * @see SignalChainScene
+ */
 class QMUSIC_FRAMEWORK_API SignalChain : public ISignalChain
 {
 public:

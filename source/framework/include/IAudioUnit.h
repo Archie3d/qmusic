@@ -8,7 +8,11 @@
 #include "FrameworkApi.h"
 
 /**
- * @brief Audio unit interface
+ * @brief Audio unit interface.
+ *
+ * This is an interface to an audio unit. An audio unit implements
+ * a signle step of signal ptocessing. It takes whatever is currently
+ * provided on its inputs and generates outputs.
  */
 class QMUSIC_FRAMEWORK_API IAudioUnit : public ISerializable
 {
@@ -21,6 +25,7 @@ public:
     };
 
 
+    // Destructor.
     virtual ~IAudioUnit() {}
 
     /**
@@ -71,13 +76,6 @@ public:
      * @return
      */
     virtual int flags() const = 0;
-
-    /**
-     * @brief Change control value of this unit.
-     * @param name Control name.
-     * @param value Control value.
-     */
-    virtual void control(const QString &name, const QVariant &value) = 0;
 };
 
 #endif // IAUDIOUNIT_H

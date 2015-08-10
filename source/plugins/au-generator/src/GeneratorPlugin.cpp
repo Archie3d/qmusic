@@ -8,7 +8,7 @@ GeneratorPlugin::GeneratorPlugin(QObject *pParent)
 
 QIcon GeneratorPlugin::icon() const
 {
-    return QIcon(":/au-generator/generator.png");
+    return QIcon(":/au-generator/icon.png");
 }
 
 AudioUnit* GeneratorPlugin::createInstance()

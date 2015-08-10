@@ -7,6 +7,11 @@
 
 class QTextEdit;
 
+/**
+ * Logging window.
+ * This object captured log events from application logger and display then in a text box.
+ * @see Logger
+ */
 class QMUSIC_VIEW_API LogWindow : public QDockWidget
 {
     Q_OBJECT

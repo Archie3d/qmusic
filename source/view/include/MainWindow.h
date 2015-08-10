@@ -10,6 +10,9 @@ class AudioUnitsManagerWindow;
 class AudioUnitPropertiesWindow;
 class SignalChainWidget;
 
+/**
+ * Application main window.
+ */
 class QMUSIC_VIEW_API MainWindow : public QMainWindow
 {
     Q_OBJECT

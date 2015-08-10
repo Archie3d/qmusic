@@ -11,11 +11,16 @@ class SignalChainConnectionItem;
 class SignalChainInputPortItem;
 class SignalChainOutputPortItem;
 
+/**
+ * Graphics items that represents an audio unit on
+ * the signal chain scene.
+ */
 class QMUSIC_FRAMEWORK_API SignalChainAudioUnitItem : public SignalChainItem,
                                                       public ISerializable
 {
 public:
 
+    /// Serialization UID.
     const static QString UID;
 
     SignalChainAudioUnitItem(QGraphicsItem *pParent = nullptr);

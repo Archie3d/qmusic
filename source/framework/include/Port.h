@@ -6,14 +6,19 @@
 
 class IAudioUnit;
 
+/**
+ * Abstract implementation of a signal port.
+ *
+ * This class is further specialized into InputPort and OutputPort.
+ */
 class QMUSIC_FRAMEWORK_API Port
 {
 public:
 
     /// Port data flow direction.
     enum Direction {
-        Direction_Input,
-        Direction_Output
+        Direction_Input,    ///< Input port.
+        Direction_Output    ///< Output port
     };
 
     /**
@@ -26,7 +31,6 @@ public:
          const QString &name = QString(),
          QVariant::Type type = QVariant::Invalid);
 
-    /// Destructor.
     virtual ~Port() {}
 
     Direction direction() const { return m_direction; }
@@ -39,7 +43,16 @@ public:
      */
     virtual int index() const = 0;
 
+    /**
+     * Assign audio unit this port belongs to.
+     * @param pAudioUnit
+     */
     void setAudioUnit(IAudioUnit *pAudioUnit) { m_pAudioUnit = pAudioUnit; }
+
+    /**
+     * Returns audio unit this port belongs to.
+     * @return
+     */
     IAudioUnit* audioUnit() const { return m_pAudioUnit; }
 
     /**
