@@ -40,6 +40,7 @@ private:
     double m_frequency;
     double m_velocity;
     double m_frequencyBend;
+    int m_noteNumber;
 
     OutputPort *m_pOutputNoteOn;
     OutputPort *m_pOutputFreq;
