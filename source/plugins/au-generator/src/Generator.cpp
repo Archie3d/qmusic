@@ -30,6 +30,30 @@ double bpl_sawtooth(double phase, double delta)
     return -o;
 }
 
+// Native triangle waveform generator
+double triangle(double phase)
+{
+    return 2.0 * fabs(sawtooth(phase)) - 1.0;
+}
+
+// Bandpass limited triangle waveform using Fourier series
+double bpl_triangle(double phase, double delta)
+{
+    int n = 0.25 / delta;
+    double k = M_PI / 2.0 / n;
+
+    double x = phase * 2.0 * M_PI;
+    double o = 0.0;
+    for (int i = 0; i < n; i++) {
+        double a = cos(i * k);
+        double d = double(2*i + 1);
+        double h = (i % 2 == 0) ? 1.0 : -1.0;
+        o += a*a* h * sin(d * x) / d / d;
+    }
+    o *= 8 / M_PI / M_PI;
+    return o;
+}
+
 // Naive square waveform generator
 double square(double phase)
 {
@@ -116,6 +140,9 @@ void Generator::process()
     case 2:
         out = bpLimit ? bpl_square(m_phase, dPhase) : square(m_phase);
         break;
+    case 3:
+        out = bpLimit ? bpl_triangle(m_phase, dPhase) : triangle(m_phase);
+        break;
     default:
         break;
     }
@@ -140,7 +167,7 @@ void Generator::createProperties()
 
     m_pPropWaveform = propertyManager()->addProperty(QtVariantPropertyManager::enumTypeId(), "Waveform");
     QVariantList list;
-    list << "Sine" << "Sawtooth" << "Square";
+    list << "Sine" << "Sawtooth" << "Square" << "Triangle";
     m_pPropWaveform->setAttribute("enumNames", list);
     m_pPropWaveform->setValue(0);
 
