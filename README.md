@@ -9,6 +9,9 @@ and synthesis signal chains.
 CMake is required to configure and build the project.
 QMusic depends on Qt 5.x framework.
 
+# Limitations
+Polyphonic synthesis is not implemented currently.
+
 # Issues
 This software is work in progress.
 At the moment it can only be compiled for MS Windows targets with Visual C++ 2013.
