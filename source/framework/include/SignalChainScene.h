@@ -69,6 +69,10 @@ public slots:
      * Copy selected items into the clipboard.
      */
     void copyToClipboard();
+
+    /**
+     * Paste items from the clipboard at current mouse position.
+     */
     void pasteFromClipboard();
 
 signals:
@@ -79,6 +83,8 @@ signals:
     void audioUnitSelected(AudioUnit *pAudioUnit);
 
 protected:
+
+    // Handle UI events (mouse drag-drop and keyboard)
 
     void mousePressEvent(QGraphicsSceneMouseEvent *pEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *pEvent) override;
@@ -94,26 +100,66 @@ protected:
 
 private slots:
 
+    /**
+     * Handle scene selection change.
+     * In case of an audio unit item being selected it will be
+     * forwarded to the audioUnitSelected signal used to display
+     * the unit's properties.
+     */
     void onSelectionChanged();
 
 private:
 
+    /**
+     * Connect ports of two audio items.
+     * This will also establish connection at signal chain level.
+     * @param pOutputPort
+     * @param pInputPort
+     */
     void connectPorts(SignalChainOutputPortItem *pOutputPort,
                       SignalChainInputPortItem *pInputPort);
 
+    /**
+     * Establist the signal ports connection initiated by the mouse drag.
+     * @param pFinalPort
+     */
     void finilizeConnection(SignalChainPortItem *pFinalPort);
 
+    /**
+     * Serialize all audio unit tems of this scene.
+     * @param pContext
+     * @return
+     */
     QVariant serializeAudioUnitItems(SerializationContext *pContext) const;
 
+    /**
+     * Serialize all connection on this scene.
+     * @param pContext
+     * @return
+     */
     QVariant serializeConnections(SerializationContext *pContext) const;
 
+    /**
+     * Deserialize audio unit items and put them on scene.
+     * @param data
+     * @param pContext
+     */
     void deserializeAudioUnitItems(const QVariant &data, SerializationContext *pContext);
 
+    /**
+     * Deserialize and establish connections between audio unit items.
+     * @param data
+     * @param pContext
+     */
     void deserializeConnections(const QVariant &data, SerializationContext *pContext);
 
+    /// Serialize scene selection (copy)
     QByteArray serializeToByteArray(bool selectedOnly) const;
+
+    /// Deserialize scene selection (paste)
     void deserializeFromByteArray(const QByteArray &data);
 
+    /// Signal chain associated to this scene.
     SignalChain *m_pSignalChain;
 
     AudioUnitPlugin *m_pDraggedAudioUnitPlugin;

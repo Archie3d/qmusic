@@ -173,8 +173,10 @@ void SignalChain::stopAudioDevices()
     }
 
     if (pMidiInDev != nullptr) {
-        pMidiInDev->stop();
-        pMidiInDev->close();
+        if (pMidiInDev->isOpen()) {
+            pMidiInDev->stop();
+            pMidiInDev->close();
+        }
     }
 }
 
