@@ -176,7 +176,7 @@ void SignalChainScene::pasteFromClipboard()
 
 void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)
 {
-    if (pEvent->button() == Qt::LeftButton) {
+    if (pEvent->button() == Qt::LeftButton && !m_pSignalChain->isStarted()) {
         SignalChainItem *pItem = signalChainItemAtPos(pEvent->scenePos());
         if (pItem != nullptr) {
             if (pItem->type() == SignalChainItem::Type_InputPort ||
@@ -252,19 +252,21 @@ void SignalChainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *pEvent)
 void SignalChainScene::dragEnterEvent(QGraphicsSceneDragDropEvent *pEvent)
 {
     bool acceptDrag = false;
-    const QMimeData *pMimeData = pEvent->mimeData();
-    if (pMimeData->formats().contains(AudioUnitPlugin::MimeDataFormat)) {
-        QString uid = QString::fromUtf8(pMimeData->data(AudioUnitPlugin::MimeDataFormat));
-        m_pDraggedAudioUnitPlugin = Application::instance()->audioUnitsManager()->audioUnitPluginByUid(uid);
-        acceptDrag = m_pDraggedAudioUnitPlugin != nullptr;
-    }
 
+    if (!m_pSignalChain->isStarted()) {
+        const QMimeData *pMimeData = pEvent->mimeData();
+        if (pMimeData->formats().contains(AudioUnitPlugin::MimeDataFormat)) {
+            QString uid = QString::fromUtf8(pMimeData->data(AudioUnitPlugin::MimeDataFormat));
+            m_pDraggedAudioUnitPlugin = Application::instance()->audioUnitsManager()->audioUnitPluginByUid(uid);
+            acceptDrag = m_pDraggedAudioUnitPlugin != nullptr;
+        }
+    }
     pEvent->setAccepted(acceptDrag);
 }
 
 void SignalChainScene::dragMoveEvent(QGraphicsSceneDragDropEvent *pEvent)
 {
-    bool accept = (m_pDraggedAudioUnitPlugin != nullptr) && (m_pSignalChain != nullptr);
+    bool accept = !m_pSignalChain->isStarted() && (m_pDraggedAudioUnitPlugin != nullptr) && (m_pSignalChain != nullptr);
     pEvent->setAccepted(accept);
 }
 
@@ -292,17 +294,19 @@ void SignalChainScene::dropEvent(QGraphicsSceneDragDropEvent *pEvent)
 
 void SignalChainScene::keyPressEvent(QKeyEvent *pEvent)
 {
-    if (pEvent->key() == Qt::Key_Delete) {
-        deleteSelected();
-    } else if (pEvent->matches(QKeySequence::SelectAll)) {
-        selectAll();
-    } else if (pEvent->matches(QKeySequence::Copy)) {
-        copyToClipboard();
-    } else if (pEvent->matches(QKeySequence::Paste)) {
-        pasteFromClipboard();
-    } else if (pEvent->matches(QKeySequence::Cut)) {
-        copyToClipboard();
-        deleteSelected();
+    if (!m_pSignalChain->isStarted()) {
+        if (pEvent->key() == Qt::Key_Delete) {
+            deleteSelected();
+        } else if (pEvent->matches(QKeySequence::SelectAll)) {
+            selectAll();
+        } else if (pEvent->matches(QKeySequence::Copy)) {
+            copyToClipboard();
+        } else if (pEvent->matches(QKeySequence::Paste)) {
+            pasteFromClipboard();
+        } else if (pEvent->matches(QKeySequence::Cut)) {
+            copyToClipboard();
+            deleteSelected();
+        }
     }
     QGraphicsScene::keyPressEvent(pEvent);
 
