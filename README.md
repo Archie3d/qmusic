@@ -1,4 +1,14 @@
 # qmusic
-Real-time modular synthesizer in Qt.
+QMusic is a visual dataflow programing environment that allows quick prototyping of audio processing
+and synthesis signal chains.
 
 ![Screenshot](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshot.png)
+
+
+# Building
+CMake is required to configure and build the project.
+QMusic depends on Qt 5.x framework.
+
+# Issues
+This software is work in progress.
+At the moment it can only be compiled for MS Windows targets with Visual C++ 2013.
