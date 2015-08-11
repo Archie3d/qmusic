@@ -24,6 +24,10 @@ class QMUSIC_FRAMEWORK_API SignalChainScene : public QGraphicsScene,
                                               public ISerializable
 {
     Q_OBJECT
+
+    // Needed to access scene internals to establish units connections
+    friend class SignalChainSceneSelection;
+
 public:
 
     /// Serialization UID.
@@ -57,9 +61,15 @@ public:
 
 public slots:
 
-    void selectAll();
+    void selectAll(bool select = true);
     void deleteSelected();
     void deleteAll();
+
+    /**
+     * Copy selected items into the clipboard.
+     */
+    void copyToClipboard();
+    void pasteFromClipboard();
 
 signals:
 
@@ -100,6 +110,9 @@ private:
     void deserializeAudioUnitItems(const QVariant &data, SerializationContext *pContext);
 
     void deserializeConnections(const QVariant &data, SerializationContext *pContext);
+
+    QByteArray serializeToByteArray(bool selectedOnly) const;
+    void deserializeFromByteArray(const QByteArray &data);
 
     SignalChain *m_pSignalChain;
 

@@ -45,6 +45,13 @@ public:
     void setMainWindow(QMainWindow *pMainWindow);
     QMainWindow* mainWindow() const { return m_pMainWindow; }
 
+    /**
+     * Returns data from the clipboard by its mime id.
+     * @param mimeId
+     * @return
+     */
+    QByteArray clipboardData(const QString &mimeId);
+
 public slots:
 
     /**

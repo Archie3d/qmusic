@@ -4,6 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
 #include <QKeyEvent>
+#include <QClipboard>
 #include "Application.h"
 #include "SerializationContext.h"
 #include "SerializationFile.h"
@@ -16,12 +17,15 @@
 #include "SignalChainPortItem.h"
 #include "SignalChainConnectionItem.h"
 #include "SignalChainAudioUnitItem.h"
+#include "SignalChainSceneSelection.h"
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
 
 const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
+
+const QString cSignalChainMimeDataId("qmusic/signalChainSceneItems");
 
 SignalChainScene::SignalChainScene(QObject *pParent)
     : QGraphicsScene(pParent)
@@ -84,10 +88,10 @@ SignalChainScene* SignalChainScene::loadFromFile(const QString &path)
     return pScene;
 }
 
-void SignalChainScene::selectAll()
+void SignalChainScene::selectAll(bool select)
 {
     foreach (QGraphicsItem *pItem, items(Qt::DescendingOrder)) {
-        pItem->setSelected(true);
+        pItem->setSelected(select);
     }
 }
 
@@ -150,6 +154,26 @@ void SignalChainScene::deleteAll()
     clear();
 }
 
+void SignalChainScene::copyToClipboard()
+{
+    // Serialize selected items to byte array
+    QByteArray data = serializeToByteArray(true);
+    if (data.isEmpty()) {
+        return;
+    }
+
+    QMimeData *pMimeData = new QMimeData();
+    pMimeData->setData(cSignalChainMimeDataId, data);
+    QClipboard *pClipboard = QApplication::clipboard();
+    pClipboard->setMimeData(pMimeData);
+}
+
+void SignalChainScene::pasteFromClipboard()
+{
+    QByteArray data = Application::instance()->clipboardData(cSignalChainMimeDataId);
+    deserializeFromByteArray(data);
+}
+
 void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)
 {
     if (pEvent->button() == Qt::LeftButton) {
@@ -177,6 +201,7 @@ void SignalChainScene::mousePressEvent(QGraphicsSceneMouseEvent *pEvent)
 void SignalChainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *pEvent)
 {
     m_mousePos = pEvent->scenePos();
+
     if (m_pConnectionItem != nullptr) {
         if (m_pConnectionItem->inputPortItem() != nullptr) {
             m_pConnectionItem->setSourcePoint(m_mousePos);
@@ -272,12 +297,12 @@ void SignalChainScene::keyPressEvent(QKeyEvent *pEvent)
     } else if (pEvent->matches(QKeySequence::SelectAll)) {
         selectAll();
     } else if (pEvent->matches(QKeySequence::Copy)) {
-        //copyToClipboard();
+        copyToClipboard();
     } else if (pEvent->matches(QKeySequence::Paste)) {
-        //pasteFromClipboard();
+        pasteFromClipboard();
     } else if (pEvent->matches(QKeySequence::Cut)) {
-        //copyToClipboard();
-        //deleteSelected();
+        copyToClipboard();
+        deleteSelected();
     }
     QGraphicsScene::keyPressEvent(pEvent);
 
@@ -445,4 +470,36 @@ void SignalChainScene::deserializeConnections(const QVariant &data, Serializatio
 
         connectPorts(pOutputPortItem, pInputPortItem);
     }
+}
+
+QByteArray SignalChainScene::serializeToByteArray(bool selectedOnly) const
+{
+    SignalChainSceneSelection selection;
+    selection.populateFromSignalChainScene(this, selectedOnly);
+    if (selection.isEmpty()) {
+        return QByteArray();
+    }
+
+    SerializationContext context;
+    context.serialize(&selection);
+
+    QByteArray data = context.toByteArray();
+    return data;
+}
+
+void SignalChainScene::deserializeFromByteArray(const QByteArray &data)
+{
+    if (data.isEmpty()) {
+        return;
+    }
+
+    SignalChainFactory factory;
+    SerializationContext context(&factory);
+
+    context.fromByteArray(data);
+    SignalChainSceneSelection *pSelection = context.deserialize<SignalChainSceneSelection>();
+    Q_ASSERT(pSelection != nullptr);
+
+    pSelection->putOnScene(this, m_mousePos);
+    delete pSelection;
 }

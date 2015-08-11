@@ -12,6 +12,7 @@ SignalChainWidget::SignalChainWidget(QWidget *pParent)
     m_pSignalChainView->setAcceptDrops(true);
     m_pSignalChainView->setRenderHint(QPainter::Antialiasing);
     m_pSignalChainView->setDragMode(QGraphicsView::RubberBandDrag);
+    m_pSignalChainView->setMouseTracking(true); // Required to send mouse position changes to the scene.
 
     pLayout->addWidget(m_pSignalChainView);
     setLayout(pLayout);

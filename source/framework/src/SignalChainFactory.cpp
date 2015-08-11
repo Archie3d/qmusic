@@ -4,6 +4,7 @@
 #include "AudioUnit.h"
 #include "SignalChain.h"
 #include "SignalChainScene.h"
+#include "SignalChainSceneSelection.h"
 #include "SignalChainAudioUnitItem.h"
 #include "SignalChainFactory.h"
 
@@ -31,5 +32,6 @@ void SignalChainFactory::registerCreators()
 {
     m_creators[SignalChain::UID] = SignalChain::create;
     m_creators[SignalChainScene::UID] = SignalChainScene::create;
+    m_creators[SignalChainSceneSelection::UID] = SignalChainSceneSelection::create;
     m_creators[SignalChainAudioUnitItem::UID] = SignalChainAudioUnitItem::create;
 }

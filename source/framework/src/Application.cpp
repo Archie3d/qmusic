@@ -1,5 +1,7 @@
 #include <QDebug>
 #include <QTimer>
+#include <QClipboard>
+#include <QMimeData>
 #include "Logger.h"
 #include "AudioDevice.h"
 #include "MidiInputDevice.h"
@@ -68,6 +70,28 @@ void Application::setMainWindow(QMainWindow *pMainWindow)
     Q_ASSERT(m_pMainWindow == nullptr);
 
     m_pMainWindow = pMainWindow;
+}
+
+QByteArray Application::clipboardData(const QString &mimeId)
+{
+    const QClipboard *pClipboard = QApplication::clipboard();
+    const QMimeData *pMimeData = pClipboard->mimeData();
+
+    foreach (QString format, pMimeData->formats()) {
+        QByteArray data = pMimeData->data(format);
+        if (format.startsWith("application/x-qt")) {
+            // Retrieving true format name
+            int indexBegin = format.indexOf('"') + 1;
+            int indexEnd = format.indexOf('"', indexBegin);
+            format = format.mid(indexBegin, indexEnd - indexBegin);
+        }
+
+        if (format == mimeId) {
+            return data;
+        }
+    }
+
+    return QByteArray();
 }
 
 int Application::launch()
