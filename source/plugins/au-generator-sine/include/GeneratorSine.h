@@ -23,13 +23,12 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
 
 private:
 
     void createProperties();
 
-    double m_phase;
+    float m_phase;
 
     InputPort *m_pInputFreq;
     OutputPort *m_pOutput;

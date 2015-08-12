@@ -8,18 +8,15 @@ OutputPort::OutputPort()
 {
 }
 
-OutputPort::OutputPort(const QString &name, QVariant::Type type)
+OutputPort::OutputPort(const QString &name, Signal::Type type)
     : Port(Direction_Output, name, type),
       m_value()
 {
 }
 
-void OutputPort::setValue(const QVariant &value)
+void OutputPort::setValue(const Signal &value)
 {
-    if (value.canConvert(dataType())) {
-        m_value = value;
-        m_value.convert(dataType());
-    }
+    m_value = value;
 }
 
 void OutputPort::update()

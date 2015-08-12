@@ -45,14 +45,14 @@ public:
      * @brief Returns time step used to advance time
      * @return
      */
-    virtual double timeStep() const = 0;
+    virtual float timeStep() const = 0;
 
     /**
      * @brief Returns sample rate.
      * @note Sample rate is normally 1/time step.
      * @return Signal chain processing sample rate.
      */
-    virtual double sampleRate() const = 0;
+    virtual float sampleRate() const = 0;
 
     /**
      * @brief Set synth time step

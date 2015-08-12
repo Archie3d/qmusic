@@ -2,6 +2,7 @@
 #define SIGNALCHAINPORTITEM_H
 
 #include "FrameworkApi.h"
+#include "Signal.h"
 #include "SignalChainItem.h"
 
 class SignalChainConnectionItem;
@@ -30,7 +31,7 @@ public:
 
     bool isInput() const { return !isOutput(); }
 
-    virtual QVariant::Type dataType() const = 0;
+    virtual Signal::Type dataType() const = 0;
 
     /**
      * @brief Returns pointer to audio unit item this port belongs to.
@@ -66,7 +67,7 @@ public:
     SignalChainInputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainInputPortItem(InputPort *pInput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return false; }
-    QVariant::Type dataType() const override;
+    Signal::Type dataType() const override;
     InputPort* inputPort() const { return m_pInputPort; }
 
 private:
@@ -80,7 +81,7 @@ public:
     SignalChainOutputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainOutputPortItem(OutputPort *pOutput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return true; }
-    QVariant::Type dataType() const override;
+    Signal::Type dataType() const override;
     OutputPort* outputPort() const { return m_pOutputPort; }
 
 private:

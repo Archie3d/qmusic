@@ -8,9 +8,9 @@
 Adder::Adder(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputA = addInput("", QVariant::Double);
-    m_pInputB = addInput("", QVariant::Double);
-    m_pOutput = addOutput("", QVariant::Double);
+    m_pInputA = addInput("", Signal::Type_Float);
+    m_pInputB = addInput("", Signal::Type_Float);
+    m_pOutput = addOutput("", Signal::Type_Float);
 }
 
 Adder::~Adder()
@@ -27,9 +27,9 @@ void Adder::processStop()
 
 void Adder::process()
 {
-    double a = m_pInputA->value().toDouble();
-    double b = m_pInputB->value().toDouble();
-    m_pOutput->setValue(a + b);
+    float a = m_pInputA->value().asFloat;
+    float b = m_pInputB->value().asFloat;
+    m_pOutput->setFloatValue(a + b);
 }
 
 QGraphicsItem* Adder::graphicsItem()

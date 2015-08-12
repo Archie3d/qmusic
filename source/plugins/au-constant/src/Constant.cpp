@@ -11,7 +11,7 @@ const QColor cItemColor(255, 220, 255);
 Constant::Constant(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutput = addOutput("", QVariant::Double);
+    m_pOutput = addOutput("", Signal::Type_Float);
     createProperties();
 
     m_pValueItem = nullptr;
@@ -31,7 +31,7 @@ void Constant::processStop()
 
 void Constant::process()
 {
-    m_pOutput->setValue(m_pPropConstant->value());
+    m_pOutput->setFloatValue(m_pPropConstant->value().toDouble());
 }
 
 void Constant::reset()

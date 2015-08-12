@@ -18,8 +18,8 @@ Envelope::Envelope(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_pNoteOnInput = addInput("on", QVariant::Bool);
-    m_pOutput = addOutput("gain", QVariant::Double);
+    m_pNoteOnInput = addInput("on", Signal::Type_Bool);
+    m_pOutput = addOutput("gain", Signal::Type_Float);
 
     createProperties();
 }
@@ -51,7 +51,7 @@ void Envelope::deserialize(const QVariantMap &data, SerializationContext *pConte
 void Envelope::processStart()
 {
     m_state = State_Off;
-    m_output = 0.0;
+    m_output = 0.0f;
     m_noteOn = false;
 
     m_attackTCO = exp(-1.5);
@@ -69,7 +69,7 @@ void Envelope::processStop()
 
 void Envelope::process()
 {
-    bool noteOn = m_pNoteOnInput->value().toBool();
+    bool noteOn = m_pNoteOnInput->value().asBool;
 
     // Handle note on signal
     if (noteOn) {
@@ -94,7 +94,7 @@ void Envelope::process()
     calculateDecay();
     calculateRelease();
 
-    m_pOutput->setValue(m_output);
+    m_pOutput->setFloatValue(m_output);
 }
 
 void Envelope::reset()
@@ -142,24 +142,24 @@ void Envelope::doEnvelope()
 
 void Envelope::calculateAttack()
 {
-    double dt = signalChain()->timeStep();
-    double samples = m_pAttackTimeMs->value().toDouble() / dt / 1000.0;
+    float dt = signalChain()->timeStep();
+    float samples = m_pAttackTimeMs->value().toDouble() / dt / 1000.0;
     m_attackCoeff = exp(-log((1.0 + m_attackTCO) / m_attackTCO) / samples);
     m_attackOffset = (1.0 + m_attackTCO) * (1.0 - m_attackCoeff);
 }
 
 void Envelope::calculateDecay()
 {
-    double dt = signalChain()->timeStep();
-    double samples = m_pDecayTimeMs->value().toDouble() / dt / 1000.0;
+    float dt = signalChain()->timeStep();
+    float samples = m_pDecayTimeMs->value().toDouble() / dt / 1000.0;
     m_decayCoeff = exp(-log((1.0 + m_decayTCO) / m_decayTCO) / samples);
     m_decayOffset = (m_pSustainLevel->value().toDouble() - m_decayTCO) * (1.0 - m_decayCoeff);
 }
 
 void Envelope::calculateRelease()
 {
-    double dt = signalChain()->timeStep();
-    double samples = m_pReleaseTimeMs->value().toDouble() / dt / 1000.0;
+    float dt = signalChain()->timeStep();
+    float samples = m_pReleaseTimeMs->value().toDouble() / dt / 1000.0;
     m_releaseCoeff = exp(-log((1.0 + m_releaseTCO) / m_releaseTCO) / samples);
     m_releaseOffset = -m_releaseTCO * (1.0 - m_releaseCoeff);
 }

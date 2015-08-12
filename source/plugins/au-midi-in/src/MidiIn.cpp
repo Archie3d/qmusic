@@ -14,9 +14,9 @@ const QColor cDefaultColor(230, 240, 210);
 MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutputFreq = addOutput("f", QVariant::Double);
-    m_pOutputVelocity = addOutput("velocity", QVariant::Double);
-    m_pOutputNoteOn = addOutput("note on", QVariant::Bool);
+    m_pOutputFreq = addOutput("f", Signal::Type_Float);
+    m_pOutputVelocity = addOutput("velocity", Signal::Type_Float);
+    m_pOutputNoteOn = addOutput("note on", Signal::Type_Bool);
 
     Application::instance()->midiInputDevice()->addListener(this);
 
@@ -50,9 +50,9 @@ void MidiIn::deserialize(const QVariantMap &data, SerializationContext *pContext
 void MidiIn::processStart()
 {
     m_noteOn = false;
-    m_frequency = 0.0;
-    m_frequencyBend = 1.0;
-    m_velocity = 0.0;
+    m_frequency = 0.0f;
+    m_frequencyBend = 1.0f;
+    m_velocity = 0.0f;
 }
 
 void MidiIn::processStop()
@@ -61,16 +61,12 @@ void MidiIn::processStop()
 
 void MidiIn::process()
 {
-    m_pOutputNoteOn->setValue(m_noteOn);
-    m_pOutputFreq->setValue(m_frequency * m_frequencyBend);
-    m_pOutputVelocity->setValue(m_velocity);    
+    m_pOutputNoteOn->setBoolValue(m_noteOn);
+    m_pOutputFreq->setFloatValue(m_frequency * m_frequencyBend);
+    m_pOutputVelocity->setFloatValue(m_velocity);
 }
 
 void MidiIn::reset()
-{
-}
-
-void MidiIn::control(const QString &name, const QVariant &value)
 {
 }
 
@@ -94,7 +90,7 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
         break;
     case MidiMessage::Status_PitchBend: {
         int bend = msg.pitchBend() - 8192;
-        double dBend = double(bend) / 8192.0;
+        float dBend = float(bend) / 8192.0f;
         dBend *= m_pPropPitchBendSemitones->value().toDouble();
         m_frequencyBend = pow(2.0, dBend / 12.0);
     }

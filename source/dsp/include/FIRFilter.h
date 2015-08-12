@@ -27,6 +27,8 @@ public:
      */
     float process(float x);
 
+    FIRFilter* create(float fa, float fb, float att, float sampleRate, int length = 127);
+
 private:
 
     Q_DISABLE_COPY(FIRFilter)

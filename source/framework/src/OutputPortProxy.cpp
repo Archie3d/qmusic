@@ -18,9 +18,9 @@ OutputPortProxy::OutputPortProxy(const QString &name, OutputPort *pOutput)
 {
 }
 
-QVariant OutputPortProxy::value() const
+Signal OutputPortProxy::value() const
 {
-    return m_pOutputPort == nullptr ? QVariant() : m_pOutputPort->value();
+    return m_pOutputPort == nullptr ? Signal() : m_pOutputPort->value();
 }
 
 void OutputPortProxy::update()

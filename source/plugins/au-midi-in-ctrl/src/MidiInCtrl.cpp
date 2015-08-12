@@ -29,7 +29,7 @@ const QColor cDefaultColor(230, 240, 240);
 MidiInCtrl::MidiInCtrl(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutputValue = addOutput("", QVariant::Double);
+    m_pOutputValue = addOutput("", Signal::Type_Float);
 
     m_pValueItem = nullptr;
     m_controllerValue = 100;
@@ -67,14 +67,14 @@ void MidiInCtrl::deserialize(const QVariantMap &data, SerializationContext *pCon
     m_pPropDefaultValue->setValue(data["controllerDefault"]);
 
     m_controllerValue = m_pPropDefaultValue->value().toInt();
-    m_controllerValueNormalized = m_controllerValue / 127.0;
+    m_controllerValueNormalized = m_controllerValue / 127.0f;
 }
 
 void MidiInCtrl::processStart()
 {
     m_controller = cNameToController.values().at(m_pPropController->value().toInt());
     m_controllerValue = m_pPropDefaultValue->value().toInt();
-    m_controllerValueNormalized = m_controllerValue / 127.0;
+    m_controllerValueNormalized = m_controllerValue / 127.0f;
 }
 
 void MidiInCtrl::processStop()
@@ -83,7 +83,7 @@ void MidiInCtrl::processStop()
 
 void MidiInCtrl::process()
 {
-    m_pOutputValue->setValue(m_controllerValueNormalized);
+    m_pOutputValue->setFloatValue(m_controllerValueNormalized);
 }
 
 void MidiInCtrl::reset()
@@ -104,7 +104,7 @@ void MidiInCtrl::inputMidiMessage(const MidiMessage &msg)
     if (msg.status() == MidiMessage::Status_ControlChange) {
         if (msg.controllerNumber() == m_controller) {
             m_controllerValue = msg.controllerValue();
-            m_controllerValueNormalized = m_controllerValue / 127.0;
+            m_controllerValueNormalized = m_controllerValue / 127.0f;
             emit triggerUpdateView();
         }
     }

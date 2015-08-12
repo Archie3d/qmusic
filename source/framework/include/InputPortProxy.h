@@ -14,7 +14,7 @@ public:
     InputPortProxy(InputPort *pInput);
     InputPortProxy(const QString &name, InputPort *pInput);
 
-    QVariant value() const override;
+    Signal value() const override;
     void update() override;
 private:
 

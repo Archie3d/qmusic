@@ -9,45 +9,45 @@
 const QColor cDefaultColor(140, 200, 180);
 
 // Naive sawtooth generator implementation
-double sawtooth(double phase)
+float sawtooth(float phase)
 {
-    return 2.0 * phase - 1.0;
+    return 2.0f * phase - 1.0f;
 }
 
 // Bandpass-limited sawtooth using Fourier series
-double bpl_sawtooth(double phase, double delta)
+float bpl_sawtooth(float phase, float delta)
 {
     int n = 0.5 / delta;
-    double k = M_PI / 2.0 / n;
+    float k = M_PI / 2.0 / n;
 
-    double x = phase * 2.0 * M_PI;
-    double o = 0.0;
+    float x = phase * 2.0 * M_PI;
+    float o = 0.0;
     for (int i = 1; i <= n; i++) {
         // Limit harmonics amplitude to prevent overflow
-        double a = cos((i - 1) * k);
-        o += a * a * (1.0 / double(i)) * sin(double(i) * x);
+        float a = cos((i - 1) * k);
+        o += a * a * (1.0 / float(i)) * sin(float(i) * x);
     }
     return -o;
 }
 
 // Native triangle waveform generator
-double triangle(double phase)
+float triangle(float phase)
 {
-    return 2.0 * fabs(sawtooth(phase)) - 1.0;
+    return 2.0f * fabs(sawtooth(phase)) - 1.0f;
 }
 
 // Bandpass limited triangle waveform using Fourier series
-double bpl_triangle(double phase, double delta)
+float bpl_triangle(float phase, float delta)
 {
     int n = 0.25 / delta;
-    double k = M_PI / 2.0 / n;
+    float k = M_PI / 2.0 / n;
 
-    double x = phase * 2.0 * M_PI;
-    double o = 0.0;
+    float x = phase * 2.0 * M_PI;
+    float o = 0.0;
     for (int i = 0; i < n; i++) {
-        double a = cos(i * k);
-        double d = double(2*i + 1);
-        double h = (i % 2 == 0) ? 1.0 : -1.0;
+        float a = cos(i * k);
+        float d = float(2*i + 1);
+        float h = (i % 2 == 0) ? 1.0 : -1.0;
         o += a*a* h * sin(d * x) / d / d;
     }
     o *= 8 / M_PI / M_PI;
@@ -55,33 +55,33 @@ double bpl_triangle(double phase, double delta)
 }
 
 // Naive square waveform generator
-double square(double phase)
+float square(float phase)
 {
-    return phase - 0.5 > 0.0 ? 1.0 : -1.0;
+    return phase - 0.5f > 0.0f ? 1.0f : -1.0f;
 }
 
 // Bandpass limited square waveform using Fourier series
-double bpl_square(double phase, double delta)
+float bpl_square(float phase, float delta)
 {
     int n = 0.25 / delta;
-    double k = M_PI / 2.0 / n;
+    float k = M_PI / 2.0 / n;
 
-    double x = phase * 2.0 * M_PI;
-    double o = 0.0;
+    float x = phase * 2.0 * M_PI;
+    float o = 0.0;
     for (int i = 1; i <= n; i+=2) {
         // Limit harmonics amplitude to prevent overflow
-        double a = cos((i - 1) * k);
-        o += a * a * (1 / double(i)) * sin(double(i) * x);
+        float a = cos((i - 1) * k);
+        o += a * a * (1 / float(i)) * sin(float(i) * x);
     }
     return o;
 }
 
 Generator::Generator(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
-      m_phase(0.0)
+      m_phase(0.0f)
 {
-    m_pInputFreq = addInput("f", QVariant::Double);
-    m_pOutput = addOutput("out", QVariant::Double);
+    m_pInputFreq = addInput("f", Signal::Type_Float);
+    m_pOutput = addOutput("out", Signal::Type_Float);
 
     createProperties();
 }
@@ -122,14 +122,14 @@ void Generator::processStop()
 void Generator::process()
 {
     ISignalChain* chain = signalChain();
-    double dt = chain->timeStep();
-    double f = m_pInputFreq->value().toDouble();
-    double dPhase = f * dt;
+    float dt = chain->timeStep();
+    float f = m_pInputFreq->value().asFloat;
+    float dPhase = f * dt;
 
     int waveform = m_pPropWaveform->value().toInt();
     bool bpLimit = m_pPropBandPassLimit->value().toBool();
 
-    double out = 0.0;
+    float out = 0.0;
     switch (waveform) {
     case 0:
         out = sin(m_phase * 2 * M_PI);
@@ -149,7 +149,7 @@ void Generator::process()
 
     m_phase = fmod(m_phase + dPhase, 1.0);
 
-    m_pOutput->setValue(out);
+    m_pOutput->setFloatValue(out);
 }
 
 void Generator::reset()

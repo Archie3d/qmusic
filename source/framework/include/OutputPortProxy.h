@@ -15,7 +15,7 @@ public:
     OutputPortProxy(OutputPort *pOutput);
     OutputPortProxy(const QString &name, OutputPort *pOutput);
 
-    QVariant value() const override;
+    Signal value() const override;
     void update() override;
 
 private:

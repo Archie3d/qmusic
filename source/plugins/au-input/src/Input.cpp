@@ -14,8 +14,8 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pLeftBuffer = nullptr;
     m_pRightBuffer = nullptr;
 
-    m_pOutputLeft = addOutput("L", QVariant::Double);
-    m_pOutputRight = addOutput("R", QVariant::Double);
+    m_pOutputLeft = addOutput("L", Signal::Type_Float);
+    m_pOutputRight = addOutput("R", Signal::Type_Float);
 
     m_pLeft = nullptr;
     m_pRight = nullptr;
@@ -76,8 +76,8 @@ void Input::process()
         m_pRightBuffer->read(&r, 1);
     }
 
-    m_pOutputLeft->setValue(l);
-    m_pOutputRight->setValue(r);
+    m_pOutputLeft->setFloatValue(l);
+    m_pOutputRight->setFloatValue(r);
 }
 
 void Input::allocateBuffers()

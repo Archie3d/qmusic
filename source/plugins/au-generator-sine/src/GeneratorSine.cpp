@@ -13,8 +13,8 @@ GeneratorSine::GeneratorSine(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_phase(0.0)
 {
-    m_pInputFreq = addInput("f", QVariant::Double);
-    m_pOutput = addOutput("out", QVariant::Double);
+    m_pInputFreq = addInput("f", Signal::Type_Float);
+    m_pOutput = addOutput("out", Signal::Type_Float);
 
     createProperties();
 }
@@ -53,27 +53,23 @@ void GeneratorSine::processStop()
 
 void GeneratorSine::process()
 {
-    double amp = m_pPropAmplitude->value().toDouble();
-    double out = amp * sin(m_phase * 2.0 * M_PI);
+    float amp = m_pPropAmplitude->value().toDouble();
+    float out = amp * sin(m_phase * 2.0 * M_PI);
 
-    double freqScale = m_pPropFreqScale->value().toDouble();
+    float freqScale = m_pPropFreqScale->value().toDouble();
     ISignalChain* chain = signalChain();
-    double dt = chain->timeStep();
-    double f = m_pInputFreq->value().toDouble();
+    float dt = chain->timeStep();
+    float f = m_pInputFreq->value().asFloat;
 
-    double dPhase = f * freqScale * dt;
+    float dPhase = f * freqScale * dt;
     m_phase = fmod(m_phase + dPhase, 1.0);
 \
-    m_pOutput->setValue(out);
+    m_pOutput->setFloatValue(out);
 }
 
 void GeneratorSine::reset()
 {
     m_phase = RAD(m_pPropPhase->value().toDouble());
-}
-
-void GeneratorSine::control(const QString &name, const QVariant &value)
-{
 }
 
 void GeneratorSine::createProperties()
@@ -95,7 +91,6 @@ void GeneratorSine::createProperties()
     m_pPropPhase->setAttribute("minumum", -180.0);
     m_pPropPhase->setAttribute("maximum", 180);
     m_pPropPhase->setValue(0.0);
-
 
     pRoot->addSubProperty(m_pPropFreqScale);
     pRoot->addSubProperty(m_pPropAmplitude);

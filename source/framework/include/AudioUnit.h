@@ -58,7 +58,7 @@ public:
      * @param type Port data type.
      * @return Pointer to created port.
      */
-    InputPort* addInput(const QString &name, QVariant::Type type);
+    InputPort* addInput(const QString &name, Signal::Type type);
 
     /**
      * Add an input port.
@@ -81,7 +81,7 @@ public:
      * @param type Port data type.
      * @return Pointer to created port.
      */
-    OutputPort* addOutput(const QString &name, QVariant::Type type);
+    OutputPort* addOutput(const QString &name, Signal::Type type);
 
     /**
      * Add an output port.

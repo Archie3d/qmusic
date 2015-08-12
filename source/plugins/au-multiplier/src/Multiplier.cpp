@@ -5,15 +5,15 @@
 #include "ISignalChain.h"
 #include "Multiplier.h"
 
-const double cDefaultGain = 1.0;
+const float cDefaultGain = 1.0f;
 
 Multiplier::Multiplier(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_pInput = addInput("", QVariant::Double);
-    m_pGain = addInput("", QVariant::Double);
-    m_pOutput = addOutput("", QVariant::Double);
+    m_pInput = addInput("", Signal::Type_Float);
+    m_pGain = addInput("", Signal::Type_Float);
+    m_pOutput = addOutput("", Signal::Type_Float);
 }
 
 Multiplier::~Multiplier()
@@ -30,9 +30,9 @@ void Multiplier::processStop()
 
 void Multiplier::process()
 {
-    double v = m_pInput->value().toDouble();
-    double gain = m_pGain->value().toDouble();
-    m_pOutput->setValue(v * gain);
+    float v = m_pInput->value().asFloat;
+    float gain = m_pGain->value().asFloat;
+    m_pOutput->setFloatValue(v * gain);
 }
 
 void Multiplier::reset()

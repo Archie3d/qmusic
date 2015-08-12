@@ -1,7 +1,6 @@
 #ifndef OUTPUTPORT_H
 #define OUTPUTPORT_H
 
-#include <QSharedPointer>
 #include "FrameworkApi.h"
 #include "IAudioUnit.h"
 #include "Port.h"
@@ -25,19 +24,23 @@ public:
      * @param name Port name.
      * @param type Port data type.
      */
-    OutputPort(const QString &name, QVariant::Type type);
+    OutputPort(const QString &name, Signal::Type type);
 
     /**
      * Returns value stored in this port.
      * @return
      */
-    QVariant value() const override { return m_value; }
+    Signal value() const override { return m_value; }
 
     /**
      * Assign value to this port.
      * @param value
      */
-    void setValue(const QVariant &value);
+    void setValue(const Signal &value);
+
+    void setIntValue(int v) { m_value.asInt = v; }
+    void setFloatValue(float v) { m_value.asFloat = v; }
+    void setBoolValue(bool v) { m_value.asBool = v; }
 
     /**
      * Update the port.
@@ -54,7 +57,7 @@ public:
 private:
 
     /// Value stored in this output port.
-    QVariant m_value;
+    Signal m_value;
 };
 
 #endif // OUTPUTPORT_H

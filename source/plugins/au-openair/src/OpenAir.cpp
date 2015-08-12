@@ -11,8 +11,8 @@
 OpenAir::OpenAir(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInput = addInput("in", QVariant::Double);
-    m_pOutput = addOutput("out", QVariant::Double);
+    m_pInput = addInput("in", Signal::Type_Float);
+    m_pOutput = addOutput("out", Signal::Type_Float);
 
     createProperties();
 
@@ -49,7 +49,7 @@ void OpenAir::processStop()
 
 void OpenAir::process()
 {
-    m_pOutput->setValue(m_pFIRFilter->process(m_pInput->value().toDouble()));
+    m_pOutput->setFloatValue(m_pFIRFilter->process(m_pInput->value().asFloat));
 }
 
 void OpenAir::reset()

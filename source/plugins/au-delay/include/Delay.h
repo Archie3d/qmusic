@@ -23,7 +23,6 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
 
 private:
 

@@ -27,7 +27,6 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
 
     // IMidiInputListener
     void inputMidiMessage(const MidiMessage &msg);
@@ -37,9 +36,9 @@ private:
     void createProperties();
 
     bool m_noteOn;
-    double m_frequency;
-    double m_velocity;
-    double m_frequencyBend;
+    float m_frequency;
+    float m_velocity;
+    float m_frequencyBend;
     int m_noteNumber;
 
     OutputPort *m_pOutputNoteOn;

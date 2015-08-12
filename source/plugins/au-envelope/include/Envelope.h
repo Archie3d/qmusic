@@ -49,18 +49,18 @@ private:
 
     bool m_noteOn;
     State m_state;
-    double m_output;
+    float m_output;
 
-    double m_attackTCO;
-    double m_decayTCO;
-    double m_releaseTCO;
+    float m_attackTCO;
+    float m_decayTCO;
+    float m_releaseTCO;
 
-    double m_attackOffset;
-    double m_attackCoeff;
-    double m_decayOffset;
-    double m_decayCoeff;
-    double m_releaseOffset;
-    double m_releaseCoeff;
+    float m_attackOffset;
+    float m_attackCoeff;
+    float m_decayOffset;
+    float m_decayCoeff;
+    float m_releaseOffset;
+    float m_releaseCoeff;
 
     QtVariantProperty *m_pAttackTimeMs;
     QtVariantProperty *m_pDecayTimeMs;

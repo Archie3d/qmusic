@@ -13,13 +13,12 @@ const int cFontSize = 7;
 const char *cFontFamily = "Verdana";
 const QColor cPortNameColor(64, 0, 128);
 
-QMap<QVariant::Type, QColor> cTypeToColorMap = []() {
-    QMap<QVariant::Type, QColor> map;
-    map[QVariant::Int] = QColor("blue");
-    map[QVariant::Double] = QColor("red");
-    map[QVariant::Bool] = QColor("green");
-    map[QVariant::List] = QColor("cyan");
-    map[QVariant::Map] = QColor("magenta");
+QMap<Signal::Type, QColor> cTypeToColorMap = []() {
+    QMap<Signal::Type, QColor> map;
+    map[Signal::Type_Invalid] = QColor("black");
+    map[Signal::Type_Int] = QColor("blue");
+    map[Signal::Type_Float] = QColor("red");
+    map[Signal::Type_Bool] = QColor("green");
     return map;
 }();
 
@@ -101,7 +100,7 @@ void SignalChainPortItem::setLabel(const QString &text)
 
 void SignalChainPortItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
 {
-    QVariant::Type type = dataType();
+    Signal::Type type = dataType();
     QColor color = cTypeToColorMap.value(type, Qt::black);
 
     pPainter->setPen(color);
@@ -136,13 +135,13 @@ SignalChainInputPortItem::SignalChainInputPortItem(InputPort *pInput, QGraphicsI
     Q_ASSERT(pInput != nullptr);
 }
 
-QVariant::Type SignalChainInputPortItem::dataType() const
+Signal::Type SignalChainInputPortItem::dataType() const
 {
     if (m_pInputPort != nullptr) {
         return m_pInputPort->dataType();
     }
 
-    return QVariant::Invalid;
+    return Signal::Type_Invalid;
 }
 
 /*
@@ -163,11 +162,11 @@ SignalChainOutputPortItem::SignalChainOutputPortItem(OutputPort *pOutput, QGraph
     Q_ASSERT(pOutput != nullptr);
 }
 
-QVariant::Type SignalChainOutputPortItem::dataType() const
+Signal::Type SignalChainOutputPortItem::dataType() const
 {
     if (m_pOutputPort != nullptr) {
         return m_pOutputPort->dataType();
     }
 
-    return QVariant::Invalid;
+    return Signal::Type_Invalid;
 }

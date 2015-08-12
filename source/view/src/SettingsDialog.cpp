@@ -64,16 +64,21 @@ void SettingsDialog::loadSettings()
 void SettingsDialog::saveSettings()
 {
     Settings settings;
-    settings.set(Settings::Setting_WaveInIndex, m_pWaveInComboBox->currentData().toInt());
-    settings.set(Settings::Setting_WaveOutIndex, m_pWaveOutComboBox->currentData().toInt());
     bool ok = false;
+
+    int index = m_pWaveInComboBox->currentData().toInt(&ok);
+    settings.set(Settings::Setting_WaveInIndex, ok ? index : -1);
+
+    index = m_pWaveOutComboBox->currentData().toInt(&ok);
+    settings.set(Settings::Setting_WaveOutIndex, ok ? index : -1);
     double sampleRate = m_pSampleRateComboBox->currentText().toDouble(&ok);
     if (ok) {
         settings.set(Settings::Setting_SampleRate, sampleRate);
     }
     settings.set(Settings::Setting_BufferSize, m_pBufferSizeSpinBox->value());
 
-    settings.set(Settings::Setting_MidiInIndex, m_pMidiInComboBox->currentData().toInt());
+    index = m_pMidiInComboBox->currentData().toInt(&ok);
+    settings.set(Settings::Setting_MidiInIndex, ok ? index : -1);
     settings.set(Settings::Setting_MidiInChannel, m_pMidiInChannelSpinBox->value());
 }
 

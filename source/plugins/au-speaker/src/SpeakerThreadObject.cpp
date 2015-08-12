@@ -61,13 +61,13 @@ void SpeakerThreadObject::stop()
 float SpeakerThreadObject::getNextLeftChannelSample()
 {
     m_pLeftChannelInput->update();
-    return m_pLeftChannelInput->value().toDouble();
+    return m_pLeftChannelInput->value().asFloat;
 }
 
 float SpeakerThreadObject::getNextRightChannelSample()
 {
     m_pRightChannelInput->update();
-    return m_pRightChannelInput->value().toDouble();
+    return m_pRightChannelInput->value().asFloat;
 }
 
 void SpeakerThreadObject::generateSamples()

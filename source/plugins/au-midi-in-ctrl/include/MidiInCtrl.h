@@ -50,7 +50,7 @@ private:
 
     MidiMessage::Controller m_controller;
     int m_controllerValue;
-    double m_controllerValueNormalized;
+    float m_controllerValueNormalized;
     QString m_controllerName;
 
     OutputPort *m_pOutputValue;

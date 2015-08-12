@@ -1,7 +1,6 @@
 #ifndef INPUTPORT_H
 #define INPUTPORT_H
 
-#include <QVariant>
 #include "Port.h"
 #include "FrameworkApi.h"
 
@@ -29,14 +28,14 @@ public:
      * @param name Port name.
      * @param type Port data type.
      */
-    InputPort(const QString &name, QVariant::Type type);
+    InputPort(const QString &name, Signal::Type type);
 
     /**
      * Returns port value.
      * Value is taked from connected output port. If not connected an invalid value is returned.
      * @return
      */
-    QVariant value() const override;
+    Signal value() const override;
 
     /**
      * Update the input.

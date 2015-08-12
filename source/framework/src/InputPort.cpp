@@ -9,15 +9,15 @@ InputPort::InputPort()
 {
 }
 
-InputPort::InputPort(const QString &name, QVariant::Type type)
+InputPort::InputPort(const QString &name, Signal::Type type)
     : Port(Direction_Input, name, type),
       m_pConnectedOutputPort(nullptr)
 {
 }
 
-QVariant InputPort::value() const
+Signal InputPort::value() const
 {
-    return m_pConnectedOutputPort == nullptr ? QVariant() : m_pConnectedOutputPort->value();
+    return m_pConnectedOutputPort == nullptr ? Signal() : m_pConnectedOutputPort->value();
 }
 
 void InputPort::update()

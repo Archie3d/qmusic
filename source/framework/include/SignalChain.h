@@ -30,9 +30,9 @@ public:
     void stop() override;
     bool isStarted() const override { return m_started; }
     void reset() override;
-    double timeStep() const override { return m_timeStep; }
+    float timeStep() const override { return m_timeStep; }
     void setTimeStep(double dt) override { m_timeStep = dt; }
-    double sampleRate() const override { return 1.0 / m_timeStep; }
+    float sampleRate() const override { return 1.0f / m_timeStep; }
     void addAudioUnit(IAudioUnit *pAudioUnit) override;
     void removeAudioUnit(IAudioUnit *pAudioUnit) override;
     void prepareUpdate() override;
@@ -52,7 +52,7 @@ private:
     void resetAllAudioUnits();
 
     /// Current global time, s
-    double m_timeStep;
+    float m_timeStep;
 
     /// Signal chain processing has been started.
     bool m_started;

@@ -4,13 +4,13 @@
 #include "Application.h"
 #include "DelayLine.h"
 #include "ISignalChain.h"
-#include "../include/Delay.h"
+#include "Delay.h"
 
 Delay::Delay(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInput = addInput("", QVariant::Double);
-    m_pOutput = addOutput("", QVariant::Double);
+    m_pInput = addInput("", Signal::Type_Float);
+    m_pOutput = addOutput("", Signal::Type_Float);
 
     m_pDelayLine = nullptr;
 
@@ -38,7 +38,7 @@ void Delay::deserialize(const QVariantMap &data, SerializationContext *pContext)
 
 void Delay::processStart()
 {
-    double delayMs = m_pPropDelay->value().toDouble();
+    float delayMs = m_pPropDelay->value().toDouble();
     int delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
     m_pDelayLine = new DelayLine(delaySamples);
 }
@@ -49,15 +49,11 @@ void Delay::processStop()
 
 void Delay::process()
 {
-    double out = m_pDelayLine->process(m_pInput->value().toDouble());
-    m_pOutput->setValue(out);
+    float out = m_pDelayLine->process(m_pInput->value().asFloat);
+    m_pOutput->setFloatValue(out);
 }
 
 void Delay::reset()
-{
-}
-
-void Delay::control(const QString &name, const QVariant &value)
 {
 }
 

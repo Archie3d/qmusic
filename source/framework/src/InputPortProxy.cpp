@@ -18,9 +18,9 @@ InputPortProxy::InputPortProxy(const QString &name, InputPort *pInput)
 {
 }
 
-QVariant InputPortProxy::value() const
+Signal InputPortProxy::value() const
 {
-    return m_pInputPort == nullptr ? QVariant() : m_pInputPort->value();
+    return m_pInputPort == nullptr ? Signal() : m_pInputPort->value();
 }
 
 void InputPortProxy::update()
