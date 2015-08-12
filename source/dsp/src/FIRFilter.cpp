@@ -8,7 +8,7 @@ FIRFilter::FIRFilter()
     reset();
 }
 
-FIRFilter::FIRFilter(const QVector<double> &coefs)
+FIRFilter::FIRFilter(const QVector<float> &coefs)
     : m_coefs(coefs),
       m_pBuffer(nullptr)
 {
@@ -24,29 +24,19 @@ FIRFilter::~FIRFilter()
 void FIRFilter::reset()
 {
     delete[] m_pBuffer;
-    m_pBuffer = new double[m_coefs.count()];
-    memset(m_pBuffer, 0, m_coefs.count() * sizeof(double));
+    m_pBuffer = new float[m_coefs.count()];
+    memset(m_pBuffer, 0, m_coefs.count() * sizeof(float));
     m_bufferIndex = 0;
 }
 
-double FIRFilter::process(double x)
+float FIRFilter::process(float x)
 {
-    // enqueue data into the buffer
-    m_pBuffer[m_bufferIndex] = x;
-
-    // Convolute filter coefficients and buffered samples.
-    double out = 0.0;
-    int j = m_bufferIndex;
-    for (int i = 0; i < m_coefs.count(); ++i) {
-        out += m_pBuffer[j++] * m_coefs[i];
-        if (j >= m_coefs.count()) {
-            j = 0;
-        }
+    const float *pCoefs = m_coefs.constData();
+    float out = x * pCoefs[0];
+    for (int i = m_coefs.count() - 1; i > 0; i--) {
+        out += m_pBuffer[i] * pCoefs[i];
+        m_pBuffer[i] = m_pBuffer[i - 1];
     }
-
-    if (--m_bufferIndex < 0) {
-        m_bufferIndex = m_coefs.count() - 1;
-    }
-
+    m_pBuffer[0] = x;
     return out;
 }

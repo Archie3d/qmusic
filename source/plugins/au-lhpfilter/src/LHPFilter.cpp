@@ -60,10 +60,6 @@ void LHPFilter::reset()
     m_filter.reset();
 }
 
-void LHPFilter::control(const QString &name, const QVariant &value)
-{
-}
-
 void LHPFilter::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();

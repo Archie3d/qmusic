@@ -12,7 +12,7 @@ class QMUSIC_DSP_API FIRFilter
 public:
 
     FIRFilter();
-    FIRFilter(const QVector<double> &coefs);
+    FIRFilter(const QVector<float> &coefs);
     ~FIRFilter();
 
     /**
@@ -25,14 +25,14 @@ public:
      * @param x Input sample.
      * @return Output (filtered) value.
      */
-    double process(double x);
+    float process(float x);
 
 private:
 
     Q_DISABLE_COPY(FIRFilter)
 
-    QVector<double> m_coefs;    ///< Filter coefficients
-    double *m_pBuffer;          ///< Samples buffer;
+    QVector<float> m_coefs;    ///< Filter coefficients
+    float *m_pBuffer;          ///< Samples buffer;
     int m_bufferIndex;          ///< Position in samples buffer.
 };
 

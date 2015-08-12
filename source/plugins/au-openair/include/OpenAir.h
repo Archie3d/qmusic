@@ -1,18 +1,17 @@
-#ifndef AU_LHPFILTER_H
-#define AU_LHPFILTER_H
+#ifndef AU_OPENAIR_H
+#define AU_OPENAIR_H
 
-#include "VAOnePoleFilter.h"
 #include "AudioUnit.h"
 
 class QtVariantProperty;
+class FIRFilter;
 
-
-class LHPFilter : public AudioUnit
+class OpenAir : public AudioUnit
 {
 public:
 
-    LHPFilter(AudioUnitPlugin *pPlugin);
-    ~LHPFilter();
+    OpenAir(AudioUnitPlugin *pPlugin);
+    ~OpenAir();
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
@@ -28,15 +27,15 @@ protected:
 private:
 
     void createProperties();
-
-    VAOnePoleFilter m_filter;
+    void createFIR();
 
     InputPort *m_pInput;
-    InputPort *m_pInputCutOffFreq;
     OutputPort *m_pOutput;
 
-    QtVariantProperty *m_pFilterType;
+    QtVariantProperty *m_pPropEnvironment;
+
+    FIRFilter *m_pFIRFilter;
 };
 
-#endif // AU_LHPFILTER_H
+#endif // AU_OPENAIR_H
 

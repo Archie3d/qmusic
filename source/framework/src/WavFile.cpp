@@ -116,6 +116,11 @@ bool WavFile::readHeader()
             } else {
                 setError("Unable to read format data");
             }
+
+            if (m_blockAlign != m_numberOfChannels * m_bitsPerSample / 8) {
+                setError("Invalid block align");
+            }
+
             break;
         }
         case Chunk_Data:
@@ -150,7 +155,7 @@ bool WavFile::readSingleChannelData(QVector<float> &data)
 
     bool ok = true;
     int samples = 0;
-    while (samples < m_numberOfSamples && !m_file.atEnd()) {
+    while (ok && samples < m_numberOfSamples && !m_file.atEnd()) {
         float v;
         ok &= readSingleSample(v);
         if (ok) {
@@ -198,6 +203,18 @@ bool WavFile::readSingleSample(float &v)
         }
         break;
     }
+    case 24: {
+        char buf[3];
+        qint64 r = m_file.read(buf, 3);
+        ok &= r == 3;
+        if (ok) {
+            qint32 value = qint32(buf[0]) << 24;
+            value |= qint32(buf[1]) << 16;
+            value |= qint32(buf[2]) << 8;
+            v = float(value) / 2147483648.0f;
+        }
+        break;
+    }
     case 32: {
         qint32 data;
         ok &= read<qint32>(m_file, data);
@@ -207,7 +224,6 @@ bool WavFile::readSingleSample(float &v)
         break;
     }
     default:
-        qDebug() << "Unknown bits per sample" << m_bitsPerSample;
         ok = false;
         break;
     }

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/au-openair">
+        <file>icon.png</file>
+        <file>ir/carpark_balloon_ir_mono_24bit_44100.wav</file>
+        <file>ir/ir2_dc.wav</file>
+        <file>ir/stalbans_omni.wav</file>
+    </qresource>
+</RCC>
