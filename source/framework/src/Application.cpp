@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QClipboard>
 #include <QMimeData>
+#include <QFile>
 #include "Logger.h"
 #include "AudioDevice.h"
 #include "MidiInputDevice.h"
@@ -47,6 +48,8 @@ Application::Application(int argc, char **argv)
     m_pAudioOutputDevice = new AudioDevice();
     m_pMidiInputDevice = new MidiInputDevice();
     m_pAudioUnitsManager = new AudioUnitsManager(this);
+
+    loadStylesheet();
 
     s_pApplicationInstance = this;
 }
@@ -107,6 +110,17 @@ int Application::launch()
 
     return exec();
 }
+
+void Application::loadStylesheet()
+{
+    QFile f(":/framework/style.qss");
+    if (f.open(QIODevice::ReadOnly)) {
+        QString styleSheet = QString::fromUtf8(f.readAll());
+        setStyleSheet(styleSheet);
+        f.close();
+    }
+}
+
 
 void Application::initialize()
 {

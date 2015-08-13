@@ -42,7 +42,7 @@ private:
 
     void allocateBuffers();
     void releaseBuffers();
-    static int bufferSizeFropmSettings();
+    static int bufferSizeFromSettings();
 
     InputPort *m_pInputLeft;
     InputPort *m_pInputRight;

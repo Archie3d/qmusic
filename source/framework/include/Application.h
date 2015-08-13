@@ -63,6 +63,11 @@ public slots:
 private slots:
 
     /**
+     * Load and apply global application stylesheet.
+     */
+    void loadStylesheet();
+
+    /**
      * @brief Initialize application.
      */
     void initialize();

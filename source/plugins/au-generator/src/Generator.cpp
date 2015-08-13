@@ -47,10 +47,10 @@ float bpl_triangle(float phase, float delta)
     for (int i = 0; i < n; i++) {
         float a = cos(i * k);
         float d = float(2*i + 1);
-        float h = (i % 2 == 0) ? 1.0 : -1.0;
+        float h = (i % 2 == 0) ? 1.0f : -1.0f;
         o += a*a* h * sin(d * x) / d / d;
     }
-    o *= 8 / M_PI / M_PI;
+    o *= float(8.0f / M_PI / M_PI);
     return o;
 }
 

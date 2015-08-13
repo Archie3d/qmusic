@@ -26,6 +26,8 @@ public:
     void setSignalChain(ISignalChain *pSignalChain);
     void setInputPorts(InputPort *pLeft, InputPort *pRight);
 
+    float dspLoad() const { return m_dspLoad; }
+
 public slots:
 
     void start();
@@ -37,6 +39,12 @@ signals:
     void continueGenerateSamples();
     void bufferReady();
 
+    /**
+     * Notify DSP load update.
+     * @param l
+     */
+    void dspLoadChanged(float l);
+
 private slots:
 
     float getNextLeftChannelSample();
@@ -45,6 +53,8 @@ private slots:
     void generateSamples();
 
 private:
+
+    void setDspLoad(float l);
 
     QMutex m_mutex; ///< Protective mutex.
 
@@ -58,6 +68,9 @@ private:
 
     bool m_started;
     bool m_firstBuffer;
+
+    /// Processing load, [0..1]
+    float m_dspLoad;
 
     InputPort *m_pLeftChannelInput;
     InputPort *m_pRightChannelInput;

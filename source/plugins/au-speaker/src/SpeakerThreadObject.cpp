@@ -1,3 +1,4 @@
+#include <chrono>
 #include <QTimer>
 #include "ISignalChain.h"
 #include "AudioBuffer.h"
@@ -14,6 +15,7 @@ SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     m_pRightData = new float[bufferSize * 2];
 
     m_started = false;
+    m_dspLoad = 0.0f;
 
     connect(this, SIGNAL(started()), this, SLOT(generateSamples()), Qt::QueuedConnection);
     connect(this, SIGNAL(continueGenerateSamples()),
@@ -49,6 +51,8 @@ void SpeakerThreadObject::start()
     m_firstBuffer = true;
     m_pLeftBuffer->clear();
     m_pRightBuffer->clear();
+    m_dspLoad = 0.0;
+    setDspLoad(0.0f);
     emit started();
 }
 
@@ -56,6 +60,7 @@ void SpeakerThreadObject::stop()
 {
     QMutexLocker lock(&m_mutex);
     m_started = false;
+    setDspLoad(0.0f);
 }
 
 float SpeakerThreadObject::getNextLeftChannelSample()
@@ -82,8 +87,13 @@ void SpeakerThreadObject::generateSamples()
 
     if (available < m_bufferSize / 2) {
         // If availability is low, trigger timer
-        QTimer::singleShot(1, this, SLOT(generateSamples()));
+        QMetaObject::invokeMethod(this, "generateSamples", Qt::QueuedConnection);
+        //QTimer::singleShot(1, this, SLOT(generateSamples()));
     } else {
+
+        double realTimeUs = m_pSignalChain->timeStep() * available * 1.0e6;
+
+        auto startTime = std::chrono::high_resolution_clock::now();
         for (long i = 0; i < available; i++) {
             m_pSignalChain->prepareUpdate();
             m_pLeftData[i] = getNextLeftChannelSample();
@@ -91,6 +101,13 @@ void SpeakerThreadObject::generateSamples()
         }
         m_pLeftBuffer->write(m_pLeftData, available);
         m_pRightBuffer->write(m_pRightData, available);
+        auto processingTime = std::chrono::high_resolution_clock::now() - startTime;
+        double dspTimeUs = double(std::chrono::duration_cast<std::chrono::microseconds>(processingTime).count());
+
+        float l = dspTimeUs / realTimeUs;
+
+
+        setDspLoad(l);
 
         // Continue with the samples generation
         emit continueGenerateSamples();
@@ -99,5 +116,15 @@ void SpeakerThreadObject::generateSamples()
     if (m_firstBuffer) {
         m_firstBuffer = false;
         emit bufferReady();
+    }
+}
+
+void SpeakerThreadObject::setDspLoad(float l)
+{
+    float dl = fabs(m_dspLoad - l);
+    if (dl >= 0.05) {
+        // Do some averaging to filter rapid changes
+        m_dspLoad = m_dspLoad * 0.95 + l * 0.05;
+        emit dspLoadChanged(m_dspLoad);
     }
 }

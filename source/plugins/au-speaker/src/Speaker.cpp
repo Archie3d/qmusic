@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Settings.h"
 #include "ISignalChain.h"
+#include "MainWindow.h"
 #include "SpeakerThreadObject.h"
 #include "Speaker.h"
 
@@ -15,15 +16,22 @@ Speaker::Speaker(AudioUnitPlugin *pPlugin)
     m_pInputRight = addInput("R", Signal::Type_Float);
 
     m_pThread = new QThread(this);
-    m_pThreadObject = new SpeakerThreadObject(bufferSizeFropmSettings());
+    m_pThreadObject = new SpeakerThreadObject(bufferSizeFromSettings());
     m_pThreadObject->setInputPorts(m_pInputLeft, m_pInputRight);
     m_pThreadObject->moveToThread(m_pThread);
-    m_pThread->start(QThread::TimeCriticalPriority);
+    m_pThread->start(QThread::IdlePriority);
 
     m_pLeftBuffer = nullptr;
     m_pRightBuffer = nullptr;
 
     Application::instance()->audioOutputDevice()->addListener(this);
+
+    // Connect DSL load signal with the main GUI
+    MainWindow *pMainWindow = dynamic_cast<MainWindow*>(Application::instance()->mainWindow());
+    if (pMainWindow != nullptr) {
+        QObject::connect(m_pThreadObject, SIGNAL(dspLoadChanged(float)),
+                         pMainWindow, SLOT(updateDspLoad(float)), Qt::QueuedConnection);
+    }
 }
 
 Speaker::~Speaker()
@@ -87,12 +95,14 @@ void Speaker::processStart()
     signalChain()->reset();
     m_pThreadObject->setSignalChain(signalChain());
 
-    m_pThreadObject->start();
+    m_pThread->setPriority(QThread::TimeCriticalPriority);
+    m_pThreadObject->start();        
 }
 
 void Speaker::processStop()
 {
     m_pThreadObject->stop();
+    m_pThread->setPriority(QThread::IdlePriority);
 }
 
 void Speaker::process()
@@ -102,7 +112,7 @@ void Speaker::process()
 void Speaker::allocateBuffers()
 {
     releaseBuffers();
-    int bufferSize = bufferSizeFropmSettings();
+    int bufferSize = bufferSizeFromSettings();
     m_pLeftBuffer = new float[2 * bufferSize];
     m_pRightBuffer = new float[2 * bufferSize];
 }
@@ -115,7 +125,7 @@ void Speaker::releaseBuffers()
     m_pRightBuffer = nullptr;
 }
 
-int Speaker::bufferSizeFropmSettings()
+int Speaker::bufferSizeFromSettings()
 {
     Settings settings;
     return settings.get(Settings::Setting_BufferSize).toInt();

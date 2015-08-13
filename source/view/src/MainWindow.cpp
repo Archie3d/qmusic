@@ -2,6 +2,9 @@
 #include <QCloseEvent>
 #include <QMenuBar>
 #include <QToolBar>
+#include <QProgressBar>
+#include <QLabel>
+#include <QStyle>
 #include <QMessageBox>
 #include <QFileDialog>
 #include "Application.h"
@@ -35,11 +38,36 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
 
     resize(1280, 800);
 
-    logInfo(tr("*** <b>QMusic</b> version %1 ***").arg(QMUSIC_VERSION));
+    logInfo(tr("*** <b>%1</b> version %2 ***")
+            .arg(Application::Product)
+            .arg(QMUSIC_VERSION));
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::updateDspLoad(float l)
+{
+    if (m_pSignalChainWidget->scene()->signalChain()->isStarted()) {
+        //int value = (m_pDspLoadBar->value()*0.9  + m_pDspLoadBar->maximum() * l * 0.1);
+
+        if (l < 0.5f) {
+            m_pDspLoadBar->setProperty("loadLevel", 0);
+        } else if (l < 0.8f) {
+            m_pDspLoadBar->setProperty("loadLevel", 1);
+        } else {
+            m_pDspLoadBar->setProperty("loadLevel", 2);
+        }
+
+        l = qMin(l, 1.0f);
+
+        int value = m_pDspLoadBar->maximum() * l;
+        m_pDspLoadBar->setValue(value);
+        m_pDspLoadBar->style()->unpolish(m_pDspLoadBar);
+        m_pDspLoadBar->style()->polish(m_pDspLoadBar);
+        m_pDspLoadBar->update();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *pEvent)
@@ -134,6 +162,7 @@ void MainWindow::stopSignalChain()
 {
     m_pSignalChainWidget->scene()->signalChain()->stop();
     updateActions();
+    m_pDspLoadBar->setValue(0);
     logInfo(tr("Synthesizer stopped"));
 }
 
@@ -210,6 +239,13 @@ void MainWindow::createMenu()
 
 void MainWindow::createToolBars()
 {
+    m_pDspLoadBar = new QProgressBar();
+    m_pDspLoadBar->setProperty("loadLevel", 0);
+    m_pDspLoadBar->setObjectName("dspLoadBar");
+    m_pDspLoadBar->setMinimum(0);
+    m_pDspLoadBar->setMaximum(1000);
+    m_pDspLoadBar->setMaximumWidth(200);
+
     m_pFileToolBar = addToolBar(tr("File"));
     m_pFileToolBar->setObjectName("fileToolBar");
     m_pFileToolBar->addAction(m_pNewSignalChainAction);
@@ -220,6 +256,11 @@ void MainWindow::createToolBars()
     m_pSignalChainToolBar->setObjectName("signalChainToolBar");
     m_pSignalChainToolBar->addAction(m_pStartSignalChainAction);
     m_pSignalChainToolBar->addAction(m_pStopSignalChainAction);
+    QWidget *pStretch = new QWidget(this);
+    pStretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_pSignalChainToolBar->addWidget(pStretch);
+    m_pSignalChainToolBar->addWidget(new QLabel(tr("DSP load ")));
+    m_pSignalChainToolBar->addWidget(m_pDspLoadBar);
 }
 
 void MainWindow::updateActions()

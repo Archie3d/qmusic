@@ -1,0 +1,33 @@
+QProgressBar#dspLoadBar {
+    border: 1px solid gray;
+    border-radius: 3px;
+    background: white;
+    padding: 1px;
+    margin: 2px;
+    max-height: 14px;
+    text-align:center;
+}
+
+QProgressBar#dspLoadBar[loadLevel="0"]::chunk:horizontal {
+    border-radius: 2px;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 green
+        stop: 0.45 lightGreen
+        stop: 1 green);
+}
+
+QProgressBar#dspLoadBar[loadLevel="1"]::chunk:horizontal {
+    border-radius: 2px;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 orange
+        stop: 0.45 yellow
+        stop: 1 orange);
+}
+
+QProgressBar#dspLoadBar[loadLevel="2"]::chunk:horizontal {
+    border-radius: 2px;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 red
+        stop: 0.45 rgba(255, 220, 220, 255)
+        stop: 1 red);
+}

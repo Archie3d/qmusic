@@ -5,6 +5,7 @@
 #include "ViewApi.h"
 
 class QAction;
+class QProgressBar;
 class LogWindow;
 class AudioUnitsManagerWindow;
 class AudioUnitPropertiesWindow;
@@ -20,6 +21,14 @@ public:
 
     MainWindow(QWidget *pParent = nullptr, Qt::WindowFlags flags = 0);
     ~MainWindow();
+
+public slots:
+
+    /**
+     * Update the load bar with a new value.
+     * @param l Load, [0..1].
+     */
+    void updateDspLoad(float l);
 
 protected:
 
@@ -70,6 +79,9 @@ private:
     // Toolbars
     QToolBar *m_pFileToolBar;
     QToolBar *m_pSignalChainToolBar;
+
+    // Load bar
+    QProgressBar *m_pDspLoadBar;
 };
 
 #endif // MAINWINDOW_H
