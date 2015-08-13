@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QAction>
 #include <QCloseEvent>
 #include <QMenuBar>
@@ -11,11 +12,12 @@
 #include "LogWindow.h"
 #include "AudioUnitsManagerWindow.h"
 #include "AudioUnitPropertiesWindow.h"
+#include "SpectrumWindow.h"
 #include "SignalChainWidget.h"
 #include "SignalChainScene.h"
 #include "SignalChain.h"
 #include "SettingsDialog.h"
-#include "../include/MainWindow.h"
+#include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     : QMainWindow(pParent, flags)
@@ -68,6 +70,17 @@ void MainWindow::updateDspLoad(float l)
         m_pDspLoadBar->style()->polish(m_pDspLoadBar);
         m_pDspLoadBar->update();
     }
+}
+
+void MainWindow::updateSpectrum(const float *pSignal, int size)
+{
+    QVector<float> signal(size);
+    for (int i = 0; i < size; i++) {
+        signal[i] = pSignal[i];
+    }
+    m_pSpectrumWindow->plotSpectrum(signal);
+
+    emit spectrumUpdated();
 }
 
 void MainWindow::closeEvent(QCloseEvent *pEvent)
@@ -184,6 +197,9 @@ void MainWindow::createDockingWindows()
 
     m_pAudioUnitsManagerWindow = new AudioUnitsManagerWindow(this);
     addDockWidget(Qt::LeftDockWidgetArea, m_pAudioUnitsManagerWindow);
+
+    m_pSpectrumWindow = new SpectrumWindow(this);
+    addDockWidget(Qt::RightDockWidgetArea, m_pSpectrumWindow);
 
     m_pAudioUnitPropertiesWindow = new AudioUnitPropertiesWindow(this);
     addDockWidget(Qt::RightDockWidgetArea, m_pAudioUnitPropertiesWindow);

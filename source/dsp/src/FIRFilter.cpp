@@ -50,7 +50,7 @@ float FIRFilter::process(float x)
 {
     const float *pCoefs = m_coefs.constData();
     float out = x * pCoefs[0];
-    for (int i = m_coefs.count() - 1; i > 0; i--) {
+    for (int i = m_coefs.count() - 1; i > 0; --i) {
         out += m_pBuffer[i] * pCoefs[i];
         m_pBuffer[i] = m_pBuffer[i - 1];
     }

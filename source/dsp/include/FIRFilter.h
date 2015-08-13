@@ -27,6 +27,15 @@ public:
      */
     float process(float x);
 
+    /**
+     * Create a LP/HP/BP filter
+     * @param fa Lower frequency
+     * @param fb  Upper frequency
+     * @param att Attenuation (dB)
+     * @param sampleRate Sample rate, e.g. 44100.0
+     * @param length Number (odd) of filter coefficients to be produced
+     * @return Pointer to create filter.
+     */
     FIRFilter* create(float fa, float fb, float att, float sampleRate, int length = 127);
 
 private:

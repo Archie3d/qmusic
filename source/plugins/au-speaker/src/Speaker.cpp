@@ -31,6 +31,10 @@ Speaker::Speaker(AudioUnitPlugin *pPlugin)
     if (pMainWindow != nullptr) {
         QObject::connect(m_pThreadObject, SIGNAL(dspLoadChanged(float)),
                          pMainWindow, SLOT(updateDspLoad(float)), Qt::QueuedConnection);
+        QObject::connect(m_pThreadObject, SIGNAL(signalChanged(const float*,int)),
+                         pMainWindow, SLOT(updateSpectrum(const float*,int)));
+        QObject::connect(pMainWindow, SIGNAL(spectrumUpdated()),
+                         m_pThreadObject, SLOT(signalUpdateOver()));
     }
 }
 

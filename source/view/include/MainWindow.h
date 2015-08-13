@@ -9,6 +9,7 @@ class QProgressBar;
 class LogWindow;
 class AudioUnitsManagerWindow;
 class AudioUnitPropertiesWindow;
+class SpectrumWindow;
 class SignalChainWidget;
 
 /**
@@ -29,6 +30,12 @@ public slots:
      * @param l Load, [0..1].
      */
     void updateDspLoad(float l);
+
+    void updateSpectrum(const float *pSignal, int size);
+
+signals:
+
+    void spectrumUpdated();
 
 protected:
 
@@ -57,6 +64,7 @@ private:
     LogWindow *m_pLogWindow;    
     AudioUnitsManagerWindow *m_pAudioUnitsManagerWindow;
     AudioUnitPropertiesWindow *m_pAudioUnitPropertiesWindow;
+    SpectrumWindow *m_pSpectrumWindow;
 
     /// Central widget showing a signal chain.
     SignalChainWidget *m_pSignalChainWidget;

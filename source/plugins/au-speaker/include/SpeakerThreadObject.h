@@ -33,6 +33,8 @@ public slots:
     void start();
     void stop();
 
+    void signalUpdateOver();
+
 signals:
 
     void started();
@@ -45,6 +47,8 @@ signals:
      */
     void dspLoadChanged(float l);
 
+    void signalChanged(const float *s, int size);
+
 private slots:
 
     float getNextLeftChannelSample();
@@ -55,6 +59,9 @@ private slots:
 private:
 
     void setDspLoad(float l);
+
+    void requestSignalUpdate();
+    bool isSignalUpdateRequested() const { return m_singnalUpdateRequested; }
 
     QMutex m_mutex; ///< Protective mutex.
 
@@ -71,6 +78,11 @@ private:
 
     /// Processing load, [0..1]
     float m_dspLoad;
+
+    /// Signal waveform used for spectrum update
+    float *m_pSignalBuffer;
+    int m_signalIndex;
+    bool m_singnalUpdateRequested;
 
     InputPort *m_pLeftChannelInput;
     InputPort *m_pRightChannelInput;

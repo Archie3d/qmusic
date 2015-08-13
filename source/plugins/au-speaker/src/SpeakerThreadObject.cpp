@@ -1,8 +1,11 @@
 #include <chrono>
 #include <QTimer>
+#include <QVector>
 #include "ISignalChain.h"
 #include "AudioBuffer.h"
 #include "SpeakerThreadObject.h"
+
+#define SIGNAL_SIZE (4096)
 
 SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     : QObject(pParent),
@@ -13,6 +16,9 @@ SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     m_pRightBuffer = new AudioBuffer(bufferSize * 2);
     m_pLeftData = new float[bufferSize * 2];
     m_pRightData = new float[bufferSize * 2];
+    m_pSignalBuffer = new float[SIGNAL_SIZE];
+    m_signalIndex = 0;
+    m_singnalUpdateRequested = false;
 
     m_started = false;
     m_dspLoad = 0.0f;
@@ -28,6 +34,7 @@ SpeakerThreadObject::~SpeakerThreadObject()
     delete m_pRightBuffer;
     delete[] m_pLeftData;
     delete[] m_pRightData;
+    delete[] m_pSignalBuffer;
 }
 
 void SpeakerThreadObject::setSignalChain(ISignalChain *pSignalChain)
@@ -53,6 +60,8 @@ void SpeakerThreadObject::start()
     m_pRightBuffer->clear();
     m_dspLoad = 0.0;
     setDspLoad(0.0f);
+    m_signalIndex = 0;
+    memset(m_pSignalBuffer, 0, sizeof(float) * SIGNAL_SIZE);
     emit started();
 }
 
@@ -61,6 +70,13 @@ void SpeakerThreadObject::stop()
     QMutexLocker lock(&m_mutex);
     m_started = false;
     setDspLoad(0.0f);
+    m_signalIndex = 0;
+}
+
+void SpeakerThreadObject::signalUpdateOver()
+{
+    m_signalIndex = 0;
+    m_singnalUpdateRequested = false;
 }
 
 float SpeakerThreadObject::getNextLeftChannelSample()
@@ -97,16 +113,22 @@ void SpeakerThreadObject::generateSamples()
             m_pSignalChain->prepareUpdate();
             m_pLeftData[i] = getNextLeftChannelSample();
             m_pRightData[i] = getNextRightChannelSample();
+            if (m_signalIndex < SIGNAL_SIZE) {
+                float s = 0.5 * (m_pLeftData[i] + m_pRightData[i]);
+                m_pSignalBuffer[m_signalIndex++] = s;
+            }
         }
         m_pLeftBuffer->write(m_pLeftData, available);
         m_pRightBuffer->write(m_pRightData, available);
+
+        // Estimate DSP load as ratio of processing time vs real synthesis time.
         auto processingTime = std::chrono::high_resolution_clock::now() - startTime;
         double dspTimeUs = double(std::chrono::duration_cast<std::chrono::microseconds>(processingTime).count());
+        setDspLoad(dspTimeUs / realTimeUs);
 
-        float l = dspTimeUs / realTimeUs;
-
-
-        setDspLoad(l);
+        if (m_signalIndex >= SIGNAL_SIZE && !isSignalUpdateRequested()) {
+            requestSignalUpdate();
+        }
 
         // Continue with the samples generation
         emit continueGenerateSamples();
@@ -126,4 +148,9 @@ void SpeakerThreadObject::setDspLoad(float l)
         m_dspLoad = m_dspLoad * 0.8 + l * 0.2;
         emit dspLoadChanged(m_dspLoad);
     }
+}
+
+void SpeakerThreadObject::requestSignalUpdate()
+{
+    emit signalChanged(m_pSignalBuffer, SIGNAL_SIZE);
 }
