@@ -39,6 +39,7 @@ Speaker::~Speaker()
     Application::instance()->audioOutputDevice()->removeListener(this);
     m_pThreadObject->stop();
     m_pThread->quit();
+    m_pThread->wait(3000);
     delete m_pThreadObject;
 
     releaseBuffers();

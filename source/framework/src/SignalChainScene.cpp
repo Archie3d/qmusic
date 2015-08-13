@@ -259,7 +259,14 @@ void SignalChainScene::dragEnterEvent(QGraphicsSceneDragDropEvent *pEvent)
         const QMimeData *pMimeData = pEvent->mimeData();
         if (pMimeData->formats().contains(AudioUnitPlugin::MimeDataFormat)) {
             QString uid = QString::fromUtf8(pMimeData->data(AudioUnitPlugin::MimeDataFormat));
-            m_pDraggedAudioUnitPlugin = Application::instance()->audioUnitsManager()->audioUnitPluginByUid(uid);
+            SignalChainAudioUnitItem *pExistingItem = findAudioUnitInstance(uid);
+            if (pExistingItem != nullptr && (pExistingItem->audioUnit()->flags() & IAudioUnit::Flag_SingleInstance) != 0) {
+                // Instance already exits
+                QString name = Application::instance()->audioUnitsManager()->audioUnitPluginByUid(uid)->name();
+                qDebug() << "Only a single instance of" << name << "item is allowed";
+            } else {
+                m_pDraggedAudioUnitPlugin = Application::instance()->audioUnitsManager()->audioUnitPluginByUid(uid);
+            }
             acceptDrag = m_pDraggedAudioUnitPlugin != nullptr;
         }
     }
@@ -508,4 +515,17 @@ void SignalChainScene::deserializeFromByteArray(const QByteArray &data)
 
     pSelection->putOnScene(this, m_mousePos);
     delete pSelection;
+}
+
+SignalChainAudioUnitItem* SignalChainScene::findAudioUnitInstance(const QString &uid)
+{
+    foreach (QGraphicsItem *pItem, items()) {
+        if (pItem->type() == SignalChainItem::Type_AudioUnit) {
+            SignalChainAudioUnitItem *pAuItem = dynamic_cast<SignalChainAudioUnitItem*>(pItem);
+            if (pAuItem->audioUnit()->uid() == uid) {
+                return pAuItem;
+            }
+        }
+    }
+    return false;
 }

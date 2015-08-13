@@ -18,10 +18,14 @@ class QMUSIC_FRAMEWORK_API IAudioUnit : public ISerializable
 {
 public:
 
+    /**
+     * Flags affecting the audio unit behavior and representation.
+     */
     enum Flag {
         Flag_NoFlags = 0,
-        Flag_NoTitle = 1,
-        Flag_NoFrame = 2
+        Flag_NoTitle = 1,   ///< No title should be drawn.
+        Flag_NoFrame = 2,   ///< No frame should ne drawn.
+        Flag_SingleInstance = 4 ///< Only one instance of the unit is allowed.
     };
 
 

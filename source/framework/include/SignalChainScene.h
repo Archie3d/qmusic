@@ -11,6 +11,7 @@ class SignalChainPortItem;
 class SignalChainOutputPortItem;
 class SignalChainInputPortItem;
 class SignalChainConnectionItem;
+class SignalChainAudioUnitItem;
 class AudioUnit;
 class AudioUnitPlugin;
 
@@ -44,6 +45,14 @@ public:
      * @return Pointer to signal chain item or null if none.
      */
     SignalChainItem* signalChainItemAtPos(const QPointF &pos) const;
+
+    /**
+     * Find an existing instance of the audio unit on scene.
+     * Only the first found item is returned.
+     * @param uid Audio unit UID.
+     * @return Poiter to foud item or null of not found.
+     */
+    SignalChainAudioUnitItem* findAudioUnitInstance(const QString &uid);
 
     /**
      * Save this scene to a file.

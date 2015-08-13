@@ -124,7 +124,7 @@ void SpeakerThreadObject::setDspLoad(float l)
     float dl = fabs(m_dspLoad - l);
     if (dl >= 0.05) {
         // Do some averaging to filter rapid changes
-        m_dspLoad = m_dspLoad * 0.95 + l * 0.05;
+        m_dspLoad = m_dspLoad * 0.8 + l * 0.2;
         emit dspLoadChanged(m_dspLoad);
     }
 }

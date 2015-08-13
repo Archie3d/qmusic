@@ -61,12 +61,27 @@ void SignalChainSceneSelection::putOnScene(SignalChainScene *pScene, const QPoin
     // Unselect items on scene.
     pScene->selectAll(false);
 
+    // Items to be removed from the scene after
+    QList<SignalChainAudioUnitItem*> itemsToDelete;
+
     // Put audio unit items
     foreach (SignalChainAudioUnitItem *pAuItem, m_audioUnitItems) {
-        pScene->signalChain()->addAudioUnit(pAuItem->audioUnit());
-        pAuItem->moveBy(pos.x(), pos.y());
-        pScene->addItem(pAuItem);
-        pAuItem->setSelected(true); // Select the unit put on scene
+        bool itemWillBeDeleted = false;
+        if (pAuItem->audioUnit()->flags() && IAudioUnit::Flag_SingleInstance) {
+            QString uid = pAuItem->audioUnit()->uid();
+            SignalChainAudioUnitItem *pExistingAuItem = pScene->findAudioUnitInstance(uid);
+            if (pExistingAuItem != nullptr) {
+                itemsToDelete.append(pAuItem);
+                itemWillBeDeleted = true;
+            }
+        }
+
+        if (!itemWillBeDeleted) {
+            pScene->signalChain()->addAudioUnit(pAuItem->audioUnit());
+            pAuItem->moveBy(pos.x(), pos.y());
+            pScene->addItem(pAuItem);
+            pAuItem->setSelected(true); // Select the unit put on scene
+        }
     }
 
     // Establish connections
@@ -75,6 +90,9 @@ void SignalChainSceneSelection::putOnScene(SignalChainScene *pScene, const QPoin
         SignalChainInputPortItem *pInputPortItem = conn.pTargetAudioUnitItem->inputPortItems().at(conn.targetPortIndex);
         pScene->connectPorts(pOutputPortItem, pInputPortItem);
     }
+
+    // Remove items to be deleted
+    qDeleteAll(itemsToDelete);
 
     // Refresh the scene.
     pScene->update();

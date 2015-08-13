@@ -17,6 +17,8 @@ public:
 
     QColor color() const override;
 
+    int flags() const override { return Flag_SingleInstance; }
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);

@@ -17,6 +17,8 @@ public:
 
     QColor color() const override;
 
+    int flags() const override { return Flag_SingleInstance; }
+
     void processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples) override;
 
 protected:
