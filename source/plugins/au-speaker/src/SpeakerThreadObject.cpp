@@ -103,7 +103,10 @@ void SpeakerThreadObject::generateSamples()
 
     if (available < m_bufferSize / 2) {
         // If availability is low, trigger timer
-        emit continueGenerateSamples();
+        //emit continueGenerateSamples(); // This will behave as busy waiting with 100% CPU code load
+
+        // Add some sleep time to unload CPU
+        QTimer::singleShot(1, this, SLOT(generateSamples()));
     } else {
 
         double realTimeUs = m_pSignalChain->timeStep() * available * 1.0e6;
@@ -145,7 +148,7 @@ void SpeakerThreadObject::setDspLoad(float l)
     float dl = fabs(m_dspLoad - l);
     if (dl >= 0.05) {
         // Do some averaging to filter rapid changes
-        m_dspLoad = m_dspLoad * 0.8 + l * 0.2;
+        m_dspLoad = m_dspLoad * 0.9 + l * 0.1;
         emit dspLoadChanged(m_dspLoad);
     }
 }
