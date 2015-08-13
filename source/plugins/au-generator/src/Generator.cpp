@@ -8,6 +8,8 @@
 
 const QColor cDefaultColor(140, 200, 180);
 
+const int cMaxHarmonics(32);
+
 // Naive sawtooth generator implementation
 float sawtooth(float phase)
 {
@@ -18,6 +20,7 @@ float sawtooth(float phase)
 float bpl_sawtooth(float phase, float delta)
 {
     int n = 0.5 / delta;
+    n = qMin(n, cMaxHarmonics);
     float k = M_PI / 2.0 / n;
 
     float x = phase * 2.0 * M_PI;
@@ -40,6 +43,7 @@ float triangle(float phase)
 float bpl_triangle(float phase, float delta)
 {
     int n = 0.25 / delta;
+    n = qMin(n, cMaxHarmonics);
     float k = M_PI / 2.0 / n;
 
     float x = phase * 2.0 * M_PI;
@@ -64,6 +68,7 @@ float square(float phase)
 float bpl_square(float phase, float delta)
 {
     int n = 0.25 / delta;
+    n = qMin(n, 2*cMaxHarmonics);
     float k = M_PI / 2.0 / n;
 
     float x = phase * 2.0 * M_PI;

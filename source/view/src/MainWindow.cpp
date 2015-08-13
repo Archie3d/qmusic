@@ -176,6 +176,7 @@ void MainWindow::stopSignalChain()
     m_pSignalChainWidget->scene()->signalChain()->stop();
     updateActions();
     m_pDspLoadBar->setValue(0);
+    m_pSpectrumWindow->reset();
     logInfo(tr("Synthesizer stopped"));
 }
 

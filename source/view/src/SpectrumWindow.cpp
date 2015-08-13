@@ -8,6 +8,8 @@
 #include "SpectrumWindow.h"
 
 const QColor cSpectrumColor("navy");
+const float cMaxFrequency(20000.0f);
+const QFont cAxisFont("Verdana", 7);
 
 SpectrumWindow::SpectrumWindow(QWidget *pParent)
     : QDockWidget(pParent)
@@ -19,7 +21,15 @@ SpectrumWindow::SpectrumWindow(QWidget *pParent)
     m_pPlot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_pPlot->setMinimumSize(0, 0);
     m_pPlot->setBaseSize(0, 0);
+    m_pPlot->enableAxis(QwtPlot::xBottom, true);
     m_pPlot->enableAxis(QwtPlot::yLeft, false);
+    m_pPlot->setAxisAutoScale(QwtPlot::xBottom, false);
+    m_pPlot->setAxisScale(QwtPlot::xBottom, 0.0, cMaxFrequency);
+    m_pPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
+    m_pPlot->setAxisAutoScale(QwtPlot::yLeft, false);
+    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
+    m_yAxisScale = 1.0;
+
 
     QwtPlotGrid *pGrid = new QwtPlotGrid();
     pGrid->enableXMin(true);
@@ -54,6 +64,14 @@ void SpectrumWindow::plotSpectrum(const QVector<float> &signal)
     plotCurve(curve);
 }
 
+void SpectrumWindow::reset()
+{
+    m_pCurve->setSamples(QVector<QPointF>());
+
+    m_yAxisScale = 1.0;
+    updateYAxisScale();
+}
+
 void SpectrumWindow::plotCurve(const QVector<float> &curve)
 {
     QVector<QPointF> samples;
@@ -61,11 +79,25 @@ void SpectrumWindow::plotCurve(const QVector<float> &curve)
     float sampleRate = Application::instance()->audioOutputDevice()->openDeviceInfo().sampleRate;
     float df = sampleRate / 2.0f / curve.size();
 
-    for (int i = 0; i < curve.size(); i++) {
-        samples.append(QPointF(df * i, curve.at(i)));
+    m_yAxisScale = 1.0f;
+
+    int i = 0;
+    float f = 0.0f;
+    while (i < curve.size() && f <= cMaxFrequency) {
+        samples.append(QPointF(f, curve.at(i)));
+        if (curve.at(i) > m_yAxisScale) {
+            m_yAxisScale = curve.at(i);
+        }
+        f = df * (++i);
     }
 
     m_pCurve->setSamples(samples);
 
+    updateYAxisScale();
     m_pPlot->replot();
+}
+
+void SpectrumWindow::updateYAxisScale()
+{
+    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, m_yAxisScale);
 }
