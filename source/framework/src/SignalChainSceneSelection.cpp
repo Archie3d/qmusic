@@ -67,7 +67,7 @@ void SignalChainSceneSelection::putOnScene(SignalChainScene *pScene, const QPoin
     // Put audio unit items
     foreach (SignalChainAudioUnitItem *pAuItem, m_audioUnitItems) {
         bool itemWillBeDeleted = false;
-        if (pAuItem->audioUnit()->flags() && IAudioUnit::Flag_SingleInstance) {
+        if ((pAuItem->audioUnit()->flags() & IAudioUnit::Flag_SingleInstance) != 0) {
             QString uid = pAuItem->audioUnit()->uid();
             SignalChainAudioUnitItem *pExistingAuItem = pScene->findAudioUnitInstance(uid);
             if (pExistingAuItem != nullptr) {
