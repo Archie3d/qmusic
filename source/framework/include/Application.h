@@ -24,6 +24,9 @@ public:
     /// Company string.
     const static QString Company;
 
+    /// Company domain.
+    const static QString Domain;
+
     /// Product name.
     const static QString Product;
 

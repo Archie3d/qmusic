@@ -58,8 +58,9 @@ private:
     void createActions();
     void createMenu();
     void createToolBars();
-
     void updateActions();
+    void saveSettings();
+    void loadSettings();
 
     LogWindow *m_pLogWindow;    
     AudioUnitsManagerWindow *m_pAudioUnitsManagerWindow;

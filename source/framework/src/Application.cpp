@@ -10,6 +10,7 @@
 #include "Application.h"
 
 const QString Application::Company("Archie3d");
+const QString Application::Domain("archie3d.net");
 const QString Application::Product("QMusic");
 
 // Application instamce
@@ -42,6 +43,10 @@ Application::Application(int argc, char **argv)
       m_pMainWindow(nullptr)
 {
     Q_ASSERT(s_pApplicationInstance == nullptr);
+
+    setOrganizationName(Company);
+    setOrganizationDomain(Domain);
+    setApplicationName(Product);
 
     m_pLogger = new Logger(this);
     m_pAudioInputDevice = new AudioDevice();

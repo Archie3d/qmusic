@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QSettings>
 #include <QAction>
 #include <QCloseEvent>
 #include <QMenuBar>
@@ -22,6 +23,7 @@
 MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     : QMainWindow(pParent, flags)
 {
+    setObjectName("mainWindow");
     setWindowIcon(QIcon(":/icons/qmusic.png"));
 
     createDockingWindows();
@@ -36,9 +38,11 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     connect(m_pSignalChainWidget, SIGNAL(audioUnitSelected(AudioUnit*)),
             m_pAudioUnitPropertiesWindow, SLOT(handleAudioUnitSelected(AudioUnit*)));
 
-    updateActions();
 
     resize(1280, 800);
+    loadSettings();
+
+    updateActions();    
 
     logInfo(tr("*** <b>%1</b> version %2 ***")
             .arg(Application::Product)
@@ -100,6 +104,8 @@ void MainWindow::closeEvent(QCloseEvent *pEvent)
     }
 
     stopSignalChain();
+
+    saveSettings();
 
     QMainWindow::closeEvent(pEvent);
 }
@@ -292,4 +298,18 @@ void MainWindow::updateActions()
     m_pStartSignalChainAction->setVisible(!isStarted);
     m_pStopSignalChainAction->setVisible(isStarted);
     m_pSettingsAction->setEnabled(!isStarted);
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings settings;
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
 }
