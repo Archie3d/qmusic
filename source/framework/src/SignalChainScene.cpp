@@ -21,6 +21,7 @@
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
+const QColor cGridColor(250, 250, 250);
 
 const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
@@ -323,11 +324,15 @@ void SignalChainScene::keyPressEvent(QKeyEvent *pEvent)
 
 void SignalChainScene::drawBackground(QPainter *pPainter, const QRectF &rect)
 {
-    QPainter::RenderHints hints = pPainter->renderHints();
+    pPainter->save();
     pPainter->setRenderHint(QPainter::Antialiasing, false);
+
+    qreal scale = pPainter->transform().m11();
+
     QPen pen;
-    pen.setWidth(1);
-    pPainter->setPen(QColor(240, 240, 240));
+    pen.setWidthF(1.0 / scale);
+    pen.setColor(cGridColor);
+    pPainter->setPen(pen);
 
     int top = qRound(rect.top() / cGridSize.height()) * cGridSize.height();
     int left = qRound(rect.left() / cGridSize.width()) * cGridSize.width();
@@ -345,7 +350,7 @@ void SignalChainScene::drawBackground(QPainter *pPainter, const QRectF &rect)
         pPainter->drawLine(x, top, x, bottom);
     }
 
-    pPainter->setRenderHints(hints);
+    pPainter->restore();
 }
 
 void SignalChainScene::onSelectionChanged()

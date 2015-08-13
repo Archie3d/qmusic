@@ -45,6 +45,7 @@ void SignalChainWidget::load(const QString &path)
 {
     SignalChainScene *pLoadedScene = SignalChainScene::loadFromFile(path);
     if (pLoadedScene != nullptr) {
+        resetZoom();
         setScene(pLoadedScene);
     }
     m_signalChainSceneFile = path;
@@ -52,7 +53,9 @@ void SignalChainWidget::load(const QString &path)
 
 void SignalChainWidget::newSignalChainScene()
 {
+    resetZoom();
     setScene(new SignalChainScene());
+
     m_signalChainSceneFile.clear();
 }
 

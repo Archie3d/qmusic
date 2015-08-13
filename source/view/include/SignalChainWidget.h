@@ -16,17 +16,39 @@ class QMUSIC_VIEW_API SignalChainWidget : public QWidget
 
 public:
 
+    /**
+     * Construct signal chain widget.
+     * This will create a new signal chain, its scene and the view.
+     * @param pParent
+     */
     SignalChainWidget(QWidget *pParent = nullptr);
 
     SignalChainScene* scene() const { return m_pSignalChainScene; }
 
+    /**
+     * Returns name of the file where the scene has been saved or loaded from.
+     * @return
+     */
     QString sceneFile() const { return m_signalChainSceneFile; }
 
+    /**
+     * Save signal chain scene.
+     * @param path File path.
+     */
     void save(const QString &path);
+
+    /**
+     * Load signal chain scene from file.
+     * @param path File path.
+     */
     void load(const QString &path);
 
 public slots:
 
+    /**
+     * Create a new signal chain, and the scene.
+     * This will delete currently existing signal chain and the scene.
+     */
     void newSignalChainScene();
 
     /**
@@ -42,6 +64,10 @@ public slots:
 
 signals:
 
+    /**
+     * Notify audio unit selection.
+     * @param pAu Pointer to selected audio unit.
+     */
     void audioUnitSelected(AudioUnit* pAu);
 
 protected:
