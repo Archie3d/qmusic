@@ -29,9 +29,30 @@ public slots:
 
     void newSignalChainScene();
 
+    /**
+     * Zoom the signal chain view.
+     * @param factor Zoom factor.
+     */
+    void zoom(qreal factor);
+
+    /**
+     * Reset zoom to 100%.
+     */
+    void resetZoom();
+
 signals:
 
     void audioUnitSelected(AudioUnit* pAu);
+
+protected:
+
+    /**
+     * Handle events from the view.
+     * @param pObject
+     * @param pEvent
+     * @return
+     */
+    bool eventFilter(QObject *pObject, QEvent *pEvent);
 
 private slots:
 
@@ -45,6 +66,11 @@ private:
     QString m_signalChainSceneFile;         ///< Saved signal chain file path.
     QGraphicsView *m_pSignalChainView;      ///< Signal chain view.
     SignalChainScene *m_pSignalChainScene;  ///< Signal chain scene.
+
+    // Used for zooming
+    qreal m_baseZoomFactor;
+    QPointF m_targetScenePos;
+    QPointF m_targetViewportPos;
 };
 
 #endif // SIGNALCHAINVIEW_H

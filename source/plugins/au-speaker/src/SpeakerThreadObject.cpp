@@ -87,8 +87,7 @@ void SpeakerThreadObject::generateSamples()
 
     if (available < m_bufferSize / 2) {
         // If availability is low, trigger timer
-        QMetaObject::invokeMethod(this, "generateSamples", Qt::QueuedConnection);
-        //QTimer::singleShot(1, this, SLOT(generateSamples()));
+        emit continueGenerateSamples();
     } else {
 
         double realTimeUs = m_pSignalChain->timeStep() * available * 1.0e6;
