@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-stk-brass">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

@@ -78,14 +78,15 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
     case MidiMessage::Status_NoteOn:
         m_noteOn = true;
         m_frequency = MidiNote(msg.noteNumber()).frequency();
-        m_velocity = msg.velocity();
+        m_velocity = float(msg.velocity()) / 127.0f;
         m_noteNumber = msg.noteNumber();
         break;
     case MidiMessage::Status_NoteOff:
         if (m_noteNumber == msg.noteNumber()) {
             m_noteOn = false;
+            m_velocity = float(msg.velocity()) / 127.0f;
             //m_frequency = MidiNote(msg.noteNumber()).frequency();
-            //m_velocity = double(msg.velocity()) / 127.0;
+
         }
         break;
     case MidiMessage::Status_PitchBend: {

@@ -1,4 +1,5 @@
 add_subdirectory(asiosdk-2.3)
 add_subdirectory(portaudio-v19)
+add_subdirectory(stk-4.5.0)
 add_subdirectory(qwt-6.1.2)
 add_subdirectory(qtpropertybrowser)

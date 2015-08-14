@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-stk-beethree">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

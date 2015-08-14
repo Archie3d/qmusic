@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-stk-guitar">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
