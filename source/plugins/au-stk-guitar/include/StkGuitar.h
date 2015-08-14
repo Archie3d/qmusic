@@ -38,6 +38,7 @@ private:
     OutputPort *m_pOutput;
 
     bool m_noteOn;
+    float m_freq;
 
     QtVariantProperty *m_pPropPluckPosition;
     QtVariantProperty *m_pPropLoopGain;

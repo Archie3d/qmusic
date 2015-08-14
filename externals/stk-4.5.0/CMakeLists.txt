@@ -8,6 +8,8 @@ set(USE_QT FALSE)
 
 include(build_library)
 
+add_definitions(-D__LITTLE_ENDIAN__)
+
 if(WIN32)
     add_definitions(-D__WINDOWS_MM__)
 

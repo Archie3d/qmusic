@@ -5,6 +5,8 @@
 #include "ISignalChain.h"
 #include "StkGuitar.h"
 
+const float cMinFrequency(8.0f);
+
 StkGuitar::StkGuitar(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
@@ -48,6 +50,7 @@ void StkGuitar::processStart()
     m_pGuitar->setPluckPosition(m_pPropPluckPosition->value().toDouble());
     m_pGuitar->setLoopGain(m_pPropLoopGain->value().toDouble());
     m_noteOn = false;
+    m_freq = 0.0f;
 }
 
 void StkGuitar::processStop()
@@ -61,6 +64,10 @@ void StkGuitar::process()
     float freq = m_pInputFreq->value().asFloat;
     float amp = m_pInputVelocity->value().asFloat;
 
+    if (freq < cMinFrequency) {
+        return;
+    }
+
     if (noteOn && !m_noteOn) {
         // Note goes on
         m_pGuitar->noteOn(freq, amp);
@@ -71,6 +78,7 @@ void StkGuitar::process()
         m_pGuitar->setFrequency(freq);
     }
     m_noteOn = noteOn;
+    m_freq = freq;
 
     float sample = m_pGuitar->tick();
 

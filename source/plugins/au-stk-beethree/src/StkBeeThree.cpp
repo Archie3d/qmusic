@@ -6,6 +6,8 @@
 #include "ISignalChain.h"
 #include "StkBeeThree.h"
 
+const float cMinFrequency(8.0f);
+
 void setCtrlPropertyAttrs(QtVariantProperty *pProp)
 {
     Q_ASSERT(pProp != nullptr);
@@ -82,14 +84,19 @@ void StkBeeThree::process()
         return;
     }
 
-    m_pBeeThree->controlChange(Ctrl_Operator4, m_pPropOperator4->value().toDouble());
-    m_pBeeThree->controlChange(Ctrl_Operator3, m_pPropOperator3->value().toDouble());
-    m_pBeeThree->controlChange(Ctrl_LFOSpeed, m_pPropLFOSpeed->value().toDouble());
-    m_pBeeThree->controlChange(Ctrl_LFODepth, m_pPropLFODepth->value().toDouble());
-
     bool noteOn = m_pInputNoteOn->value().asBool;
     float freq = m_pInputFreq->value().asFloat;
     float amp = m_pInputVelocity->value().asFloat;
+
+    if (freq < cMinFrequency) {
+        return;
+    }
+
+    m_pBeeThree->controlChange(Ctrl_Operator4, 128.0 * m_pPropOperator4->value().toDouble());
+    m_pBeeThree->controlChange(Ctrl_Operator3, 128.0 * m_pPropOperator3->value().toDouble());
+    m_pBeeThree->controlChange(Ctrl_LFOSpeed, 128.0 * m_pPropLFOSpeed->value().toDouble());
+    m_pBeeThree->controlChange(Ctrl_LFODepth, 128.0 * m_pPropLFODepth->value().toDouble());
+
 
     if (noteOn && !m_noteOn) {
         // Note goes on

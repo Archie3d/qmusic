@@ -76,10 +76,15 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
 
     switch (msg.status()) {
     case MidiMessage::Status_NoteOn:
-        m_noteOn = true;
-        m_frequency = MidiNote(msg.noteNumber()).frequency();
-        m_velocity = float(msg.velocity()) / 127.0f;
         m_noteNumber = msg.noteNumber();
+        m_frequency = MidiNote(m_noteNumber).frequency();
+        if (msg.velocity() == 0) {
+            m_velocity = 0.5;
+            m_noteOn = false;
+        } else {
+            m_velocity = float(msg.velocity()) / 127.0f;
+            m_noteOn = true;
+        }
         break;
     case MidiMessage::Status_NoteOff:
         if (m_noteNumber == msg.noteNumber()) {

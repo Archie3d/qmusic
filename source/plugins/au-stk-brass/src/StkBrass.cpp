@@ -6,7 +6,7 @@
 #include "ISignalChain.h"
 #include "StkBrass.h"
 
-const float cLowestFrequency(8.0);
+const float cLowestFrequency(50.0);
 
 void setCtrlPropertyAttrs(QtVariantProperty *pProp)
 {
@@ -84,9 +84,14 @@ void StkBrass::process()
 
     bool noteOn = m_pInputNoteOn->value().asBool;
     float freq = m_pInputFreq->value().asFloat;
-    freq = qMax(freq, 2.0f * cLowestFrequency);
     float amp = m_pInputVelocity->value().asFloat;
     float breath = m_pInputBreath->value().asFloat;
+
+    m_pBrass->controlChange(Ctrl_BreathPressure, 128.0 * breath);
+
+    if (freq < cLowestFrequency) {
+        return;
+    }
 
     if (noteOn && !m_noteOn) {
         // Note goes on
@@ -97,7 +102,6 @@ void StkBrass::process()
     } else {
         m_pBrass->setFrequency(freq);
     }
-    m_pBrass->controlChange(Ctrl_BreathPressure, 128.0 * breath);
 
     m_noteOn = noteOn;
 
