@@ -23,6 +23,11 @@ public:
     MainWindow(QWidget *pParent = nullptr, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
+    LogWindow* logWindow() const { return m_pLogWindow; }
+    AudioUnitsManagerWindow* audioUnitsManagerWindow() const { return m_pAudioUnitsManagerWindow; }
+    AudioUnitPropertiesWindow* audioUnitPropertiesWindow() const { return m_pAudioUnitPropertiesWindow; }
+    SpectrumWindow* spectrumWindow() const { return m_pSpectrumWindow; }
+
 public slots:
 
     /**
@@ -30,12 +35,6 @@ public slots:
      * @param l Load, [0..1].
      */
     void updateDspLoad(float l);
-
-    void updateSpectrum(const float *pSignal, int size);
-
-signals:
-
-    void spectrumUpdated();
 
 protected:
 

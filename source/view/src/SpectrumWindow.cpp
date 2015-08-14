@@ -11,8 +11,12 @@ const QColor cSpectrumColor("navy");
 const float cMaxFrequency(20000.0f);
 const QFont cAxisFont("Verdana", 7);
 
+// Number of samples used to compute spectrum
+const int cSignalSize(4096);
+
 SpectrumWindow::SpectrumWindow(QWidget *pParent)
-    : QDockWidget(pParent)
+    : QDockWidget(pParent),
+      m_signal(cSignalSize, 0.0f)
 {
     setObjectName("spectrumWindow");
     setWindowTitle(tr("Spectrum"));
@@ -47,11 +51,11 @@ SpectrumWindow::SpectrumWindow(QWidget *pParent)
     setWidget(m_pPlot);
 }
 
-void SpectrumWindow::plotSpectrum(const QVector<float> &signal)
+void SpectrumWindow::plotSpectrum()
 {
-    Fft::Array input(signal.size());
-    for (int i = 0; i < signal.size(); i++) {
-        input[i] = signal.at(i);
+    Fft::Array input(m_signal.size());
+    for (int i = 0; i < m_signal.size(); i++) {
+        input[i] = m_signal.at(i);
     }
 
     Fft::direct(input);
@@ -70,6 +74,12 @@ void SpectrumWindow::reset()
 
     m_yAxisScale = 1.0;
     updateYAxisScale();
+}
+
+void SpectrumWindow::updateSpectrum()
+{
+    plotSpectrum();
+    emit spectrumUpdated();
 }
 
 void SpectrumWindow::plotCurve(const QVector<float> &curve)

@@ -5,8 +5,6 @@
 #include "AudioBuffer.h"
 #include "SpeakerThreadObject.h"
 
-#define SIGNAL_SIZE (4096)
-
 SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     : QObject(pParent),
       m_bufferSize(bufferSize)
@@ -16,7 +14,7 @@ SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     m_pRightBuffer = new AudioBuffer(bufferSize * 2);
     m_pLeftData = new float[bufferSize * 2];
     m_pRightData = new float[bufferSize * 2];
-    m_pSignalBuffer = new float[SIGNAL_SIZE];
+    m_pSignalBuffer = nullptr;
     m_signalIndex = 0;
     m_singnalUpdateRequested = false;
 
@@ -34,7 +32,6 @@ SpeakerThreadObject::~SpeakerThreadObject()
     delete m_pRightBuffer;
     delete[] m_pLeftData;
     delete[] m_pRightData;
-    delete[] m_pSignalBuffer;
 }
 
 void SpeakerThreadObject::setSignalChain(ISignalChain *pSignalChain)
@@ -53,6 +50,8 @@ void SpeakerThreadObject::setInputPorts(InputPort *pLeft, InputPort *pRight)
 
 void SpeakerThreadObject::start()
 {
+    Q_ASSERT(m_pSignalBuffer != nullptr);
+
     QMutexLocker lock(&m_mutex);
     m_started = true;
     m_firstBuffer = true;
@@ -61,7 +60,8 @@ void SpeakerThreadObject::start()
     m_dspLoad = 0.0;
     setDspLoad(0.0f);
     m_signalIndex = 0;
-    memset(m_pSignalBuffer, 0, sizeof(float) * SIGNAL_SIZE);
+    m_pSignalBuffer->fill(0.0f);
+
     emit started();
 }
 
@@ -102,12 +102,21 @@ void SpeakerThreadObject::generateSamples()
     available = qMin(available, m_pRightBuffer->availableToWrite());
 
     if (available < m_bufferSize / 2) {
-        // If availability is low, trigger timer
+        // If availability is low, trigger timer        
         //emit continueGenerateSamples(); // This will behave as busy waiting with 100% CPU code load
 
-        // Add some sleep time to unload CPU
-        QTimer::singleShot(1, this, SLOT(generateSamples()));
+        // Add some sleep time waiting for buffer
+        QTimer::singleShot(500 * m_pSignalChain->timeStep() * m_bufferSize, this, SLOT(generateSamples()));
+        return;
     } else {
+
+        // NOTE:
+        // On Windows 7 the time measurement floats considerably if the process
+        // does not receive system messages frequently.
+        // This can be fixed by flooding the event loop (emit continueGenerateSamples as shown above).
+        // This will however increates the CPU core usage to 100%.
+        //
+        // Windows 8 seems to provide accurate time measurements.
 
         double realTimeUs = m_pSignalChain->timeStep() * available * 1.0e6;
 
@@ -116,9 +125,9 @@ void SpeakerThreadObject::generateSamples()
             m_pSignalChain->prepareUpdate();
             m_pLeftData[i] = getNextLeftChannelSample();
             m_pRightData[i] = getNextRightChannelSample();
-            if (m_signalIndex < SIGNAL_SIZE) {
+            if (m_signalIndex < m_pSignalBuffer->size()) {
                 float s = 0.5 * (m_pLeftData[i] + m_pRightData[i]);
-                m_pSignalBuffer[m_signalIndex++] = s;
+                (*m_pSignalBuffer)[m_signalIndex++] = s;
             }
         }
         m_pLeftBuffer->write(m_pLeftData, available);
@@ -129,7 +138,7 @@ void SpeakerThreadObject::generateSamples()
         double dspTimeUs = double(std::chrono::duration_cast<std::chrono::microseconds>(processingTime).count());
         setDspLoad(dspTimeUs / realTimeUs);
 
-        if (m_signalIndex >= SIGNAL_SIZE && !isSignalUpdateRequested()) {
+        if (m_signalIndex >= m_pSignalBuffer->size() && !isSignalUpdateRequested()) {
             requestSignalUpdate();
         }
 
@@ -155,5 +164,5 @@ void SpeakerThreadObject::setDspLoad(float l)
 
 void SpeakerThreadObject::requestSignalUpdate()
 {
-    emit signalChanged(m_pSignalBuffer, SIGNAL_SIZE);
+    emit signalChanged();
 }

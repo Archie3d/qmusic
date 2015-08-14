@@ -76,17 +76,6 @@ void MainWindow::updateDspLoad(float l)
     }
 }
 
-void MainWindow::updateSpectrum(const float *pSignal, int size)
-{
-    QVector<float> signal(size);
-    for (int i = 0; i < size; i++) {
-        signal[i] = pSignal[i];
-    }
-    m_pSpectrumWindow->plotSpectrum(signal);
-
-    emit spectrumUpdated();
-}
-
 void MainWindow::closeEvent(QCloseEvent *pEvent)
 {
     int ret = QMessageBox::question(

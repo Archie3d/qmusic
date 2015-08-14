@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QVector>
 #include "InputPort.h"
 
 class ISignalChain;
@@ -19,6 +20,8 @@ public:
 
     SpeakerThreadObject(long bufferSize, QObject *pParent = nullptr);
     ~SpeakerThreadObject();
+
+    void setSignalBuffer(QVector<float> *pBuffer) { m_pSignalBuffer = pBuffer; }
 
     AudioBuffer* leftChannelBuffer() const { return m_pLeftBuffer; }
     AudioBuffer* rightChannelBuffer() const { return m_pRightBuffer; }
@@ -47,7 +50,7 @@ signals:
      */
     void dspLoadChanged(float l);
 
-    void signalChanged(const float *s, int size);
+    void signalChanged();
 
 private slots:
 
@@ -80,7 +83,7 @@ private:
     float m_dspLoad;
 
     /// Signal waveform used for spectrum update
-    float *m_pSignalBuffer;
+    QVector<float> *m_pSignalBuffer;
     int m_signalIndex;
     bool m_singnalUpdateRequested;
 

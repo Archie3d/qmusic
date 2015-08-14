@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "ISignalChain.h"
 #include "MainWindow.h"
+#include "SpectrumWindow.h"
 #include "SpeakerThreadObject.h"
 #include "Speaker.h"
 
@@ -26,14 +27,19 @@ Speaker::Speaker(AudioUnitPlugin *pPlugin)
 
     Application::instance()->audioOutputDevice()->addListener(this);
 
-    // Connect DSL load signal with the main GUI
+    // Connect DSP load signal and raw signal data (for spectrum plotting) with the main GUI
     MainWindow *pMainWindow = dynamic_cast<MainWindow*>(Application::instance()->mainWindow());
     if (pMainWindow != nullptr) {
+        SpectrumWindow *pSpectrumWindow = pMainWindow->spectrumWindow();
+        Q_ASSERT(pSpectrumWindow != nullptr);
+
+        m_pThreadObject->setSignalBuffer(&pMainWindow->spectrumWindow()->signal());
+
         QObject::connect(m_pThreadObject, SIGNAL(dspLoadChanged(float)),
                          pMainWindow, SLOT(updateDspLoad(float)), Qt::QueuedConnection);
-        QObject::connect(m_pThreadObject, SIGNAL(signalChanged(const float*,int)),
-                         pMainWindow, SLOT(updateSpectrum(const float*,int)));
-        QObject::connect(pMainWindow, SIGNAL(spectrumUpdated()),
+        QObject::connect(m_pThreadObject, SIGNAL(signalChanged()),
+                         pSpectrumWindow, SLOT(updateSpectrum()));
+        QObject::connect(pSpectrumWindow, SIGNAL(spectrumUpdated()),
                          m_pThreadObject, SLOT(signalUpdateOver()));
     }
 }
@@ -57,7 +63,6 @@ QColor Speaker::color() const
 void Speaker::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
 {
     Q_UNUSED(pInputBuffer);
-
 
     long length = leftBuffer()->availableToRead();
     length = qMin(length, rightBuffer()->availableToRead());

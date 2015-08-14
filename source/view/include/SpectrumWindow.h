@@ -2,6 +2,7 @@
 #define SPECTRUMWINDOW_H
 
 #include <QDockWidget>
+#include <QVector>
 #include "ViewApi.h"
 
 class QwtPlot;
@@ -14,15 +15,29 @@ public:
 
     SpectrumWindow(QWidget *pParent = nullptr);
 
-    void plotSpectrum(const QVector<float> &signal);
+    void plotSpectrum();
 
     void reset();
+
+    const QVector<float>& signal() const { return m_signal; }
+    QVector<float>& signal() { return m_signal; }
+
+public slots:
+
+    void updateSpectrum();
+
+signals:
+
+    void spectrumUpdated();
 
 private:
 
     void plotCurve(const QVector<float> &curve);
 
     void updateYAxisScale();
+
+    /// Incoming signal.
+    QVector<float> m_signal;
 
     QwtPlot *m_pPlot;
     QwtPlotCurve *m_pCurve;
