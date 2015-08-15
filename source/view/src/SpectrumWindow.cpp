@@ -95,9 +95,7 @@ void SpectrumWindow::plotCurve(const QVector<float> &curve)
     float f = 0.0f;
     while (i < curve.size() && f <= cMaxFrequency) {
         samples.append(QPointF(f, curve.at(i)));
-        if (curve.at(i) > m_yAxisScale) {
-            m_yAxisScale = curve.at(i);
-        }
+        m_yAxisScale = qMax(m_yAxisScale, curve.at(i));
         f = df * (++i);
     }
 
@@ -108,6 +106,6 @@ void SpectrumWindow::plotCurve(const QVector<float> &curve)
 }
 
 void SpectrumWindow::updateYAxisScale()
-{
-    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, m_yAxisScale);
+{    
+    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, qMin(100.0f, m_yAxisScale));
 }
