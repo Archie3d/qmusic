@@ -80,6 +80,7 @@ void Constant::createProperties()
     QtVariantProperty *pRoot = rootProperty();
     m_pPropConstant = propertyManager()->addProperty(QVariant::Double, "Value");
     m_pPropConstant->setValue(0.0);
+    m_pPropConstant->setAttribute("singleStep", 0.1);
 
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
         // Update text item with the value for the property.

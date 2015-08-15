@@ -13,8 +13,18 @@ class StkGuitar : public AudioUnit
 {
 public:
 
+    enum {
+        Ctrl_CouplingGain = 2,
+        Ctrl_PickPosition = 4,
+        Ctrl_StringDumping = 11,
+        Ctrl_Modulation = 1,
+        Ctrl_Aftertouch = 128
+    };
+
     StkGuitar(AudioUnitPlugin *pPlugin);
     ~StkGuitar();
+
+    QColor color() const override { return QColor(250, 240, 255); }
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
@@ -38,10 +48,9 @@ private:
     OutputPort *m_pOutput;
 
     bool m_noteOn;
-    float m_freq;
 
-    QtVariantProperty *m_pPropPluckPosition;
-    QtVariantProperty *m_pPropLoopGain;
+    QtVariantProperty *m_pPropPickPosition;
+    QtVariantProperty *m_pPropStringDumping;
 
     stk::Guitar *m_pGuitar;
 };

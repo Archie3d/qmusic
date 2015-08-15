@@ -16,6 +16,8 @@ public:
     StkRhodey(AudioUnitPlugin *pPlugin);
     ~StkRhodey();
 
+    QColor color() const override { return QColor(250, 240, 255); }
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);

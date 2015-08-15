@@ -5,7 +5,16 @@
 #include "ISignalChain.h"
 #include "StkGuitar.h"
 
-const float cMinFrequency(8.0f);
+const float cMinFrequency(50.0f);
+
+void setCtrlPropertyAttrs(QtVariantProperty *pProp, double v = 0.5, double min = 0.0, double max = 1.0)
+{
+    Q_ASSERT(pProp != nullptr);
+    pProp->setAttribute("minimum", min);
+    pProp->setAttribute("maximum", max);
+    pProp->setAttribute("singleStep", 0.1);
+    pProp->setValue(v);
+}
 
 StkGuitar::StkGuitar(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
@@ -31,26 +40,23 @@ StkGuitar::~StkGuitar()
 void StkGuitar::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
-    data["pluckPosition"] = m_pPropPluckPosition->value();
-    data["loopGain"] = m_pPropLoopGain->value();
+    data["pickPosition"] = m_pPropPickPosition->value();
+    data["stringDumping"] = m_pPropStringDumping->value();
     AudioUnit::serialize(data, pContext);
 }
 
 void StkGuitar::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
-    m_pPropPluckPosition->setValue(data["pluckPosition"]);
-    m_pPropLoopGain->setValue(data["loopGain"]);
+    m_pPropPickPosition->setValue(data["pickPosition"]);
+    m_pPropStringDumping->setValue(data["stringDumping"]);
     AudioUnit::deserialize(data, pContext);
 }
 
 void StkGuitar::processStart()
 {
     m_pGuitar->setSampleRate(signalChain()->sampleRate());
-    m_pGuitar->setPluckPosition(m_pPropPluckPosition->value().toDouble());
-    m_pGuitar->setLoopGain(m_pPropLoopGain->value().toDouble());
     m_noteOn = false;
-    m_freq = 0.0f;
 }
 
 void StkGuitar::processStop()
@@ -68,6 +74,9 @@ void StkGuitar::process()
         return;
     }
 
+    m_pGuitar->controlChange(Ctrl_PickPosition, 128.0 * m_pPropPickPosition->value().toDouble());
+    m_pGuitar->controlChange(Ctrl_StringDumping, 128.0 * m_pPropStringDumping->value().toDouble());
+
     if (noteOn && !m_noteOn) {
         // Note goes on
         m_pGuitar->noteOn(freq, amp);
@@ -78,7 +87,6 @@ void StkGuitar::process()
         m_pGuitar->setFrequency(freq);
     }
     m_noteOn = noteOn;
-    m_freq = freq;
 
     float sample = m_pGuitar->tick();
 
@@ -94,17 +102,13 @@ void StkGuitar::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
 
-    m_pPropPluckPosition = propertyManager()->addProperty(QVariant::Double, "Pluck position");
-    m_pPropPluckPosition->setAttribute("minimum", 0.0);
-    m_pPropPluckPosition->setAttribute("maximum", 100.0);
-    m_pPropPluckPosition->setAttribute("singleStep", 0.1);
-    m_pPropPluckPosition->setValue(0.5);
+    m_pPropPickPosition = propertyManager()->addProperty(QVariant::Double, "Pick position");
+    setCtrlPropertyAttrs(m_pPropPickPosition, 0.5, 0.01, 1.0);
 
-    m_pPropLoopGain = propertyManager()->addProperty(QVariant::Double, "Loop gain");
-    m_pPropLoopGain->setAttribute("minimum", 0.0);
-    m_pPropLoopGain->setAttribute("maximum", 1.0);
-    m_pPropLoopGain->setValue(0.5);
+    m_pPropStringDumping = propertyManager()->addProperty(QVariant::Double, "String dumping");
+    setCtrlPropertyAttrs(m_pPropStringDumping, 0.5, 0.0, 0.99);
 
-    pRoot->addSubProperty(m_pPropPluckPosition);
-    pRoot->addSubProperty(m_pPropLoopGain);
+
+    pRoot->addSubProperty(m_pPropPickPosition);
+    pRoot->addSubProperty(m_pPropStringDumping);
 }
