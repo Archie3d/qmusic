@@ -9,6 +9,9 @@ and synthesis signal chains.
 CMake is required to configure and build the project.
 QMusic depends on Qt 5.x framework.
 
+# Playing
+There are some examples provided in **patches** folder of the source tree.
+
 # Limitations
 Polyphonic synthesis is not implemented currently.
 
