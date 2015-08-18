@@ -24,6 +24,8 @@
 #include "SignalChainEvent.h"
 #include "Envelope.h"
 
+const QColor cDefaultColor(230, 240, 210);
+
 void setDefaultAttrs(QtVariantProperty *pProp)
 {
     pProp->setAttribute("decimals", 2);
@@ -57,6 +59,11 @@ void Envelope::handleEvent(SignalChainEvent *pEvent)
             setState(State_Release);
         }
     }
+}
+
+QColor Envelope::color() const
+{
+    return cDefaultColor;
 }
 
 void Envelope::serialize(QVariantMap &data, SerializationContext *pContext) const

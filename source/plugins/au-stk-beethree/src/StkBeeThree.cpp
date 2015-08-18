@@ -21,6 +21,7 @@
 #include <BeeThree.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "StkBeeThree.h"
 
 const float cMinFrequency(8.0f);
@@ -39,11 +40,7 @@ StkBeeThree::StkBeeThree(AudioUnitPlugin *pPlugin)
 {
     m_pInputFreq = addInput("f", Signal::Type_Float);
     m_pInputVelocity = addInput("amp", Signal::Type_Float);
-    m_pInputNoteOn = addInput("on", Signal::Type_Bool);
-
     m_pOutput = addOutput("out", Signal::Type_Float);
-
-    m_noteOn = false;
 
     createProperties();
 
@@ -60,6 +57,26 @@ StkBeeThree::StkBeeThree(AudioUnitPlugin *pPlugin)
 StkBeeThree::~StkBeeThree()
 {
     delete m_pBeeThree;
+}
+
+void StkBeeThree::handleEvent(SignalChainEvent *pEvent)
+{
+    QString name = pEvent->name();
+
+    float freq = m_pInputFreq->value().asFloat;
+    float amp = m_pInputVelocity->value().asFloat;
+
+    if (name == "noteOn") {
+        if (freq > cMinFrequency) {
+            m_note = pEvent->data().toMap()["number"].toInt();
+            m_pBeeThree->noteOn(freq, amp);
+        }
+    } else if (name == "noteOff") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        if (note == m_note) {
+            m_pBeeThree->noteOff(amp);
+        }
+    }
 }
 
 void StkBeeThree::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -87,7 +104,7 @@ void StkBeeThree::processStart()
     if (m_pBeeThree != nullptr) {
         m_pBeeThree->setSampleRate(signalChain()->sampleRate());
     }
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkBeeThree::processStop()
@@ -101,7 +118,6 @@ void StkBeeThree::process()
         return;
     }
 
-    bool noteOn = m_pInputNoteOn->value().asBool;
     float freq = m_pInputFreq->value().asFloat;
     float amp = m_pInputVelocity->value().asFloat;
 
@@ -114,17 +130,7 @@ void StkBeeThree::process()
     m_pBeeThree->controlChange(Ctrl_LFOSpeed, 128.0 * m_pPropLFOSpeed->value().toDouble());
     m_pBeeThree->controlChange(Ctrl_LFODepth, 128.0 * m_pPropLFODepth->value().toDouble());
 
-
-    if (noteOn && !m_noteOn) {
-        // Note goes on
-        m_pBeeThree->noteOn(freq, amp);
-    } else if (!noteOn && m_noteOn) {
-        // Note goes off
-        m_pBeeThree->noteOff(amp);
-    } else {
-        m_pBeeThree->setFrequency(freq);
-    }
-    m_noteOn = noteOn;
+    m_pBeeThree->setFrequency(freq);
 
     float sample = m_pBeeThree->tick();
 
@@ -133,7 +139,6 @@ void StkBeeThree::process()
 
 void StkBeeThree::reset()
 {
-    m_noteOn = false;
 }
 
 void StkBeeThree::createProperties()

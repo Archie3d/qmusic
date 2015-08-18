@@ -19,9 +19,77 @@
 #include "Settings.h"
 #include "AudioDevice.h"
 #include "MidiInputDevice.h"
+#include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "AudioDevicesManager.h"
 
 const int cNumberOfChannels(2);
+
+class MidiEventTranslator : public IMidiInputListener
+{
+public:
+    MidiEventTranslator()
+    {
+        m_pSignalChain = nullptr;
+    }
+
+    void setSignalChain(ISignalChain *pSignalChain)
+    {
+        m_pSignalChain = pSignalChain;
+    }
+
+    void inputMidiMessage(const MidiMessage &msg)
+    {
+        if (m_pSignalChain == nullptr) {
+            return;
+        }
+
+        QString eventName;
+        QVariantMap eventData;
+
+        switch (msg.status()) {
+        case MidiMessage::Status_NoteOn:
+            eventData["number"] = msg.noteNumber();
+            if (msg.velocity() == 0) {
+                eventData["velocity"] = 64;
+                eventName = "noteOff";
+            } else {
+                eventData["velocity"] = msg.velocity();
+                eventName = "noteOn";
+            }
+            break;
+        case MidiMessage::Status_NoteOff:
+            eventName = "noteOff";
+            eventData["number"] = msg.noteNumber();
+            eventData["velocity"] = msg.velocity();
+            break;
+        case MidiMessage::Status_PitchBend: {
+            eventName = "pitchBend";
+            eventData["value"] = msg.pitchBend();
+            break;
+        }
+        case MidiMessage::Status_ControlChange: {
+            eventName = "control";
+            eventData["number"] = msg.controllerNumber();
+            eventData["value"] = msg.controllerValue();
+            break;
+        }
+        default:
+            return;
+            break;
+        }
+
+        m_pSignalChain->postEvent(new SignalChainEvent(eventName, eventData));
+    }
+
+private:
+
+    ISignalChain *m_pSignalChain;
+};
+
+/*
+ *  AudioDeviceManager implementation
+ */
 
 AudioDevicesManager::AudioDevicesManager(QObject *pParent)
     : QObject(pParent)
@@ -29,6 +97,9 @@ AudioDevicesManager::AudioDevicesManager(QObject *pParent)
     m_pAudioInputDevice = new AudioDevice();
     m_pAudioOutputDevice = new AudioDevice();
     m_pMidiInputDevice = new MidiInputDevice();
+
+    m_pMidiEventTranslator = new MidiEventTranslator();
+    m_pMidiInputDevice->addListener(m_pMidiEventTranslator);
 }
 
 AudioDevicesManager::~AudioDevicesManager()
@@ -36,15 +107,18 @@ AudioDevicesManager::~AudioDevicesManager()
     delete m_pAudioInputDevice;
     delete m_pAudioOutputDevice;
     delete m_pMidiInputDevice;
+    delete m_pMidiEventTranslator;
 }
 
-void AudioDevicesManager::startAudioDevices()
+void AudioDevicesManager::startAudioDevices(ISignalChain *pSignalChain)
 {
     Settings settings;
 
     Q_ASSERT(m_pAudioInputDevice != nullptr);
     Q_ASSERT(m_pAudioOutputDevice != nullptr);
     Q_ASSERT(m_pMidiInputDevice != nullptr);
+
+    m_pMidiEventTranslator->setSignalChain(pSignalChain);
 
     int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
     int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
@@ -53,8 +127,6 @@ void AudioDevicesManager::startAudioDevices()
 
     double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
     int bufferSize = settings.get(Settings::Setting_BufferSize).toInt();
-
-    //setTimeStep(1.0 / sampleRate);
 
     if (waveInDeviceIndex == waveOutDeviceIndex) {
         // Open only one device

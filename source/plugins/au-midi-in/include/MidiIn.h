@@ -19,13 +19,10 @@
 #define AU_MIDIIN_H
 
 #include "AudioUnit.h"
-#include "MidiInputDevice.h"
 
 class QtVariantProperty;
-class MidiInputDevice;
 
-class MidiIn : public AudioUnit,
-               public IMidiInputListener
+class MidiIn : public AudioUnit
 {
 public:
 
@@ -49,20 +46,15 @@ protected:
     void process();
     void reset();
 
-    // IMidiInputListener
-    void inputMidiMessage(const MidiMessage &msg);
-
 private:
 
     void createProperties();
 
-    bool m_noteOn;
     float m_frequency;
     float m_velocity;
     float m_frequencyBend;
     int m_noteNumber;
 
-    OutputPort *m_pOutputNoteOn;
     OutputPort *m_pOutputFreq;
     OutputPort *m_pOutputVelocity;
 

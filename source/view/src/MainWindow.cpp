@@ -186,7 +186,7 @@ void MainWindow::startSignalChain()
     m_pSignalChainWidget->scene()->signalChain()->setTimeStep(1.0 / sampleRate);
 
     // Start audio devices
-    Application::instance()->audioDevicesManager()->startAudioDevices();
+    Application::instance()->audioDevicesManager()->startAudioDevices(m_pSignalChainWidget->scene()->signalChain());
 
     // Start signal chain
     m_pSignalChainWidget->scene()->signalChain()->start();

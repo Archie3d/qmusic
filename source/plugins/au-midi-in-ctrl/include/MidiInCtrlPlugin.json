@@ -1,6 +1,6 @@
 {
     "uid":          "4a6d6becb96536988fc085e87d4a6409",
-    "name":         "MIDI in control",
-    "category":     "Audio devices",
+    "name":         "Controller",
+    "category":     "MIDI",
     "version":      "1.0.0"
 }

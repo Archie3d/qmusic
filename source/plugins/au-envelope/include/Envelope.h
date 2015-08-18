@@ -41,6 +41,8 @@ public:
 
     void handleEvent(SignalChainEvent *pEvent);
 
+    QColor color() const override;
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
     void deserialize(const QVariantMap &data, SerializationContext *pContext) override;

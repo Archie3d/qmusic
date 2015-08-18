@@ -41,6 +41,8 @@ public:
     StkGuitar(AudioUnitPlugin *pPlugin);
     ~StkGuitar();
 
+    void handleEvent(SignalChainEvent *pEvent) override;
+
     QColor color() const override { return QColor(250, 240, 255); }
 
     // ISerializable interface
@@ -60,11 +62,10 @@ private:
 
     InputPort *m_pInputFreq;
     InputPort *m_pInputVelocity;
-    InputPort *m_pInputNoteOn;
 
     OutputPort *m_pOutput;
 
-    bool m_noteOn;
+    int m_note;
 
     QtVariantProperty *m_pPropPickPosition;
     QtVariantProperty *m_pPropStringDumping;

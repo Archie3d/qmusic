@@ -21,8 +21,11 @@
 #include <QObject>
 #include "FrameworkApi.h"
 
+class ISignalChain;
+class SignalChainEvent;
 class AudioDevice;
 class MidiInputDevice;
+class MidiEventTranslator;
 
 /**
  * Single point of access to the audio devices.
@@ -41,7 +44,7 @@ public:
 
 public slots:
 
-    void startAudioDevices();
+    void startAudioDevices(ISignalChain *pSignalChain = nullptr);
     void stopAudioDevices();
 
 private:
@@ -54,6 +57,9 @@ private:
 
     /// Pointer to MIDI input device;
     MidiInputDevice *m_pMidiInputDevice;
+
+    /// Helper to translate MIDI messages to signal chain events
+    MidiEventTranslator *m_pMidiEventTranslator;
 };
 
 #endif // AUDIODEVICESMANAGER_H

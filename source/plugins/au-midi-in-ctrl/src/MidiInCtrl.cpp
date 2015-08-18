@@ -42,7 +42,7 @@ QMap<QString, MidiMessage::Controller> cNameToController = []() {
     return map;
 }();
 
-const QColor cDefaultColor(230, 240, 240);
+const QColor cDefaultColor(230, 240, 210);
 
 MidiInCtrl::MidiInCtrl(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
