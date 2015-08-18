@@ -47,6 +47,8 @@ public:
     void stop() override;
     bool isStarted() const override { return m_started; }
     void reset() override;
+    void enable(bool v) override;
+    bool isEnabled() const override { return m_enabled; }
     float timeStep() const override { return m_timeStep; }
     void setTimeStep(double dt) override { m_timeStep = dt; }
     float sampleRate() const override { return 1.0f / m_timeStep; }
@@ -71,6 +73,9 @@ private:
 
     /// Signal chain processing has been started.
     bool m_started;
+
+    /// Whether the signal chain is enabled.
+    bool m_enabled;
 
     /// Audio units in this chain.
     QList<IAudioUnit*> m_audioUnits;

@@ -59,6 +59,19 @@ public:
     virtual void reset() = 0;
 
     /**
+     * @brief Enable or disable the signal chain.
+     * @note Disabled signal chain does not process audio units updates.
+     * @param v
+     */
+    virtual void enable(bool v) = 0;
+
+    /**
+     * @brief Tells whether the signal chain is enabled.
+     * @return true if signal chain is enabled.
+     */
+    virtual bool isEnabled() const = 0;
+
+    /**
      * @brief Returns time step used to advance time
      * @return
      */

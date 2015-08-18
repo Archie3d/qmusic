@@ -43,6 +43,7 @@ void SignalChain::start()
         return;
     }
     startAllAudioUnits();
+    m_enabled = false;
     m_started = true;
 }
 
@@ -63,6 +64,12 @@ void SignalChain::reset()
         return;
     }
     resetAllAudioUnits();
+    m_enabled = false;
+}
+
+void SignalChain::enable(bool v)
+{
+    m_enabled = v;
 }
 
 void SignalChain::addAudioUnit(IAudioUnit *pAudioUnit)
