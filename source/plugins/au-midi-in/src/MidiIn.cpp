@@ -25,6 +25,7 @@
 #include "MidiDevice.h"
 #include "MidiInputDevice.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "MidiIn.h"
 
 const QColor cDefaultColor(230, 240, 210);
@@ -44,6 +45,29 @@ MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
 MidiIn::~MidiIn()
 {
     Application::instance()->audioDevicesManager()->midiInputDevice()->removeListener(this);
+}
+
+void MidiIn::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    // Handle noteOn, noteOff, and pitchBend events
+    QString name = pEvent->name();
+    QVariantMap map = pEvent->data().toMap();
+    if (name == "noteOn") {
+        m_noteOn = true;
+        m_noteNumber = map["number"].toInt();
+        m_frequency = MidiNote(m_noteNumber).frequency();
+        m_velocity = map["velocity"].toFloat();
+    } else if (name == "noteOff") {
+        int number = map["number"].toInt();
+        if (m_noteNumber == number) {
+            m_noteOn = false;
+            m_velocity = map["velocity"].toFloat();
+        }
+    } else if (name == "pitchBend") {
+        m_frequencyBend = map["frequency"].toFloat();
+    }
 }
 
 QColor MidiIn::color() const
@@ -92,35 +116,36 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
 {
     qDebug() << "[MIDI]" << msg;
 
+    QString eventName;
+    QVariantMap eventData;
+
     switch (msg.status()) {
     case MidiMessage::Status_NoteOn:
-        m_noteNumber = msg.noteNumber();
-        m_frequency = MidiNote(m_noteNumber).frequency();
+        eventData["number"] = msg.noteNumber();
         if (msg.velocity() == 0) {
-            m_velocity = 0.5;
-            m_noteOn = false;
+            eventData["velocity"] = 0.5;
+            eventName = "noteOff";
         } else {
-            m_velocity = float(msg.velocity()) / 127.0f;
-            m_noteOn = true;
+            eventData["velocity"] = float(msg.velocity()) / 127.0f;
+            eventName = "noteOn";
         }
         break;
     case MidiMessage::Status_NoteOff:
-        if (m_noteNumber == msg.noteNumber()) {
-            m_noteOn = false;
-            m_velocity = float(msg.velocity()) / 127.0f;
-            //m_frequency = MidiNote(msg.noteNumber()).frequency();
-
-        }
+        eventName = "noteOff";
+        eventData["velocity"] = float(msg.velocity()) / 127.0f;
         break;
     case MidiMessage::Status_PitchBend: {
+        eventName = "pitchBend";
         int bend = msg.pitchBend() - 8192;
         float dBend = float(bend) / 8192.0f;
-        dBend *= m_pPropPitchBendSemitones->value().toDouble();
-        m_frequencyBend = pow(2.0, dBend / 12.0);
+        dBend *= m_pPropPitchBendSemitones->value().toFloat();
+        eventData["frequency"] = pow(2.0, dBend / 12.0);
     }
     default:
         break;
     }
+
+    signalChain()->postEvent(new SignalChainEvent(eventName, eventData));
 }
 
 void MidiIn::createProperties()

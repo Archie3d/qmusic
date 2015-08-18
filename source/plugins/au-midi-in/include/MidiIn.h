@@ -32,13 +32,15 @@ public:
     MidiIn(AudioUnitPlugin *pPlugin);
     ~MidiIn();
 
+    void handleEvent(SignalChainEvent *pEvent) override;
+
     QColor color() const override;
 
     int flags() const override { return Flag_SingleInstance; }
 
     // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
 protected:
 
