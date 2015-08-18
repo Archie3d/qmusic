@@ -18,10 +18,11 @@
 #ifndef ISIGNALCHAIN_H
 #define ISIGNALCHAIN_H
 
-#include "ISerializable.h"
 #include "FrameworkApi.h"
+#include "ISerializable.h"
 
 class IAudioUnit;
+class SignalChainEvent;
 
 /**
  * @brief Interface to a signal chain.
@@ -70,6 +71,17 @@ public:
      * @return true if signal chain is enabled.
      */
     virtual bool isEnabled() const = 0;
+
+    /**
+     * Post event to this signal chain.
+     * @param evt Event to be posted.
+     */
+    virtual void postEvent(SignalChainEvent *pEvent) = 0;
+
+    /**
+     * Process all events waiting in the events queue.
+     */
+    virtual void processEvents() = 0;
 
     /**
      * @brief Returns time step used to advance time

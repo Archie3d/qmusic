@@ -24,6 +24,8 @@
 #include "ISerializable.h"
 #include "FrameworkApi.h"
 
+class SignalChainEvent;
+
 /**
  * @brief Audio unit interface.
  *
@@ -79,6 +81,13 @@ public:
      * @brief Reset the audio unit to its initial state.
      */
     virtual void reset() = 0;
+
+    /**
+     * @brief Process an event.
+     * @note Defautl behavior should be doing nothing.
+     * @param pEvent Pointer to an event.
+     */
+    virtual void handleEvent(SignalChainEvent *pEvent) = 0;
 
     /**
      * @brief Create a custom graphics view for this item

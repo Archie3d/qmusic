@@ -19,6 +19,7 @@
 #include <QtVariantProperty>
 #include "SerializationContext.h"
 #include "SignalChain.h"
+#include "SignalChainEvent.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 
@@ -96,6 +97,11 @@ void AudioUnit::stop()
 
     processStop();
     m_started = false;
+}
+
+void AudioUnit::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
 }
 
 QColor AudioUnit::color() const

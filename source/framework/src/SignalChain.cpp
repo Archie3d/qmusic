@@ -21,6 +21,7 @@
 #include "AudioDevice.h"
 #include "AudioUnit.h"
 #include "SerializationContext.h"
+#include "SignalChainEvent.h"
 #include "SignalChain.h"
 
 const QString SignalChain::UID("SignalChain");
@@ -34,6 +35,7 @@ SignalChain::SignalChain()
 
 SignalChain::~SignalChain()
 {
+    clearEventsQueue();
     qDeleteAll(m_audioUnits);
 }
 
@@ -53,6 +55,7 @@ void SignalChain::stop()
         return;
     }
 
+    clearEventsQueue();
     stopAllAudioUnits();
     m_started = false;
 }
@@ -63,6 +66,8 @@ void SignalChain::reset()
         // Cannot reset when running.
         return;
     }
+
+    clearEventsQueue();
     resetAllAudioUnits();
     m_enabled = false;
 }
@@ -70,6 +75,25 @@ void SignalChain::reset()
 void SignalChain::enable(bool v)
 {
     m_enabled = v;
+}
+
+void SignalChain::postEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (isStarted()) {
+        m_events.append(pEvent);
+    }
+}
+
+void SignalChain::processEvents()
+{
+    QList<SignalChainEvent*> events = m_events;
+    m_events.clear();
+    foreach (SignalChainEvent *pEvent, events) {
+        processEvent(pEvent);
+        delete pEvent;
+    }
 }
 
 void SignalChain::addAudioUnit(IAudioUnit *pAudioUnit)
@@ -148,5 +172,19 @@ void SignalChain::resetAllAudioUnits()
 {
     foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
         pAudioUnit->reset();
+    }
+}
+
+void SignalChain::clearEventsQueue()
+{
+    qDeleteAll(m_events);
+    m_events.clear();
+}
+
+void SignalChain::processEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+        pAudioUnit->handleEvent(pEvent);
     }
 }

@@ -122,6 +122,9 @@ void SpeakerThreadObject::generateSamples()
         // If availability is low, trigger timer        
         //emit continueGenerateSamples(); // This will behave as busy waiting with 100% CPU code load
 
+        // Process pending events
+        m_pSignalChain->processEvents();
+
         // Add some sleep time waiting for buffer
         QTimer::singleShot(500 * m_pSignalChain->timeStep() * m_bufferSize, this, SLOT(generateSamples()));
         return;

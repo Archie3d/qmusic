@@ -24,6 +24,7 @@
 
 class QThread;
 class IAudioUnit;
+class SignalChainEvent;
 
 /**
  * @brief Signal chain.
@@ -49,6 +50,8 @@ public:
     void reset() override;
     void enable(bool v) override;
     bool isEnabled() const override { return m_enabled; }
+    void postEvent(SignalChainEvent *pEvent) override;
+    void processEvents() override;
     float timeStep() const override { return m_timeStep; }
     void setTimeStep(double dt) override { m_timeStep = dt; }
     float sampleRate() const override { return 1.0f / m_timeStep; }
@@ -67,6 +70,8 @@ private:
     void startAllAudioUnits();
     void stopAllAudioUnits();
     void resetAllAudioUnits();
+    void clearEventsQueue();
+    void processEvent(SignalChainEvent *pEvent);
 
     /// Current global time, s
     float m_timeStep;
@@ -79,6 +84,9 @@ private:
 
     /// Audio units in this chain.
     QList<IAudioUnit*> m_audioUnits;
+
+    /// Events queue.
+    QList<SignalChainEvent*> m_events;
 };
 
 #endif // SIGNALCHAIN_H

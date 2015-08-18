@@ -24,10 +24,11 @@
 #include "InputPort.h"
 #include "OutputPort.h"
 
-class ISignalChain;
 class QtVariantPropertyManager;
 class QtVariantProperty;
 class QtProperty;
+class ISignalChain;
+class SignalChainEvent;
 class AudioUnitPlugin;
 
 /**
@@ -57,6 +58,7 @@ public:
     void stop() override final;
     bool isStarted() const override final { return m_started; }   
     void reset() override {}
+    void handleEvent(SignalChainEvent *pEvent) override;
     QGraphicsItem* graphicsItem() override { return nullptr; }
     QColor color() const override;
     int flags() const override { return Flag_NoFlags; }
