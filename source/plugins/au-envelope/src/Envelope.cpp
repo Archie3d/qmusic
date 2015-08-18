@@ -120,10 +120,6 @@ void Envelope::reset()
 {
 }
 
-void Envelope::control(const QString &name, const QVariant &value)
-{
-}
-
 void Envelope::doEnvelope()
 {
     // Handle state switch

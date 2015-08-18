@@ -132,6 +132,7 @@ void MidiIn::inputMidiMessage(const MidiMessage &msg)
         break;
     case MidiMessage::Status_NoteOff:
         eventName = "noteOff";
+        eventData["number"] = msg.noteNumber();
         eventData["velocity"] = float(msg.velocity()) / 127.0f;
         break;
     case MidiMessage::Status_PitchBend: {
