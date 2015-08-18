@@ -20,8 +20,7 @@
 #include "FrameworkApi.h"
 
 class Logger;
-class AudioDevice;
-class MidiInputDevice;
+class AudioDevicesManager;
 class AudioUnitsManager;
 
 /**
@@ -57,9 +56,7 @@ public:
     ~Application();
 
     Logger* logger() const { return m_pLogger; }
-    AudioDevice* audioInputDevice() const { return m_pAudioInputDevice; }
-    AudioDevice* audioOutputDevice() const {return m_pAudioOutputDevice; }
-    MidiInputDevice* midiInputDevice() const { return m_pMidiInputDevice; }
+    AudioDevicesManager* audioDevicesManager() const { return m_pAudioDevicesManager; }
     AudioUnitsManager* audioUnitsManager() const { return m_pAudioUnitsManager; }
 
     void setMainWindow(QMainWindow *pMainWindow);
@@ -100,14 +97,8 @@ private:
     /// Logger.
     Logger *m_pLogger;
 
-    /// Pointer to audio input device.
-    AudioDevice *m_pAudioInputDevice;
-
-    /// Pointer to audio output device;
-    AudioDevice *m_pAudioOutputDevice;
-
-    /// Pointer to MIDI input device;
-    MidiInputDevice *m_pMidiInputDevice;
+    /// Audiodevices.
+    AudioDevicesManager *m_pAudioDevicesManager;
 
     /// Pointer to audio units manager (single instance per application).
     AudioUnitsManager *m_pAudioUnitsManager;

@@ -19,6 +19,7 @@
 #include "portaudio.h"
 #include "Application.h"
 #include "Settings.h"
+#include "AudioDevicesManager.h"
 #include "AudioBuffer.h"
 #include "ISignalChain.h"
 #include "Input.h"
@@ -37,12 +38,12 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pLeft = nullptr;
     m_pRight = nullptr;
 
-    Application::instance()->audioInputDevice()->addListener(this);
+    Application::instance()->audioDevicesManager()->audioInputDevice()->addListener(this);
 }
 
 Input::~Input()
 {
-    Application::instance()->audioInputDevice()->removeListener(this);
+    Application::instance()->audioDevicesManager()->audioInputDevice()->removeListener(this);
 
     releaseBuffers();
 }

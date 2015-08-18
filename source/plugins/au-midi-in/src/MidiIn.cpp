@@ -20,6 +20,7 @@
 #include <QtVariantProperty>
 #include <qmath.h>
 #include "Application.h"
+#include "AudioDevicesManager.h"
 #include "MidiNote.h"
 #include "MidiDevice.h"
 #include "MidiInputDevice.h"
@@ -35,14 +36,14 @@ MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
     m_pOutputVelocity = addOutput("velocity", Signal::Type_Float);
     m_pOutputNoteOn = addOutput("note on", Signal::Type_Bool);
 
-    Application::instance()->midiInputDevice()->addListener(this);
+    Application::instance()->audioDevicesManager()->midiInputDevice()->addListener(this);
 
     createProperties();
 }
 
 MidiIn::~MidiIn()
 {
-    Application::instance()->midiInputDevice()->removeListener(this);
+    Application::instance()->audioDevicesManager()->midiInputDevice()->removeListener(this);
 }
 
 QColor MidiIn::color() const

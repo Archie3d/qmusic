@@ -19,6 +19,7 @@
 #include <QThread>
 #include "Application.h"
 #include "Settings.h"
+#include "AudioDevicesManager.h"
 #include "ISignalChain.h"
 #include "MainWindow.h"
 #include "SpectrumWindow.h"
@@ -42,7 +43,7 @@ Speaker::Speaker(AudioUnitPlugin *pPlugin)
     m_pLeftBuffer = nullptr;
     m_pRightBuffer = nullptr;
 
-    Application::instance()->audioOutputDevice()->addListener(this);
+    Application::instance()->audioDevicesManager()->audioOutputDevice()->addListener(this);
 
     // Connect DSP load signal and raw signal data (for spectrum plotting) with the main GUI
     MainWindow *pMainWindow = dynamic_cast<MainWindow*>(Application::instance()->mainWindow());
@@ -63,7 +64,7 @@ Speaker::Speaker(AudioUnitPlugin *pPlugin)
 
 Speaker::~Speaker()
 {
-    Application::instance()->audioOutputDevice()->removeListener(this);
+    Application::instance()->audioDevicesManager()->audioOutputDevice()->removeListener(this);
     m_pThreadObject->stop();
     m_pThread->quit();
     m_pThread->wait(3000);

@@ -20,6 +20,7 @@
 #include <QtVariantProperty>
 #include <qmath.h>
 #include "Application.h"
+#include "AudioDevicesManager.h"
 #include "MidiNote.h"
 #include "MidiDevice.h"
 #include "MidiInputDevice.h"
@@ -51,7 +52,7 @@ MidiInCtrl::MidiInCtrl(AudioUnitPlugin *pPlugin)
     m_pValueItem = nullptr;
     m_controllerValue = 100;
 
-    Application::instance()->midiInputDevice()->addListener(this);
+    Application::instance()->audioDevicesManager()->midiInputDevice()->addListener(this);
 
     createProperties();    
 
@@ -60,7 +61,7 @@ MidiInCtrl::MidiInCtrl(AudioUnitPlugin *pPlugin)
 
 MidiInCtrl::~MidiInCtrl()
 {
-    Application::instance()->midiInputDevice()->removeListener(this);
+    Application::instance()->audioDevicesManager()->midiInputDevice()->removeListener(this);
 }
 
 QColor MidiInCtrl::color() const

@@ -27,7 +27,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include "Application.h"
+#include "Settings.h"
 #include "LogWindow.h"
+#include "AudioDevicesManager.h"
 #include "AudioUnitsManagerWindow.h"
 #include "AudioUnitPropertiesWindow.h"
 #include "SpectrumWindow.h"
@@ -178,6 +180,15 @@ void MainWindow::openSignalChain()
 
 void MainWindow::startSignalChain()
 {
+    // Update sample rate
+    Settings settings;
+    double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
+    m_pSignalChainWidget->scene()->signalChain()->setTimeStep(1.0 / sampleRate);
+
+    // Start audio devices
+    Application::instance()->audioDevicesManager()->startAudioDevices();
+
+    // Start signal chain
     m_pSignalChainWidget->scene()->signalChain()->start();
     updateActions();
     logInfo(tr("Synthesizer started"));
@@ -186,6 +197,8 @@ void MainWindow::startSignalChain()
 void MainWindow::stopSignalChain()
 {
     m_pSignalChainWidget->scene()->signalChain()->stop();
+    Application::instance()->audioDevicesManager()->stopAudioDevices();
+
     updateActions();
     m_pDspLoadBar->setValue(0);
     m_pSpectrumWindow->reset();

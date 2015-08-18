@@ -21,6 +21,7 @@
 #include <qwt_plot_curve.h>
 #include "Fft.h"
 #include "Application.h"
+#include "AudioDevicesManager.h"
 #include "AudioDevice.h"
 #include "SpectrumWindow.h"
 
@@ -103,7 +104,7 @@ void SpectrumWindow::plotCurve(const QVector<float> &curve)
 {
     QVector<QPointF> samples;
 
-    float sampleRate = Application::instance()->audioOutputDevice()->openDeviceInfo().sampleRate;
+    float sampleRate = Application::instance()->audioDevicesManager()->audioOutputDevice()->openDeviceInfo().sampleRate;
     float df = sampleRate / 2.0f / curve.size();
 
     m_yAxisScale = 1.0f;

@@ -62,8 +62,6 @@ public:
 
 private:
 
-    void startAudioDevices();
-    void stopAudioDevices();
     void startAllAudioUnits();
     void stopAllAudioUnits();
     void resetAllAudioUnits();

@@ -21,8 +21,7 @@
 #include <QMimeData>
 #include <QFile>
 #include "Logger.h"
-#include "AudioDevice.h"
-#include "MidiInputDevice.h"
+#include "AudioDevicesManager.h"
 #include "AudioUnitsManager.h"
 #include "Application.h"
 
@@ -66,9 +65,7 @@ Application::Application(int argc, char **argv)
     setApplicationName(Product);
 
     m_pLogger = new Logger(this);
-    m_pAudioInputDevice = new AudioDevice();
-    m_pAudioOutputDevice = new AudioDevice();
-    m_pMidiInputDevice = new MidiInputDevice();
+    m_pAudioDevicesManager = new AudioDevicesManager(this);
     m_pAudioUnitsManager = new AudioUnitsManager(this);
 
     loadStylesheet();
@@ -81,10 +78,6 @@ Application::~Application()
     if (m_pAudioUnitsManager != nullptr) {
         m_pAudioUnitsManager->cleanup();
     }
-
-    delete m_pAudioInputDevice;
-    delete m_pAudioOutputDevice;
-    delete m_pMidiInputDevice;
 
     s_pApplicationInstance = nullptr;
 }
