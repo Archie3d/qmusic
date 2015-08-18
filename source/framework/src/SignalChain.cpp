@@ -88,9 +88,7 @@ void SignalChain::postEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
 
-    if (isStarted()) {
-        m_events.append(pEvent);
-    }
+    m_events.append(pEvent);
 }
 
 void SignalChain::processEvents()
@@ -133,6 +131,14 @@ void SignalChain::prepareUpdate()
     // decrease overhead of events handling for every sample.
     if ((m_updateEventsCounter++) % EVENTS_PROCESS_PERIOD == 0) {
         processEvents();
+    }
+
+    // Events have to be processed even when signal chain is disabled
+    // (that is how it can get enabled actually), audio units
+    // however can be skipped.
+
+    if (!m_enabled) {
+        return;
     }
 
     // Prepare audio units update

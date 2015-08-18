@@ -15,11 +15,13 @@
     Lesser General Public License for more details.
 */
 
+#include <QDebug>
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "Envelope.h"
 
 void setDefaultAttrs(QtVariantProperty *pProp)
@@ -32,8 +34,6 @@ void setDefaultAttrs(QtVariantProperty *pProp)
 Envelope::Envelope(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-
-    m_pNoteOnInput = addInput("on", Signal::Type_Bool);
     m_pOutput = addOutput("gain", Signal::Type_Float);
 
     createProperties();
@@ -41,6 +41,22 @@ Envelope::Envelope(AudioUnitPlugin *pPlugin)
 
 Envelope::~Envelope()
 {
+}
+
+void Envelope::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    QString name = pEvent->name();
+    if (name == "noteOn") {
+        m_noteNumber = pEvent->data().toMap()["number"].toInt();
+        setState(State_Attack);
+    } else if (name == "noteOff") {
+        int noteNumber = pEvent->data().toMap()["number"].toInt();
+        if (m_noteNumber == noteNumber) {
+            setState(State_Release);
+        }
+    }
 }
 
 void Envelope::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -71,7 +87,7 @@ void Envelope::processStart()
 {
     m_state = State_Off;
     m_output = 0.0f;
-    m_noteOn = false;
+    m_noteNumber = -1;
 
     m_attackTCO = exp(-1.5);
     m_decayTCO = exp(-4.95);
@@ -88,24 +104,6 @@ void Envelope::processStop()
 
 void Envelope::process()
 {
-    bool noteOn = m_pNoteOnInput->value().asBool;
-
-    // Handle note on signal
-    if (noteOn) {
-        if (!m_noteOn) {
-            setState(State_Attack);
-        }
-    } else {
-        if (m_noteOn) {
-            if (m_output > 0) {
-                setState(State_Release);
-            } else {
-                setState(State_Off);
-            }
-        }
-    }
-    m_noteOn = noteOn;
-
     doEnvelope();
 
     // Recalculate
@@ -159,6 +157,7 @@ void Envelope::setState(State s)
 {
     if (m_state != s) {
         m_state = s;
+
         switch (m_state) {
         case State_Attack:
             if (m_pSignalChainEnable->value().toBool()) {

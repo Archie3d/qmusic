@@ -39,6 +39,8 @@ public:
     Envelope(AudioUnitPlugin *pPlugin);
     ~Envelope();
 
+    void handleEvent(SignalChainEvent *pEvent);
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
     void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
@@ -60,11 +62,9 @@ private:
     void calculateDecay();
     void calculateRelease();
 
-
-    InputPort *m_pNoteOnInput;
     OutputPort *m_pOutput;
 
-    bool m_noteOn;
+    int m_noteNumber;
     State m_state;
     float m_output;
 

@@ -69,6 +69,11 @@ void AudioUnit::update()
         return;
     }
 
+    if (!m_pSignalChain->isEnabled()) {
+        // Signal chain is disabled
+        return;
+    }
+
     // Activate already the updated flag to prevent loop recursion
     m_updated = true;
 

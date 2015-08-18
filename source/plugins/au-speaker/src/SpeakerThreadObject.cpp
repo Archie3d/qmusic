@@ -98,14 +98,20 @@ void SpeakerThreadObject::signalUpdateOver()
 
 float SpeakerThreadObject::getNextLeftChannelSample()
 {
-    m_pLeftChannelInput->update();
-    return m_pLeftChannelInput->value().asFloat;
+    if (m_pSignalChain->isEnabled()) {
+        m_pLeftChannelInput->update();
+        return m_pLeftChannelInput->value().asFloat;
+    }
+    return 0.0f;
 }
 
 float SpeakerThreadObject::getNextRightChannelSample()
 {
-    m_pRightChannelInput->update();
-    return m_pRightChannelInput->value().asFloat;
+    if (m_pSignalChain->isEnabled()) {
+        m_pRightChannelInput->update();
+        return m_pRightChannelInput->value().asFloat;
+    }
+    return 0.0f;
 }
 
 void SpeakerThreadObject::generateSamples()
