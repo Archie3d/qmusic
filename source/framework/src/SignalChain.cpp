@@ -122,6 +122,10 @@ void SignalChain::removeAudioUnit(IAudioUnit *pAudioUnit)
 
 void SignalChain::prepareUpdate()
 {
+    // TODO: Decimate the event processing (do not process every sample)
+    processEvents();
+
+    // Prepare audio units update
     foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
         pAudioUnit->prepareUpdate();
     }
