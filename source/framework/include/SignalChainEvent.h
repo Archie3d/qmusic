@@ -56,5 +56,9 @@ private:
     QVariant m_data;    ///< Event payload data.
 };
 
+Q_DECLARE_METATYPE(SignalChainEvent)
+
+QMUSIC_FRAMEWORK_API QDebug operator <<(QDebug dbg, const SignalChainEvent &evt);
+
 #endif // SIGNALCHAINEVENT_H
 

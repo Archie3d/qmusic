@@ -15,6 +15,7 @@
     Lesser General Public License for more details.
 */
 
+#include <QDebug>
 #include "SignalChainEvent.h"
 
 SignalChainEvent::SignalChainEvent(const QString &name, const QVariant &data)
@@ -36,4 +37,10 @@ SignalChainEvent& SignalChainEvent::operator =(const SignalChainEvent &evt)
         m_data = evt.m_data;
     }
     return *this;
+}
+
+QDebug operator <<(QDebug dbg, const SignalChainEvent &evt)
+{
+    dbg.nospace() << evt.name() << " " << evt.data();
+    return dbg.maybeSpace();
 }
