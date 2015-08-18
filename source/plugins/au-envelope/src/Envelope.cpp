@@ -22,8 +22,6 @@
 #include "ISignalChain.h"
 #include "Envelope.h"
 
-const double cDefautTime = 1000.0; // ms
-
 void setDefaultAttrs(QtVariantProperty *pProp)
 {
     pProp->setAttribute("decimals", 2);
@@ -53,6 +51,8 @@ void Envelope::serialize(QVariantMap &data, SerializationContext *pContext) cons
     data["decayTime"] = m_pDecayTimeMs->value();
     data["sustainLevel"] = m_pSustainLevel->value();
     data["releaseTime"] = m_pReleaseTimeMs->value();
+    data["signalChainEnable"] = m_pSignalChainEnable->value();
+    data["signalChainDisable"] = m_pSignalChainDisable->value();
 }
 
 void Envelope::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -62,6 +62,8 @@ void Envelope::deserialize(const QVariantMap &data, SerializationContext *pConte
     m_pDecayTimeMs->setValue(data["decayTime"]);
     m_pSustainLevel->setValue(data["sustainLevel"]);
     m_pReleaseTimeMs->setValue(data["releaseTime"]);
+    m_pSignalChainEnable->setValue(data["signalChainEnable"]);
+    m_pSignalChainDisable->setValue(data["signalChainDisable"]);
     AudioUnit::deserialize(data, pContext);
 }
 
@@ -91,14 +93,14 @@ void Envelope::process()
     // Handle note on signal
     if (noteOn) {
         if (!m_noteOn) {
-            m_state = State_Attack;
+            setState(State_Attack);
         }
     } else {
         if (m_noteOn) {
             if (m_output > 0) {
-                m_state = State_Release;
+                setState(State_Release);
             } else {
-                m_state = State_Off;
+                setState(State_Off);
             }
         }
     }
@@ -133,13 +135,13 @@ void Envelope::doEnvelope()
         m_output = m_attackOffset + m_output * m_attackCoeff;
         if (m_output >= 1.0 || m_pAttackTimeMs->value().toDouble() <= 0.0) {
             m_output = 1.0;
-            m_state = State_Decay;
+            setState(State_Decay);
         }
         break;
     case State_Decay:
         m_output = m_decayOffset + m_output * m_decayCoeff;
         if (m_output <= m_pSustainLevel->value().toDouble() || m_pDecayTimeMs->value().toDouble() <= 0.0) {
-            m_state = State_Sustain;
+            setState(State_Sustain);
         }
         break;
     case State_Sustain:
@@ -149,11 +151,32 @@ void Envelope::doEnvelope()
         m_output = m_releaseOffset + m_output * m_releaseCoeff;
         if (m_output <= 0.0 || m_pReleaseTimeMs->value().toDouble() <= 0.0) {
             m_output = 0.0;
-            m_state = State_Off;
+            setState(State_Off);
         }
         break;
     default:
         break;
+    }
+}
+
+void Envelope::setState(State s)
+{
+    if (m_state != s) {
+        m_state = s;
+        switch (m_state) {
+        case State_Attack:
+            if (m_pSignalChainEnable->value().toBool()) {
+                signalChain()->enable(true);
+            }
+            break;
+        case State_Off:
+            if (m_pSignalChainDisable->value().toBool()) {
+                signalChain()->enable(false);
+            }
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -190,11 +213,13 @@ void Envelope::createProperties()
     QtVariantProperty *pDecay = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Decay");
     QtVariantProperty *pSustain = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Sustain");
     QtVariantProperty *pRelease = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Release");
+    QtVariantProperty *pSignalChain = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Signal chain");
 
     pRoot->addSubProperty(pAttack);
     pRoot->addSubProperty(pDecay);
     pRoot->addSubProperty(pSustain);
     pRoot->addSubProperty(pRelease);
+    pRoot->addSubProperty(pSignalChain);
 
     // Attack
     m_pAttackTimeMs = propertyManager()->addProperty(QVariant::Double, "Time, ms");
@@ -221,6 +246,16 @@ void Envelope::createProperties()
     m_pReleaseTimeMs = propertyManager()->addProperty(QVariant::Double, "Time, ms");
     setDefaultAttrs(m_pReleaseTimeMs);
     m_pReleaseTimeMs->setValue(300.0);
-
     pRelease->addSubProperty(m_pReleaseTimeMs);
+
+    // Control signal chain
+    m_pSignalChainEnable = propertyManager()->addProperty(QVariant::Bool, "Enable");
+    m_pSignalChainEnable->setValue(false);
+    m_pSignalChainEnable->setToolTip("Note on event enables signal chain");
+    pSignalChain->addSubProperty(m_pSignalChainEnable);
+
+    m_pSignalChainDisable = propertyManager()->addProperty(QVariant::Bool, "Disable");
+    m_pSignalChainDisable->setValue(false);
+    m_pSignalChainDisable->setToolTip("Release disables signal chain");
+    pSignalChain->addSubProperty(m_pSignalChainDisable);
 }

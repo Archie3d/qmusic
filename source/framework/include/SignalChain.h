@@ -82,6 +82,9 @@ private:
     /// Whether the signal chain is enabled.
     bool m_enabled;
 
+    /// Counter used to decimate events processing.
+    int m_updateEventsCounter;
+
     /// Audio units in this chain.
     QList<IAudioUnit*> m_audioUnits;
 

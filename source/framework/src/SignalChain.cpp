@@ -24,12 +24,18 @@
 #include "SignalChainEvent.h"
 #include "SignalChain.h"
 
+// Event process period in samples
+#define EVENTS_PROCESS_PERIOD  (50)
+
 const QString SignalChain::UID("SignalChain");
 
 SignalChain::SignalChain()
     : m_timeStep(0.0),
       m_started(false),
-      m_audioUnits()
+      m_enabled(false),
+      m_updateEventsCounter(0),
+      m_audioUnits(),
+      m_events()
 {
 }
 
@@ -44,6 +50,7 @@ void SignalChain::start()
     if (isStarted()) {
         return;
     }
+    m_updateEventsCounter = 0;
     startAllAudioUnits();
     m_enabled = false;
     m_started = true;
@@ -122,15 +129,17 @@ void SignalChain::removeAudioUnit(IAudioUnit *pAudioUnit)
 
 void SignalChain::prepareUpdate()
 {
-    // TODO: Decimate the event processing (do not process every sample)
-    processEvents();
+    // Decimate the event processing occurrence in order to
+    // decrease overhead of events handling for every sample.
+    if ((m_updateEventsCounter++) % EVENTS_PROCESS_PERIOD == 0) {
+        processEvents();
+    }
 
     // Prepare audio units update
     foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
         pAudioUnit->prepareUpdate();
     }
 }
-
 
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const
 {

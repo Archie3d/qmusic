@@ -55,6 +55,7 @@ private:
 
     void createProperties();
     void doEnvelope();
+    void setState(State s);
 
     void calculateAttack();
     void calculateDecay();
@@ -83,6 +84,8 @@ private:
     QtVariantProperty *m_pDecayTimeMs;
     QtVariantProperty *m_pSustainLevel;
     QtVariantProperty *m_pReleaseTimeMs;
+    QtVariantProperty *m_pSignalChainEnable;
+    QtVariantProperty *m_pSignalChainDisable;
 };
 
 #endif // AMPLIFIER_H
