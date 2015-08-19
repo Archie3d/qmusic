@@ -58,6 +58,7 @@ public:
     void addAudioUnit(IAudioUnit *pAudioUnit) override;
     void removeAudioUnit(IAudioUnit *pAudioUnit) override;
     void prepareUpdate() override;
+    ISignalChain* clone() override;
 
     // ISerializable interface
     QString uid() const override final { return UID; }

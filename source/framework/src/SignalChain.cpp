@@ -21,6 +21,7 @@
 #include "AudioDevice.h"
 #include "AudioUnit.h"
 #include "SerializationContext.h"
+#include "SignalChainFactory.h"
 #include "SignalChainEvent.h"
 #include "SignalChain.h"
 
@@ -145,6 +146,22 @@ void SignalChain::prepareUpdate()
     foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
         pAudioUnit->prepareUpdate();
     }
+}
+
+ISignalChain* SignalChain::clone()
+{
+    // Clone signal chain by serializing and then
+    // deserializing it back.
+
+    // TODO: serialize/deserialize connections
+
+    SignalChainFactory factory;
+    SerializationContext context(&factory);
+
+    context.serialize(this);
+    SignalChain *pSignalChainClone = context.deserialize<SignalChain>();
+
+    return pSignalChainClone;
 }
 
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const

@@ -119,6 +119,12 @@ public:
      */
     virtual void prepareUpdate() = 0;
 
+    /**
+     * @brief Clone this signal chain.
+     * @return Pointer to cloned signal chain.
+     */
+    virtual ISignalChain* clone() = 0;
+
     /// Destructor.
     virtual ~ISignalChain() {}
 };
