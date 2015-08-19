@@ -153,13 +153,50 @@ ISignalChain* SignalChain::clone()
     // Clone signal chain by serializing and then
     // deserializing it back.
 
-    // TODO: serialize/deserialize connections
+    // Helper structure to track connections
+    struct Connection {
+        QVariant sourceAudioUnitHandle;
+        QVariant targetAudioUnitHandle;
+        int sourcePortIndex;
+        int targetPortIndex;
+    };
+
+    QList<Connection> connections;
+
 
     SignalChainFactory factory;
     SerializationContext context(&factory);
 
     context.serialize(this);
+
+    // Serialize connections
+    foreach (IAudioUnit *pIAu, m_audioUnits) {
+        AudioUnit *pAu = dynamic_cast<AudioUnit*>(pIAu);
+        foreach (InputPort *pInput, pAu->inputs()) {
+            if (pInput->connectedOutputPort() != nullptr) {
+                IAudioUnit *pSourceAu = pInput->connectedOutputPort()->audioUnit();
+                IAudioUnit *pTargetAu = pInput->audioUnit();
+
+                Connection conn;
+                conn.sourceAudioUnitHandle = context.serialize(dynamic_cast<ISerializable*>(pSourceAu));
+                conn.targetAudioUnitHandle = context.serialize(dynamic_cast<ISerializable*>(pTargetAu));
+                conn.sourcePortIndex = pInput->connectedOutputPort()->index();
+                conn.targetPortIndex = pInput->index();
+                connections.append(conn);
+            }
+        }
+    }
+
     SignalChain *pSignalChainClone = context.deserialize<SignalChain>();
+
+    // Deserialize connections
+    foreach(const Connection &conn, connections) {
+        AudioUnit *pSourceAu = context.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
+        AudioUnit *pTargetAu = context.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
+        OutputPort *pSourcePort = pSourceAu->outputs().at(conn.sourcePortIndex);
+        InputPort *pTargetPort = pTargetAu->inputs().at(conn.targetPortIndex);
+        pTargetPort->connect(pSourcePort);
+    }
 
     return pSignalChainClone;
 }
