@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-expose-output">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

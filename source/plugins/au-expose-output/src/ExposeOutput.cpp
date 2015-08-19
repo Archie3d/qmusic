@@ -21,92 +21,91 @@
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "ExposeInput.h"
+#include "ExposeOutput.h"
 
-const QColor cItemColor(220, 120, 180);
+const QColor cItemColor(180, 120, 220);
 
-ExposeInput::ExposeInput(AudioUnitPlugin *pPlugin)
+ExposeOutput::ExposeOutput(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutput = addOutput("", Signal::Type_Float);
+    m_pInput = addInput("", Signal::Type_Float);
     createProperties();
 
     m_pNameItem = nullptr;
 }
 
-ExposeInput::~ExposeInput()
+ExposeOutput::~ExposeOutput()
 {
 }
 
-void ExposeInput::processStart()
+void ExposeOutput::processStart()
 {
 }
 
-void ExposeInput::processStop()
+void ExposeOutput::processStop()
 {
 }
 
-void ExposeInput::process()
-{
-    m_pOutput->setFloatValue(0.0);
-}
-
-void ExposeInput::reset()
+void ExposeOutput::process()
 {
 }
 
-QGraphicsItem* ExposeInput::graphicsItem()
+void ExposeOutput::reset()
+{
+}
+
+QGraphicsItem* ExposeOutput::graphicsItem()
 {
     if (m_pNameItem == nullptr) {
         m_pNameItem = new QGraphicsSimpleTextItem();
-        QBrush brush(QColor(160, 60, 60));
+        QBrush brush(QColor(60, 60, 160));
         m_pNameItem->setBrush(brush);
 
         QFont font = m_pNameItem->font();
         font.setBold(true);
         m_pNameItem->setFont(font);
 
-        m_pNameItem->setText(m_pPropName->valueText() + " ");
+        m_pNameItem->setText(QString(" %1").arg(m_pPropName->valueText()));
     }
     return m_pNameItem;
 }
 
-QColor ExposeInput::color() const
+QColor ExposeOutput::color() const
 {
     return cItemColor;
 }
 
-int ExposeInput::flags() const
+int ExposeOutput::flags() const
 {
     return Flag_NoTitle | Flag_NoFrame;
 }
 
-void ExposeInput::serialize(QVariantMap &data, SerializationContext *pContext) const
+void ExposeOutput::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
     AudioUnit::serialize(data, pContext);
     data["name"] = m_pPropName->value();
 }
 
-void ExposeInput::deserialize(const QVariantMap &data, SerializationContext *pContext)
+void ExposeOutput::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
     m_pPropName->setValue(data["name"]);
     AudioUnit::deserialize(data, pContext);
 }
 
-void ExposeInput::createProperties()
+void ExposeOutput::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
     m_pPropName = propertyManager()->addProperty(QVariant::String, "Name");
-    m_pPropName->setValue("input");
+    m_pPropName->setValue("output");
 
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
         // Update text item with the value for the property.
         QtVariantProperty *pV = dynamic_cast<QtVariantProperty*>(pProperty);
         if (pV == m_pPropName) {
             if (m_pNameItem != nullptr) {
-                m_pNameItem->setText(pV->valueText() + " ");
+                m_pNameItem->setText(QString(" %1").arg(pV->valueText()));
             }
         }
     });
