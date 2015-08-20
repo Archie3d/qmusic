@@ -13,7 +13,7 @@ QMusic depends on Qt 5.x framework.
 There are some examples provided in **patches** folder of the source tree.
 
 # Limitations
-Polyphonic synthesis is not implemented currently.
+Polyphonic synthesis is limited to 8 voices.
 
 # Issues
 This software is work in progress.
