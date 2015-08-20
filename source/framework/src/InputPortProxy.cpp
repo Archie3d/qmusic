@@ -24,20 +24,20 @@ InputPortProxy::InputPortProxy()
 }
 
 InputPortProxy::InputPortProxy(InputPort *pInput)
-    : InputPort(pInput->name(), pInput->dataType()),
+    : InputPort(pInput->name()),
       m_pInputPort(pInput)
 {
 }
 
 InputPortProxy::InputPortProxy(const QString &name, InputPort *pInput)
-    : InputPort(name, pInput->dataType()),
+    : InputPort(name),
       m_pInputPort(pInput)
 {
 }
 
-Signal InputPortProxy::value() const
+float InputPortProxy::value() const
 {
-    return m_pInputPort == nullptr ? Signal() : m_pInputPort->value();
+    return m_pInputPort == nullptr ? 0.0f : m_pInputPort->value();
 }
 
 void InputPortProxy::update()

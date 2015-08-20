@@ -74,10 +74,9 @@ public:
      * New input port will be added to this audio unit. The port will be destroyed together
      * with this audio unit object.
      * @param name Port name.
-     * @param type Port data type.
      * @return Pointer to created port.
      */
-    InputPort* addInput(const QString &name, Signal::Type type);
+    InputPort* addInput(const QString &name = QString());
 
     /**
      * Add an input port.
@@ -97,10 +96,9 @@ public:
      * New output port will be added to this audio unit. The port will be destroyed together
      * with this audio unit object.
      * @param name Port name.
-     * @param type Port data type.
      * @return Pointer to created port.
      */
-    OutputPort* addOutput(const QString &name, Signal::Type type);
+    OutputPort* addOutput(const QString &name = QString());
 
     /**
      * Add an output port.

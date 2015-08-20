@@ -29,7 +29,7 @@ ExposedInput::ExposedInput(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_pReferencedInputPort(nullptr)
 {
-    m_pOutput = addOutput("", Signal::Type_Float);
+    m_pOutput = addOutput();
     createProperties();
 
     m_pNameItem = nullptr;
@@ -51,7 +51,7 @@ void ExposedInput::process()
 {
     if (m_pReferencedInputPort) {
         m_pReferencedInputPort->update();
-        m_pOutput->setFloatValue(m_pReferencedInputPort->value().asFloat);
+        m_pOutput->setValue(m_pReferencedInputPort->value());
     }
 }
 

@@ -100,7 +100,7 @@ float SpeakerThreadObject::getNextLeftChannelSample()
 {
     if (m_pSignalChain->isEnabled()) {
         m_pLeftChannelInput->update();
-        return m_pLeftChannelInput->value().asFloat;
+        return m_pLeftChannelInput->value();
     }
     return 0.0f;
 }
@@ -109,7 +109,7 @@ float SpeakerThreadObject::getNextRightChannelSample()
 {
     if (m_pSignalChain->isEnabled()) {
         m_pRightChannelInput->update();
-        return m_pRightChannelInput->value().asFloat;
+        return m_pRightChannelInput->value();
     }
     return 0.0f;
 }

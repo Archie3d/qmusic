@@ -246,16 +246,14 @@ void SignalChainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *pEvent)
                     SignalChainInputPortItem *pInputItem = dynamic_cast<SignalChainInputPortItem*>(pItem);
                     if (!pInputItem->hasConnections() &&
                             m_pConnectionItem->inputPortItem() == nullptr &&
-                            m_pConnectionItem->outputPortItem()->parentItem() != pInputItem->parentItem() &&
-                            m_pConnectionItem->outputPortItem()->dataType() == pInputItem->dataType()) {
+                            m_pConnectionItem->outputPortItem()->parentItem() != pInputItem->parentItem()) {
                         finilizeConnection(pInputItem);
                         return;
                     }
                 } else if (pItem->type() == SignalChainItem::Type_OutputPort) {
                     SignalChainOutputPortItem *pOutputItem = dynamic_cast<SignalChainOutputPortItem*>(pItem);
                     if (m_pConnectionItem->outputPortItem() == nullptr &&
-                            m_pConnectionItem->inputPortItem()->parentItem() != pOutputItem->parentItem() &&
-                            m_pConnectionItem->inputPortItem()->dataType() == pOutputItem->dataType()) {
+                            m_pConnectionItem->inputPortItem()->parentItem() != pOutputItem->parentItem()) {
                         finilizeConnection(pOutputItem);
                         return;
                     }

@@ -26,15 +26,15 @@ InputPort::InputPort()
 {
 }
 
-InputPort::InputPort(const QString &name, Signal::Type type)
-    : Port(Direction_Input, name, type),
+InputPort::InputPort(const QString &name)
+    : Port(Direction_Input, name),
       m_pConnectedOutputPort(nullptr)
 {
 }
 
-Signal InputPort::value() const
+float InputPort::value() const
 {
-    return m_pConnectedOutputPort == nullptr ? Signal() : m_pConnectedOutputPort->value();
+    return m_pConnectedOutputPort == nullptr ? 0.0f : m_pConnectedOutputPort->value();
 }
 
 void InputPort::update()

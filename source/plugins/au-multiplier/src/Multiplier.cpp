@@ -28,9 +28,9 @@ Multiplier::Multiplier(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
 
-    m_pInput = addInput("", Signal::Type_Float);
-    m_pGain = addInput("", Signal::Type_Float);
-    m_pOutput = addOutput("", Signal::Type_Float);
+    m_pInput = addInput();
+    m_pGain = addInput();
+    m_pOutput = addOutput();
 }
 
 Multiplier::~Multiplier()
@@ -47,9 +47,9 @@ void Multiplier::processStop()
 
 void Multiplier::process()
 {
-    float v = m_pInput->value().asFloat;
-    float gain = m_pGain->value().asFloat;
-    m_pOutput->setFloatValue(v * gain);
+    float v = m_pInput->value();
+    float gain = m_pGain->value();
+    m_pOutput->setValue(v * gain);
 }
 
 void Multiplier::reset()

@@ -21,6 +21,7 @@
 #include <Clarinet.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "StkClarinet.h"
 
 const float cLowestFrequency(8.0);
@@ -37,14 +38,13 @@ void setCtrlPropertyAttrs(QtVariantProperty *pProp)
 StkClarinet::StkClarinet(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pInputVelocity = addInput("amp", Signal::Type_Float);
-    m_pInputBreath = addInput("breath", Signal::Type_Float);
-    m_pInputNoteOn = addInput("on", Signal::Type_Bool);
+    m_pInputFreq = addInput("f");
+    m_pInputVelocity = addInput("amp");
+    m_pInputBreath = addInput("breath");
 
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pOutput = addOutput("out");
 
-    m_noteOn = false;
+    m_note = -1;
 
     createProperties();
 
@@ -59,6 +59,29 @@ StkClarinet::StkClarinet(AudioUnitPlugin *pPlugin)
 StkClarinet::~StkClarinet()
 {
     delete m_pClarinet;
+}
+
+void StkClarinet::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    QString name = pEvent->name();
+
+    float freq = m_pInputFreq->value();
+    float amp = m_pInputVelocity->value();
+
+    if (name == "noteOn") {
+        if (freq > cLowestFrequency) {
+            m_note = pEvent->data().toMap()["number"].toInt();
+            m_pClarinet->noteOn(freq, amp);
+        }
+    } else if (name == "noteOff") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        if (note == m_note) {
+            m_pClarinet->noteOff(amp);
+        }
+    }
+
 }
 
 void StkClarinet::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -82,7 +105,7 @@ void StkClarinet::processStart()
     if (m_pClarinet != nullptr) {
         m_pClarinet->setSampleRate(signalChain()->sampleRate());
     }
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkClarinet::processStop()
@@ -96,36 +119,28 @@ void StkClarinet::process()
         return;
     }
 
+
+    float freq = m_pInputFreq->value();
+    if (freq < cLowestFrequency) {
+        return;
+    }
+
+    float breath = m_pInputBreath->value();
+
+    m_pClarinet->setFrequency(freq);
+
     m_pClarinet->controlChange(Ctrl_ReedStiffness, 128.0 * m_pPropReedStiffness->value().toDouble());
     m_pClarinet->controlChange(Ctrl_NoiseGain, 128.0 * m_pPropNoiseGain->value().toDouble());
-
-    bool noteOn = m_pInputNoteOn->value().asBool;
-    float freq = m_pInputFreq->value().asFloat;
-    freq = qMax(freq, 2.0f * cLowestFrequency);
-    float amp = m_pInputVelocity->value().asFloat;
-    float breath = m_pInputBreath->value().asFloat;
-
-    if (noteOn && !m_noteOn) {
-        // Note goes on
-        m_pClarinet->noteOn(freq, amp);
-    } else if (!noteOn && m_noteOn) {
-        // Note goes off
-        m_pClarinet->noteOff(amp);
-    } else {
-        m_pClarinet->setFrequency(freq);
-    }
     m_pClarinet->controlChange(Ctrl_BreathPressure, 128.0 * breath);
-
-    m_noteOn = noteOn;
 
     float sample = m_pClarinet->tick();
 
-    m_pOutput->setFloatValue(sample);
+    m_pOutput->setValue(sample);
 }
 
 void StkClarinet::reset()
 {
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkClarinet::createProperties()

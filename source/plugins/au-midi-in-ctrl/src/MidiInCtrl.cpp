@@ -47,7 +47,7 @@ const QColor cDefaultColor(230, 240, 210);
 MidiInCtrl::MidiInCtrl(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutputValue = addOutput("", Signal::Type_Float);
+    m_pOutputValue = addOutput();
 
     m_pValueItem = nullptr;
     m_controllerValue = 100;
@@ -101,7 +101,7 @@ void MidiInCtrl::processStop()
 
 void MidiInCtrl::process()
 {
-    m_pOutputValue->setFloatValue(m_controllerValueNormalized);
+    m_pOutputValue->setValue(m_controllerValueNormalized);
 }
 
 void MidiInCtrl::reset()

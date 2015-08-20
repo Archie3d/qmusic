@@ -29,15 +29,7 @@ const int cRadius = 3;
 const int cFontSize = 7;
 const char *cFontFamily = "Verdana";
 const QColor cPortNameColor(64, 0, 128);
-
-QMap<Signal::Type, QColor> cTypeToColorMap = []() {
-    QMap<Signal::Type, QColor> map;
-    map[Signal::Type_Invalid] = QColor("black");
-    map[Signal::Type_Int] = QColor("blue");
-    map[Signal::Type_Float] = QColor("red");
-    map[Signal::Type_Bool] = QColor("green");
-    return map;
-}();
+const QColor cSocketColor("red");
 
 /*
  * SignalChainPortItem implementation
@@ -117,10 +109,7 @@ void SignalChainPortItem::setLabel(const QString &text)
 
 void SignalChainPortItem::paint(QPainter *pPainter, const QStyleOptionGraphicsItem *pOption, QWidget *pWidget)
 {
-    Signal::Type type = dataType();
-    QColor color = cTypeToColorMap.value(type, Qt::black);
-
-    pPainter->setPen(color);
+    pPainter->setPen(cSocketColor);
     pPainter->setBrush(QBrush(Qt::white));
     pPainter->drawPath(path());
 }
@@ -152,15 +141,6 @@ SignalChainInputPortItem::SignalChainInputPortItem(InputPort *pInput, QGraphicsI
     Q_ASSERT(pInput != nullptr);
 }
 
-Signal::Type SignalChainInputPortItem::dataType() const
-{
-    if (m_pInputPort != nullptr) {
-        return m_pInputPort->dataType();
-    }
-
-    return Signal::Type_Invalid;
-}
-
 /*
  *  class SignalChainOutputPortItem implementation
  */
@@ -177,13 +157,4 @@ SignalChainOutputPortItem::SignalChainOutputPortItem(OutputPort *pOutput, QGraph
       m_pOutputPort(pOutput)
 {
     Q_ASSERT(pOutput != nullptr);
-}
-
-Signal::Type SignalChainOutputPortItem::dataType() const
-{
-    if (m_pOutputPort != nullptr) {
-        return m_pOutputPort->dataType();
-    }
-
-    return Signal::Type_Invalid;
 }

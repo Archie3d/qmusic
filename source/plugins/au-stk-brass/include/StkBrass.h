@@ -41,6 +41,8 @@ public:
     StkBrass(AudioUnitPlugin *pPlugin);
     ~StkBrass();
 
+    void handleEvent(SignalChainEvent *pEvent) override;
+
     QColor color() const override { return QColor(250, 240, 255); }
 
     // ISerializable interface
@@ -65,7 +67,7 @@ private:
 
     OutputPort *m_pOutput;
 
-    bool m_noteOn;
+    int m_note;
 
     QtVariantProperty *m_pPropLipTension;
     QtVariantProperty *m_pPropSlideLength;

@@ -38,9 +38,9 @@ void setCtrlPropertyAttrs(QtVariantProperty *pProp)
 StkBeeThree::StkBeeThree(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pInputVelocity = addInput("amp", Signal::Type_Float);
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pInputFreq = addInput("f");
+    m_pInputVelocity = addInput("amp");
+    m_pOutput = addOutput("out");
 
     createProperties();
 
@@ -63,8 +63,8 @@ void StkBeeThree::handleEvent(SignalChainEvent *pEvent)
 {
     QString name = pEvent->name();
 
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
+    float freq = m_pInputFreq->value();
+    float amp = m_pInputVelocity->value();
 
     if (name == "noteOn") {
         if (freq > cMinFrequency) {
@@ -118,8 +118,7 @@ void StkBeeThree::process()
         return;
     }
 
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
+    float freq = m_pInputFreq->value();
 
     if (freq < cMinFrequency) {
         return;
@@ -134,7 +133,7 @@ void StkBeeThree::process()
 
     float sample = m_pBeeThree->tick();
 
-    m_pOutput->setFloatValue(sample);
+    m_pOutput->setValue(sample);
 }
 
 void StkBeeThree::reset()

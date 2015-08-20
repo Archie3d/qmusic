@@ -30,8 +30,8 @@ GeneratorSine::GeneratorSine(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_phase(0.0)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pInputFreq = addInput("f");
+    m_pOutput = addOutput("out");
 
     createProperties();
 }
@@ -76,12 +76,12 @@ void GeneratorSine::process()
     float freqScale = m_pPropFreqScale->value().toDouble();
     ISignalChain* chain = signalChain();
     float dt = chain->timeStep();
-    float f = m_pInputFreq->value().asFloat;
+    float f = m_pInputFreq->value();
 
     float dPhase = f * freqScale * dt;
     m_phase = fmod(m_phase + dPhase, 1.0);
 \
-    m_pOutput->setFloatValue(out);
+    m_pOutput->setValue(out);
 }
 
 void GeneratorSine::reset()

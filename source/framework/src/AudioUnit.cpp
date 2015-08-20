@@ -114,9 +114,9 @@ QColor AudioUnit::color() const
     return cDefaultColor;
 }
 
-InputPort *AudioUnit::addInput(const QString &name, Signal::Type type)
+InputPort *AudioUnit::addInput(const QString &name)
 {
-    InputPort *pInput = new InputPort(name, type);
+    InputPort *pInput = new InputPort(name);
     addInput(pInput);
     return pInput;
 }
@@ -128,9 +128,9 @@ void AudioUnit::addInput(InputPort *pInput)
     m_inputs.append(pInput);
 }
 
-OutputPort *AudioUnit::addOutput(const QString &name, Signal::Type type)
+OutputPort *AudioUnit::addOutput(const QString &name)
 {
-    OutputPort *pOutput = new OutputPort(name, type);
+    OutputPort *pOutput = new OutputPort(name);
     addOutput(pOutput);
     return pOutput;
 }

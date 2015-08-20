@@ -48,8 +48,6 @@ public:
 
     bool isInput() const { return !isOutput(); }
 
-    virtual Signal::Type dataType() const = 0;
-
     /**
      * @brief Returns pointer to audio unit item this port belongs to.
      * @note Audio unit item is a parent of this port graphics item.
@@ -84,7 +82,6 @@ public:
     SignalChainInputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainInputPortItem(InputPort *pInput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return false; }
-    Signal::Type dataType() const override;
     InputPort* inputPort() const { return m_pInputPort; }
 
 private:
@@ -98,7 +95,6 @@ public:
     SignalChainOutputPortItem(QGraphicsItem *pParent = nullptr);
     SignalChainOutputPortItem(OutputPort *pOutput, QGraphicsItem *pParent = nullptr);
     bool isOutput() const override { return true; }
-    Signal::Type dataType() const override;
     OutputPort* outputPort() const { return m_pOutputPort; }
 
 private:

@@ -24,20 +24,20 @@ OutputPortProxy::OutputPortProxy()
 }
 
 OutputPortProxy::OutputPortProxy(OutputPort *pOutput)
-    : OutputPort(pOutput->name(), pOutput->dataType()),
+    : OutputPort(pOutput->name()),
       m_pOutputPort(pOutput)
 {
 }
 
 OutputPortProxy::OutputPortProxy(const QString &name, OutputPort *pOutput)
-    : OutputPort(name, pOutput->dataType()),
+    : OutputPort(name),
       m_pOutputPort(pOutput)
 {
 }
 
-Signal OutputPortProxy::value() const
+float OutputPortProxy::value() const
 {
-    return m_pOutputPort == nullptr ? Signal() : m_pOutputPort->value();
+    return m_pOutputPort == nullptr ? 0.0f : m_pOutputPort->value();
 }
 
 void OutputPortProxy::update()

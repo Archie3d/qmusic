@@ -113,7 +113,7 @@ void PolyphonicContainer::process()
     prepareVoicesUpdate();
 
     foreach (OutputPort *pOutputPort, m_outputs) {
-        pOutputPort->setFloatValue(0.0f);
+        pOutputPort->setValue(0.0f);
     }
 
     // The following will trigger update of internal signal chains
@@ -204,12 +204,12 @@ void PolyphonicContainer::createPorts()
         if (pAu->uid() == cExposeInputUid) {
             ExposedInput *pExpInput = dynamic_cast<ExposedInput*>(pAu);
             Q_ASSERT(pExpInput != nullptr);
-            InputPort *pInputPort = addInput(pExpInput->exposedInputName(), Signal::Type_Float);
+            InputPort *pInputPort = addInput(pExpInput->exposedInputName());
             m_inputs.append(pInputPort);
         } else if (pAu->uid() == cExposeOutputUid) {
             ExposedOutput *pExpOutput = dynamic_cast<ExposedOutput*>(pAu);
             Q_ASSERT(pExpOutput != nullptr);
-            OutputPort *pOutputPort = addOutput(pExpOutput->exposedOutputName(), Signal::Type_Float);
+            OutputPort *pOutputPort = addOutput(pExpOutput->exposedOutputName());
             m_outputs.append(pOutputPort);
         }
     }

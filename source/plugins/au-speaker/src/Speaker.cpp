@@ -31,8 +31,8 @@ const QColor cDefaultColor(240, 230, 210);
 Speaker::Speaker(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputLeft = addInput("L", Signal::Type_Float);
-    m_pInputRight = addInput("R", Signal::Type_Float);
+    m_pInputLeft = addInput("L");
+    m_pInputRight = addInput("R");
 
     m_pThread = new QThread(this);
     m_pThreadObject = new SpeakerThreadObject(bufferSizeFromSettings());

@@ -37,10 +37,10 @@ void setCtrlPropertyAttrs(QtVariantProperty *pProp, double v = 0.5, double min =
 StkGuitar::StkGuitar(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pInputVelocity = addInput("amp", Signal::Type_Float);
+    m_pInputFreq = addInput("f");
+    m_pInputVelocity = addInput("amp");
 
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pOutput = addOutput("out");
 
     createProperties();
 
@@ -56,8 +56,8 @@ void StkGuitar::handleEvent(SignalChainEvent *pEvent)
 {
     QString name = pEvent->name();
 
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
+    float freq = m_pInputFreq->value();
+    float amp = m_pInputVelocity->value();
 
     if (name == "noteOn") {
         if (freq > cMinFrequency) {
@@ -101,8 +101,7 @@ void StkGuitar::processStop()
 
 void StkGuitar::process()
 {
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
+    float freq = m_pInputFreq->value();
 
     if (freq < cMinFrequency) {
         return;
@@ -115,7 +114,7 @@ void StkGuitar::process()
 
     float sample = m_pGuitar->tick();
 
-    m_pOutput->setFloatValue(sample);
+    m_pOutput->setValue(sample);
 }
 
 void StkGuitar::reset()

@@ -33,8 +33,8 @@ const QColor cDefaultColor(230, 240, 210);
 MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutputFreq = addOutput("f", Signal::Type_Float);
-    m_pOutputVelocity = addOutput("velocity", Signal::Type_Float);
+    m_pOutputFreq = addOutput("f");
+    m_pOutputVelocity = addOutput("velocity");
 
     createProperties();
 }
@@ -99,8 +99,8 @@ void MidiIn::processStop()
 
 void MidiIn::process()
 {
-    m_pOutputFreq->setFloatValue(m_frequency * m_frequencyBend);
-    m_pOutputVelocity->setFloatValue(m_velocity);
+    m_pOutputFreq->setValue(m_frequency * m_frequencyBend);
+    m_pOutputVelocity->setValue(m_velocity);
 }
 
 void MidiIn::reset()

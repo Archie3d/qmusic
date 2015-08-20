@@ -43,16 +43,15 @@ public:
     /**
      * Construct an input port.
      * @param name Port name.
-     * @param type Port data type.
      */
-    InputPort(const QString &name, Signal::Type type);
+    InputPort(const QString &name);
 
     /**
      * Returns port value.
      * Value is taked from connected output port. If not connected an invalid value is returned.
      * @return
      */
-    Signal value() const override;
+    float value() const override;
 
     /**
      * Update the input.

@@ -28,10 +28,10 @@ Mixer::Mixer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
     for (int i = 0; i < cNumberOfInputs; ++i) {
-        InputPort *pInput = addInput("", Signal::Type_Float);
+        InputPort *pInput = addInput();
         m_inputs.append(pInput);
     }
-    m_pOutput = addOutput("", Signal::Type_Float);
+    m_pOutput = addOutput();
 }
 
 Mixer::~Mixer()
@@ -50,8 +50,8 @@ void Mixer::process()
 {
     float sum = 0.0;
     foreach (const InputPort *pInput, m_inputs) {
-        sum += pInput->value().asFloat;
+        sum += pInput->value();
     }
 
-    m_pOutput->setFloatValue(sum);
+    m_pOutput->setValue(sum);
 }

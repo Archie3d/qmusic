@@ -21,6 +21,7 @@
 #include <Brass.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "StkBrass.h"
 
 const float cLowestFrequency(50.0);
@@ -37,14 +38,13 @@ void setCtrlPropertyAttrs(QtVariantProperty *pProp)
 StkBrass::StkBrass(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pInputVelocity = addInput("amp", Signal::Type_Float);
-    m_pInputBreath = addInput("breath", Signal::Type_Float);
-    m_pInputNoteOn = addInput("on", Signal::Type_Bool);
+    m_pInputFreq = addInput("f");
+    m_pInputVelocity = addInput("amp");
+    m_pInputBreath = addInput("breath");
 
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pOutput = addOutput("out");
 
-    m_noteOn = false;
+    m_note = -1;
 
     createProperties();
 
@@ -59,6 +59,29 @@ StkBrass::StkBrass(AudioUnitPlugin *pPlugin)
 StkBrass::~StkBrass()
 {
     delete m_pBrass;
+}
+
+void StkBrass::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    QString name = pEvent->name();
+
+    float freq = m_pInputFreq->value();
+    float amp = m_pInputVelocity->value();
+
+    if (name == "noteOn") {
+        if (freq > cLowestFrequency) {
+            m_note = pEvent->data().toMap()["number"].toInt();
+            m_pBrass->noteOn(freq, amp);
+        }
+    } else if (name == "noteOff") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        if (note == m_note) {
+            m_pBrass->noteOff(amp);
+        }
+    }
+
 }
 
 void StkBrass::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -82,7 +105,7 @@ void StkBrass::processStart()
     if (m_pBrass != nullptr) {
         m_pBrass->setSampleRate(signalChain()->sampleRate());
     }
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkBrass::processStop()
@@ -96,40 +119,26 @@ void StkBrass::process()
         return;
     }
 
-    m_pBrass->controlChange(Ctrl_LipTension, 128.0 * m_pPropLipTension->value().toDouble());
-    m_pBrass->controlChange(Ctrl_SlideLength, 128.0 * m_pPropSlideLength->value().toDouble());
-
-    bool noteOn = m_pInputNoteOn->value().asBool;
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
-    float breath = m_pInputBreath->value().asFloat;
-
-    m_pBrass->controlChange(Ctrl_BreathPressure, 128.0 * breath);
-
+    float freq = m_pInputFreq->value();
     if (freq < cLowestFrequency) {
         return;
     }
+    float breath = m_pInputBreath->value();
 
-    if (noteOn && !m_noteOn) {
-        // Note goes on
-        m_pBrass->noteOn(freq, amp);
-    } else if (!noteOn && m_noteOn) {
-        // Note goes off
-        m_pBrass->noteOff(amp);
-    } else {
-        m_pBrass->setFrequency(freq);
-    }
+    m_pBrass->controlChange(Ctrl_LipTension, 128.0 * m_pPropLipTension->value().toDouble());
+    m_pBrass->controlChange(Ctrl_SlideLength, 128.0 * m_pPropSlideLength->value().toDouble());
+    m_pBrass->controlChange(Ctrl_BreathPressure, 128.0 * breath);
 
-    m_noteOn = noteOn;
+    m_pBrass->setFrequency(freq);
 
     float sample = m_pBrass->tick();
 
-    m_pOutput->setFloatValue(sample);
+    m_pOutput->setValue(sample);
 }
 
 void StkBrass::reset()
 {
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkBrass::createProperties()

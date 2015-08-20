@@ -36,7 +36,7 @@ void setDefaultAttrs(QtVariantProperty *pProp)
 Envelope::Envelope(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pOutput = addOutput("gain", Signal::Type_Float);
+    m_pOutput = addOutput("gain");
 
     createProperties();
 }
@@ -118,7 +118,7 @@ void Envelope::process()
     calculateDecay();
     calculateRelease();
 
-    m_pOutput->setFloatValue(m_output);
+    m_pOutput->setValue(m_output);
 }
 
 void Envelope::reset()

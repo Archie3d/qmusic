@@ -26,8 +26,8 @@
 Delay::Delay(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInput = addInput("", Signal::Type_Float);
-    m_pOutput = addOutput("", Signal::Type_Float);
+    m_pInput = addInput("");
+    m_pOutput = addOutput("");
 
     m_pDelayLine = nullptr;
 
@@ -66,8 +66,8 @@ void Delay::processStop()
 
 void Delay::process()
 {
-    float out = m_pDelayLine->process(m_pInput->value().asFloat);
-    m_pOutput->setFloatValue(out);
+    float out = m_pDelayLine->process(m_pInput->value());
+    m_pOutput->setValue(out);
 }
 
 void Delay::reset()

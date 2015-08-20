@@ -29,7 +29,7 @@ ExposedOutput::ExposedOutput(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_pReferencedOutputPort(nullptr)
 {
-    m_pInput = addInput("", Signal::Type_Float);
+    m_pInput = addInput();
     createProperties();
 
     m_pNameItem = nullptr;
@@ -50,10 +50,10 @@ void ExposedOutput::processStop()
 void ExposedOutput::process()
 {
     if (m_pReferencedOutputPort != nullptr) {
-        float value = m_pReferencedOutputPort->value().asFloat;
+        float value = m_pReferencedOutputPort->value();
         // Mix the input with whatever has been already assigned to referenced port
         m_pInput->update();
-        m_pReferencedOutputPort->setFloatValue(value + m_pInput->value().asFloat);
+        m_pReferencedOutputPort->setValue(value + m_pInput->value());
     }
 }
 

@@ -32,7 +32,7 @@ public:
     OutputPortProxy(OutputPort *pOutput);
     OutputPortProxy(const QString &name, OutputPort *pOutput);
 
-    Signal value() const override;
+    float value() const override;
     void update() override;
 
 private:

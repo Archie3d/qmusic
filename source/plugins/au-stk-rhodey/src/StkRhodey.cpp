@@ -21,18 +21,19 @@
 #include <Rhodey.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "SignalChainEvent.h"
 #include "StkRhodey.h"
 
 StkRhodey::StkRhodey(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInputFreq = addInput("f", Signal::Type_Float);
-    m_pInputVelocity = addInput("amp", Signal::Type_Float);
-    m_pInputNoteOn = addInput("on", Signal::Type_Bool);
+    m_pInputFreq = addInput("f");
+    m_pInputVelocity = addInput("amp");
+    m_pInputNoteOn = addInput("on");
 
-    m_pOutput = addOutput("out", Signal::Type_Float);
+    m_pOutput = addOutput("out");
 
-    m_noteOn = false;
+    m_note = -1;
 
     createProperties();
 
@@ -49,6 +50,26 @@ StkRhodey::StkRhodey(AudioUnitPlugin *pPlugin)
 StkRhodey::~StkRhodey()
 {
     delete m_pRhodey;
+}
+
+void StkRhodey::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    QString name = pEvent->name();
+
+    float freq = m_pInputFreq->value();
+    float amp = m_pInputVelocity->value();
+
+    if (name == "noteOn") {
+        m_note = pEvent->data().toMap()["number"].toInt();
+        m_pRhodey->noteOn(freq, amp);
+    } else if (name == "noteOff") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        if (note == m_note) {
+            m_pRhodey->noteOff(amp);
+        }
+    }
 }
 
 void StkRhodey::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -68,7 +89,7 @@ void StkRhodey::processStart()
     if (m_pRhodey != nullptr) {
         m_pRhodey->setSampleRate(signalChain()->sampleRate());
     }
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkRhodey::processStop()
@@ -82,29 +103,18 @@ void StkRhodey::process()
         return;
     }
 
-    bool noteOn = m_pInputNoteOn->value().asBool;
-    float freq = m_pInputFreq->value().asFloat;
-    float amp = m_pInputVelocity->value().asFloat;
+    float freq = m_pInputFreq->value();
 
-    if (noteOn && !m_noteOn) {
-        // Note goes on
-        m_pRhodey->noteOn(freq, amp);
-    } else if (!noteOn && m_noteOn) {
-        // Note goes off
-        m_pRhodey->noteOff(amp);
-    } else {
-        m_pRhodey->setFrequency(freq);
-    }
-    m_noteOn = noteOn;
+    m_pRhodey->setFrequency(freq);
 
     float sample = m_pRhodey->tick();
 
-    m_pOutput->setFloatValue(sample);
+    m_pOutput->setValue(sample);
 }
 
 void StkRhodey::reset()
 {
-    m_noteOn = false;
+    m_note = -1;
 }
 
 void StkRhodey::createProperties()

@@ -25,13 +25,13 @@ OutputPort::OutputPort()
 {
 }
 
-OutputPort::OutputPort(const QString &name, Signal::Type type)
-    : Port(Direction_Output, name, type),
+OutputPort::OutputPort(const QString &name)
+    : Port(Direction_Output, name),
       m_value()
 {
 }
 
-void OutputPort::setValue(const Signal &value)
+void OutputPort::setValue(float value)
 {
     m_value = value;
 }
