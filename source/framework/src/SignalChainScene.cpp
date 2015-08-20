@@ -29,6 +29,7 @@
 #include "AudioUnitsManager.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
+#include "ISignalChainSceneContainer.h"
 #include "SignalChain.h"
 #include "SignalChainItem.h"
 #include "SignalChainPortItem.h"
@@ -44,6 +45,8 @@ const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
 
 const QString cSignalChainMimeDataId("qmusic/signalChainSceneItems");
+
+const QString cPolyphonicContainerUid("d37746dd670118a9c1625d86ee5e182c");
 
 SignalChainScene::SignalChainScene(QObject *pParent)
     : QGraphicsScene(pParent)
@@ -550,4 +553,29 @@ SignalChainAudioUnitItem* SignalChainScene::findAudioUnitInstance(const QString 
         }
     }
     return false;
+}
+
+void SignalChainScene::createPolyphonicContainer(SignalChainScene *pScene)
+{
+    Q_ASSERT(pScene != nullptr);
+
+    SignalChainFactory factory;
+    ISerializable *pSerializable = factory.createObject(cPolyphonicContainerUid);
+    if (pSerializable == nullptr) {
+        qCritical() << "Polyphonic container plugin cannot be found";
+        return;
+    }
+
+    AudioUnit *pAudioUnit = dynamic_cast<AudioUnit*>(pSerializable);
+    ISignalChainSceneContainer *pSceneContainer = dynamic_cast<ISignalChainSceneContainer*>(pSerializable);
+    Q_ASSERT(pAudioUnit != nullptr);
+    Q_ASSERT(pSceneContainer != nullptr);
+    Q_ASSERT(m_pSignalChain != nullptr);
+
+    pSceneContainer->setSignalChainScene(pScene);
+
+    m_pSignalChain->addAudioUnit(pAudioUnit);
+    SignalChainAudioUnitItem *pItem = new SignalChainAudioUnitItem(pAudioUnit);
+    pItem->setPos(m_mousePos);
+    addItem(pItem);
 }

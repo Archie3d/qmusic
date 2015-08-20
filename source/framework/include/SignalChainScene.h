@@ -72,6 +72,12 @@ public:
     SignalChainAudioUnitItem* findAudioUnitInstance(const QString &uid);
 
     /**
+     * Create a polyphonic container for a gived scene.
+     * @param pScene
+     */
+    void createPolyphonicContainer(SignalChainScene *pScene);
+
+    /**
      * Save this scene to a file.
      * @param path File path.
      * @return true if saved OK.

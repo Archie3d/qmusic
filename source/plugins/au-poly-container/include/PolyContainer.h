@@ -19,19 +19,22 @@
 #define AU_POLY_CONTAINER_H
 
 #include "AudioUnit.h"
+#include "ISignalChainSceneContainer.h"
 
 class QtVariantProperty;
 class QGraphicsSimpleTextItem;
-class SignalChainScene;
 
-class PolyphonicContainer : public AudioUnit
+
+class PolyphonicContainer : public AudioUnit,
+                                   ISignalChainSceneContainer
 {
 public:
 
     PolyphonicContainer(AudioUnitPlugin *pPlugin);
     ~PolyphonicContainer();
 
-    void setSignalChainScene(SignalChainScene *pScene);
+    void setSignalChainScene(SignalChainScene *pScene) override;
+    SignalChainScene* signalChainScene() const override { return m_pSignalChainScene; }
 
 protected:
 
