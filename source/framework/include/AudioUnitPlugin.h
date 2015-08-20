@@ -60,6 +60,15 @@ public:
     virtual AudioUnit* createInstance() = 0;
 
     /**
+     * Create an instance involving user interaction (if needed).
+     * This method can pop up a GUI dialog to agree the instance
+     * creation with the user.
+     * @note Default implememtation calls createInstance().
+     * @return Pointer to a new instance.
+     */
+    virtual AudioUnit* createInstanceInteractive();
+
+    /**
      * Initialize plugin.
      * This method is called by plugins manager.
      */

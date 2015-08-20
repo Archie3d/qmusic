@@ -15,6 +15,8 @@
     Lesser General Public License for more details.
 */
 
+#include <QFileDialog>
+#include "Application.h"
 #include "PolyContainerPlugin.h"
 #include "PolyContainer.h"
 
@@ -31,4 +33,28 @@ QIcon PolyphonicContainerPlugin::icon() const
 AudioUnit* PolyphonicContainerPlugin::createInstance()
 {
     return new PolyphonicContainer(this);
+}
+
+AudioUnit* PolyphonicContainerPlugin::createInstanceInteractive()
+{
+    QString proposedPath = Application::instance()->applicationDirPath();
+    QString fileName = QFileDialog::getOpenFileName(Application::instance()->mainWindow(),
+                                                    tr("Open signal chain"),
+                                                    proposedPath,
+                                                    tr("QMusic signalchain (*.sch)"));
+
+    if (fileName.isEmpty()) {
+        return nullptr;
+    }
+
+    SignalChainScene *pScene = SignalChainScene::loadFromFile(fileName);
+    if (pScene == nullptr) {
+        return nullptr;
+    }
+
+    // Create container and assign a scene to it.
+    PolyphonicContainer *pContainer = new PolyphonicContainer(this);
+    pContainer->setSignalChainScene(pScene);
+
+    return pContainer;
 }

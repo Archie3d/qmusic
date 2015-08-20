@@ -47,7 +47,7 @@ PolyphonicContainer::~PolyphonicContainer()
 
 void PolyphonicContainer::setSignalChainScene(SignalChainScene *pScene)
 {
-    Q_ASSERT(pScence != nullptr);
+    Q_ASSERT(pScene != nullptr);
     Q_ASSERT(m_pSignalChainScene == nullptr);
 
     m_pSignalChainScene = pScene;

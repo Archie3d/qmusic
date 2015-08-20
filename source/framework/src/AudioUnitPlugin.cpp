@@ -23,3 +23,8 @@ AudioUnitPlugin::AudioUnitPlugin(QObject *pParent)
     : QObject(pParent)
 {
 }
+
+AudioUnit* AudioUnitPlugin::createInstanceInteractive()
+{
+    return createInstance();
+}

@@ -153,7 +153,7 @@ ISignalChain* SignalChain::clone()
     // Clone signal chain by serializing and then
     // deserializing it back.
 
-    // Helper structure to track connections
+    // Helper structure to keep track of connections
     struct Connection {
         QVariant sourceAudioUnitHandle;
         QVariant targetAudioUnitHandle;
@@ -163,11 +163,12 @@ ISignalChain* SignalChain::clone()
 
     QList<Connection> connections;
 
+    //
+    // Serialize
+    //
 
-    SignalChainFactory factory;
-    SerializationContext context(&factory);
-
-    context.serialize(this);
+    SerializationContext serContext;
+    serContext.serialize(this);
 
     // Serialize connections
     foreach (IAudioUnit *pIAu, m_audioUnits) {
@@ -178,8 +179,8 @@ ISignalChain* SignalChain::clone()
                 IAudioUnit *pTargetAu = pInput->audioUnit();
 
                 Connection conn;
-                conn.sourceAudioUnitHandle = context.serialize(dynamic_cast<ISerializable*>(pSourceAu));
-                conn.targetAudioUnitHandle = context.serialize(dynamic_cast<ISerializable*>(pTargetAu));
+                conn.sourceAudioUnitHandle = serContext.serialize(dynamic_cast<ISerializable*>(pSourceAu));
+                conn.targetAudioUnitHandle = serContext.serialize(dynamic_cast<ISerializable*>(pTargetAu));
                 conn.sourcePortIndex = pInput->connectedOutputPort()->index();
                 conn.targetPortIndex = pInput->index();
                 connections.append(conn);
@@ -187,12 +188,20 @@ ISignalChain* SignalChain::clone()
         }
     }
 
-    SignalChain *pSignalChainClone = context.deserialize<SignalChain>();
+    //
+    // Deserialize
+    //
+
+    SignalChainFactory factory;
+    SerializationContext deserContext(&factory);
+    deserContext.fromByteArray(serContext.toByteArray());
+
+    SignalChain *pSignalChainClone = deserContext.deserialize<SignalChain>();
 
     // Deserialize connections
     foreach(const Connection &conn, connections) {
-        AudioUnit *pSourceAu = context.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
-        AudioUnit *pTargetAu = context.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
+        AudioUnit *pSourceAu = deserContext.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
+        AudioUnit *pTargetAu = deserContext.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
         OutputPort *pSourcePort = pSourceAu->outputs().at(conn.sourcePortIndex);
         InputPort *pTargetPort = pTargetAu->inputs().at(conn.targetPortIndex);
         pTargetPort->connect(pSourcePort);
