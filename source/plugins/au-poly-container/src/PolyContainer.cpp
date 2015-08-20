@@ -22,10 +22,14 @@
 #include "SerializationContext.h"
 #include "SignalChain.h"
 #include "SignalChainScene.h"
+#include "IExposedInput.h"
+#include "IExposedOutput.h"
 #include "PolyContainer.h"
 
 const int cNumberOfVoices(8);
 const QColor cItemColor(200, 180, 120);
+const QString cExposeInputUid("b12c76c4ee191b4452ed951a270b4645");
+const QString cExposeOutputUid("0a3872cffcd4f8d00843016dc031c5d4");
 
 PolyphonicContainer::PolyphonicContainer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
@@ -41,15 +45,14 @@ PolyphonicContainer::~PolyphonicContainer()
     delete m_pSignalChainScene;
 }
 
-void PolyphonicContainer::loadSignalChain(const QString &path)
+void PolyphonicContainer::setSignalChainScene(SignalChainScene *pScene)
 {
+    Q_ASSERT(pScence != nullptr);
     Q_ASSERT(m_pSignalChainScene == nullptr);
-    m_pSignalChainScene = SignalChainScene::loadFromFile(path);
-    if (m_pSignalChainScene == nullptr) {
-        qCritical() << "Unable to load signal chain from" << path;
-        return;
-    }
 
+    m_pSignalChainScene = pScene;
+
+    createPorts();
     createVoices();
 }
 
@@ -70,7 +73,16 @@ void PolyphonicContainer::processStop()
 
 void PolyphonicContainer::process()
 {
-    // TODO: mix the outputs from the signal chains
+    prepareVoicesUpdate();
+
+    foreach (OutputPort *pOutputPort, m_outputs) {
+        pOutputPort->setFloatValue(0.0f);
+    }
+
+    // The following will trigger update of internal signal chains
+    foreach (IAudioUnit *pAu, m_exposeOutputAudioUnits) {
+        pAu->update();
+    }
 }
 
 void PolyphonicContainer::reset()
@@ -102,6 +114,8 @@ void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationCont
     Q_ASSERT(pContext != nullptr);
     AudioUnit::deserialize(data, pContext);
     m_pSignalChainScene = pContext->deserialize<SignalChainScene>(data["signalChainScene"]);
+
+    createPorts();
     createVoices();
 }
 
@@ -117,6 +131,52 @@ void PolyphonicContainer::createVoices()
         ISignalChain *pVoice = m_pSignalChainScene->signalChain()->clone();
         Q_ASSERT(pVoice != nullptr);
         m_voices.append(pVoice);
+
+        int inputIndex = 0;
+        int outputIndex = 0;
+
+        // Reference voice ports
+        QList<IAudioUnit*> audioUnits = pVoice->audioUnits();
+        foreach (IAudioUnit *pAu, audioUnits) {
+            if (pAu->uid() == cExposeInputUid) {
+                IExposedInput *pExpInput = dynamic_cast<IExposedInput*>(pAu);
+                Q_ASSERT(pExpInput != nullptr);
+                pExpInput->setRefInputPort(m_inputs.at(inputIndex++));
+
+            } else if (pAu->uid() == cExposeOutputUid) {
+                IExposedOutput *pExpOutput = dynamic_cast<IExposedOutput*>(pAu);
+                Q_ASSERT(pExpOutput != nullptr);
+                pExpOutput->setRefOutputPort(m_outputs.at(outputIndex++));
+                m_exposeOutputAudioUnits.append(pAu);
+            }
+        }
+    }
+}
+
+void PolyphonicContainer::createPorts()
+{
+    Q_ASSERT(m_pSignalChainScene != nullptr);
+
+    QList<IAudioUnit*> audioUnits = m_pSignalChainScene->signalChain()->audioUnits();
+    foreach (IAudioUnit *pAu, audioUnits) {
+        if (pAu->uid() == cExposeInputUid) {
+            IExposedInput *pExpInput = dynamic_cast<IExposedInput*>(pAu);
+            Q_ASSERT(pExpInput != nullptr);
+            InputPort *pInputPort = addInput(pExpInput->exposedInputName(), Signal::Type_Float);
+            m_inputs.append(pInputPort);
+        } else if (pAu->uid() == cExposeOutputUid) {
+            IExposedOutput *pExpOutput = dynamic_cast<IExposedOutput*>(pAu);
+            Q_ASSERT(pExpOutput != nullptr);
+            OutputPort *pOutputPort = addOutput(pExpOutput->exposedOutputName(), Signal::Type_Float);
+            m_outputs.append(pOutputPort);
+        }
+    }
+}
+
+void PolyphonicContainer::prepareVoicesUpdate()
+{
+    foreach (ISignalChain *pSignalChain, m_voices) {
+        pSignalChain->prepareUpdate();
     }
 }
 

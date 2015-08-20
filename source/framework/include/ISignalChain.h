@@ -115,6 +115,12 @@ public:
     virtual void removeAudioUnit(IAudioUnit *pAudioUnit) = 0;
 
     /**
+     * @brief Returns the list of all audio units in this chain.
+     * @return
+     */
+    virtual QList<IAudioUnit*> audioUnits() const = 0;
+
+    /**
      * @brief Prepare all audio units for update.
      */
     virtual void prepareUpdate() = 0;

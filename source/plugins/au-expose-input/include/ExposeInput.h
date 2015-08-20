@@ -19,11 +19,13 @@
 #define AU_EXPOSE_INPUT_H
 
 #include "AudioUnit.h"
+#include "IExposedInput.h"
 
 class QtVariantProperty;
 class QGraphicsSimpleTextItem;
 
-class ExposeInput : public AudioUnit
+class ExposeInput : public AudioUnit,
+                           IExposedInput
 {
 public:
 
@@ -41,6 +43,10 @@ protected:
     QColor color() const override;
     int flags() const;
 
+    // IExposedInput
+    QString exposedInputName() const override;
+    void setRefInputPort(InputPort *pInputPort) override;
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
@@ -48,6 +54,8 @@ protected:
 private:
 
     void createProperties();
+
+    InputPort *m_pReferencedInputPort;
 
     QGraphicsSimpleTextItem *m_pNameItem;
 

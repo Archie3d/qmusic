@@ -31,7 +31,7 @@ public:
     PolyphonicContainer(AudioUnitPlugin *pPlugin);
     ~PolyphonicContainer();
 
-    void loadSignalChain(const QString &path);
+    void setSignalChainScene(SignalChainScene *pScene);
 
 protected:
 
@@ -51,8 +51,14 @@ private:
 
     void createProperties();
     void createVoices();
+    void createPorts();
+    void prepareVoicesUpdate();
 
     SignalChainScene *m_pSignalChainScene;
+
+    QList<InputPort*> m_inputs;
+    QList<OutputPort*> m_outputs;
+    QList<IAudioUnit*> m_exposeOutputAudioUnits;
 
     /// List of cloned signal chains
     QList<ISignalChain*> m_voices;

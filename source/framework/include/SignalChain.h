@@ -57,6 +57,7 @@ public:
     float sampleRate() const override { return 1.0f / m_timeStep; }
     void addAudioUnit(IAudioUnit *pAudioUnit) override;
     void removeAudioUnit(IAudioUnit *pAudioUnit) override;
+    QList<IAudioUnit*> audioUnits() const override { return m_audioUnits; }
     void prepareUpdate() override;
     ISignalChain* clone() override;
 

@@ -26,7 +26,8 @@
 const QColor cItemColor(180, 120, 220);
 
 ExposeOutput::ExposeOutput(AudioUnitPlugin *pPlugin)
-    : AudioUnit(pPlugin)
+    : AudioUnit(pPlugin),
+      m_pReferencedOutputPort(nullptr)
 {
     m_pInput = addInput("", Signal::Type_Float);
     createProperties();
@@ -48,6 +49,12 @@ void ExposeOutput::processStop()
 
 void ExposeOutput::process()
 {
+    if (m_pReferencedOutputPort != nullptr) {
+        float value = m_pReferencedOutputPort->value().asFloat;
+        // Mix the input with whatever has been already assigned to referenced port
+        m_pInput->update();
+        m_pReferencedOutputPort->setFloatValue(value + m_pInput->value().asFloat);
+    }
 }
 
 void ExposeOutput::reset()
@@ -78,6 +85,17 @@ QColor ExposeOutput::color() const
 int ExposeOutput::flags() const
 {
     return Flag_NoTitle | Flag_NoFrame;
+}
+
+QString ExposeOutput::exposedOutputName() const
+{
+    return m_pPropName->valueText();
+}
+
+void ExposeOutput::setRefOutputPort(OutputPort *pOutputPort)
+{
+    Q_ASSERT(pOutputPort);
+    m_pReferencedOutputPort = pOutputPort;
 }
 
 void ExposeOutput::serialize(QVariantMap &data, SerializationContext *pContext) const

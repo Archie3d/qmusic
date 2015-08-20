@@ -19,11 +19,13 @@
 #define AU_EXPOSE_OUTPUT_H
 
 #include "AudioUnit.h"
+#include "IExposedOutput.h"
 
 class QtVariantProperty;
 class QGraphicsSimpleTextItem;
 
-class ExposeOutput : public AudioUnit
+class ExposeOutput : public AudioUnit,
+                            IExposedOutput
 {
 public:
 
@@ -37,17 +39,23 @@ protected:
     void process();
     void reset();
 
-    QGraphicsItem* graphicsItem();
+    QGraphicsItem* graphicsItem() override;
     QColor color() const override;
     int flags() const;
 
+    // IExposedOutput interface
+    QString exposedOutputName() const override;
+    void setRefOutputPort(OutputPort *pOutputPort) override;
+
     // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
 private:
 
     void createProperties();
+
+    OutputPort *m_pReferencedOutputPort;
 
     QGraphicsSimpleTextItem *m_pNameItem;
 
