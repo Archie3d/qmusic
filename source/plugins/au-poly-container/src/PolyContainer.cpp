@@ -20,15 +20,15 @@
 #include <QtVariantProperty>
 #include "Application.h"
 #include "SerializationContext.h"
+#include "ExposedInput.h"
+#include "ExposedOutput.h"
 #include "SignalChain.h"
 #include "SignalChainScene.h"
-#include "IExposedInput.h"
-#include "IExposedOutput.h"
 #include "SignalChainEvent.h"
 #include "PolyContainer.h"
 
 const int cNumberOfVoices(8);
-const QColor cItemColor(200, 180, 120);
+const QColor cItemColor(220, 200, 150);
 const QString cExposeInputUid("b12c76c4ee191b4452ed951a270b4645");
 const QString cExposeOutputUid("0a3872cffcd4f8d00843016dc031c5d4");
 
@@ -181,12 +181,12 @@ void PolyphonicContainer::createVoices()
         QList<IAudioUnit*> audioUnits = pVoice->audioUnits();
         foreach (IAudioUnit *pAu, audioUnits) {
             if (pAu->uid() == cExposeInputUid) {
-                IExposedInput *pExpInput = dynamic_cast<IExposedInput*>(pAu);
+                ExposedInput *pExpInput = dynamic_cast<ExposedInput*>(pAu);
                 Q_ASSERT(pExpInput != nullptr);
                 pExpInput->setRefInputPort(m_inputs.at(inputIndex++));
 
             } else if (pAu->uid() == cExposeOutputUid) {
-                IExposedOutput *pExpOutput = dynamic_cast<IExposedOutput*>(pAu);
+                ExposedOutput *pExpOutput = dynamic_cast<ExposedOutput*>(pAu);
                 Q_ASSERT(pExpOutput != nullptr);
                 pExpOutput->setRefOutputPort(m_outputs.at(outputIndex++));
                 m_exposeOutputAudioUnits.append(pAu);
@@ -202,12 +202,12 @@ void PolyphonicContainer::createPorts()
     QList<IAudioUnit*> audioUnits = m_pSignalChainScene->signalChain()->audioUnits();
     foreach (IAudioUnit *pAu, audioUnits) {
         if (pAu->uid() == cExposeInputUid) {
-            IExposedInput *pExpInput = dynamic_cast<IExposedInput*>(pAu);
+            ExposedInput *pExpInput = dynamic_cast<ExposedInput*>(pAu);
             Q_ASSERT(pExpInput != nullptr);
             InputPort *pInputPort = addInput(pExpInput->exposedInputName(), Signal::Type_Float);
             m_inputs.append(pInputPort);
         } else if (pAu->uid() == cExposeOutputUid) {
-            IExposedOutput *pExpOutput = dynamic_cast<IExposedOutput*>(pAu);
+            ExposedOutput *pExpOutput = dynamic_cast<ExposedOutput*>(pAu);
             Q_ASSERT(pExpOutput != nullptr);
             OutputPort *pOutputPort = addOutput(pExpOutput->exposedOutputName(), Signal::Type_Float);
             m_outputs.append(pOutputPort);

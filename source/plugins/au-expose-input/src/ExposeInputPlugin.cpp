@@ -16,7 +16,7 @@
 */
 
 #include "ExposeInputPlugin.h"
-#include "ExposeInput.h"
+#include "ExposedInput.h"
 
 ExposeInputPlugin::ExposeInputPlugin(QObject *pParent)
     : AudioUnitPlugin(pParent)
@@ -30,5 +30,5 @@ QIcon ExposeInputPlugin::icon() const
 
 AudioUnit* ExposeInputPlugin::createInstance()
 {
-    return new ExposeInput(this);
+    return new ExposedInput(this);
 }

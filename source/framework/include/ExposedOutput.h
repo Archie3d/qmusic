@@ -15,22 +15,27 @@
     Lesser General Public License for more details.
 */
 
-#ifndef AU_EXPOSE_OUTPUT_H
-#define AU_EXPOSE_OUTPUT_H
+#ifndef EXPOSEDOUTPUT_H
+#define EXPOSEDOUTPUT_H
 
+#include "FrameworkApi.h"
 #include "AudioUnit.h"
-#include "IExposedOutput.h"
 
 class QtVariantProperty;
 class QGraphicsSimpleTextItem;
 
-class ExposeOutput : public AudioUnit,
-                            IExposedOutput
+/**
+ * This is a special kind of audio unit that represents an exposed output.
+ */
+class QMUSIC_FRAMEWORK_API ExposedOutput : public AudioUnit
 {
 public:
 
-    ExposeOutput(AudioUnitPlugin *pPlugin);
-    ~ExposeOutput();
+    ExposedOutput(AudioUnitPlugin *pPlugin);
+    ~ExposedOutput();
+
+    QString exposedOutputName() const;
+    void setRefOutputPort(OutputPort *pOutputPort);
 
 protected:
 
@@ -42,10 +47,6 @@ protected:
     QGraphicsItem* graphicsItem() override;
     QColor color() const override;
     int flags() const;
-
-    // IExposedOutput interface
-    QString exposedOutputName() const override;
-    void setRefOutputPort(OutputPort *pOutputPort) override;
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
@@ -63,5 +64,5 @@ private:
     QtVariantProperty *m_pPropName;
 };
 
-#endif // AU_EXPOSE_OUTPUT_H
+#endif // EXPOSEDOUTPUT_H
 
