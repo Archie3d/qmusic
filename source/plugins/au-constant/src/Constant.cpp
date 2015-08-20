@@ -40,6 +40,7 @@ Constant::~Constant()
 
 void Constant::processStart()
 {
+    m_pOutput->setValue(m_pPropConstant->value().toFloat());
 }
 
 void Constant::processStop()
@@ -48,7 +49,7 @@ void Constant::processStop()
 
 void Constant::process()
 {
-    m_pOutput->setValue(m_pPropConstant->value().toFloat());
+
 }
 
 void Constant::reset()

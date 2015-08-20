@@ -87,6 +87,14 @@ private:
     QtVariantProperty *m_pReleaseTimeMs;
     QtVariantProperty *m_pSignalChainEnable;
     QtVariantProperty *m_pSignalChainDisable;
+
+    float m_dt;
+    float m_attackTimeMs;
+    float m_decayTimeMs;
+    float m_sustainLevel;
+    float m_releaseTimeMs;
+    bool m_signalChainEnable;
+    bool m_signalChainDisable;
 };
 
 #endif // AMPLIFIER_H

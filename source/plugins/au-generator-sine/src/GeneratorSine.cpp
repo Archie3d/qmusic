@@ -61,7 +61,10 @@ void GeneratorSine::deserialize(const QVariantMap &data, SerializationContext *p
 
 void GeneratorSine::processStart()
 {
-    m_phase = m_pPropPhase->value().toDouble();
+    m_phase = m_pPropPhase->value().toFloat();
+    m_amp = m_pPropAmplitude->value().toFloat();
+    m_freqScale = m_pPropFreqScale->value().toFloat();
+    m_freqScale *= signalChain()->timeStep();
 }
 
 void GeneratorSine::processStop()
@@ -70,15 +73,9 @@ void GeneratorSine::processStop()
 
 void GeneratorSine::process()
 {
-    float amp = m_pPropAmplitude->value().toDouble();
-    float out = amp * sin(m_phase * 2.0 * M_PI);
-
-    float freqScale = m_pPropFreqScale->value().toDouble();
-    ISignalChain* chain = signalChain();
-    float dt = chain->timeStep();
+    float out = m_amp * sin(m_phase * 2.0 * M_PI);
     float f = m_pInputFreq->value();
-
-    float dPhase = f * freqScale * dt;
+    float dPhase = f * m_freqScale;
     m_phase = fmod(m_phase + dPhase, 1.0);
 \
     m_pOutput->setValue(out);

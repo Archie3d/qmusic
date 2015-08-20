@@ -100,6 +100,14 @@ void Envelope::processStart()
     m_decayTCO = exp(-4.95);
     m_releaseTCO = m_decayTCO;
 
+    m_dt = signalChain()->timeStep();
+    m_attackTimeMs = m_pAttackTimeMs->value().toFloat();
+    m_decayTimeMs = m_pDecayTimeMs->value().toFloat();
+    m_sustainLevel = m_pSustainLevel->value().toFloat();
+    m_releaseTimeMs = m_pReleaseTimeMs->value().toFloat();
+    m_signalChainEnable = m_pSignalChainEnable->value().toBool();
+    m_signalChainDisable = m_pSignalChainDisable->value().toBool();
+
     calculateAttack();
     calculateDecay();
     calculateRelease();
@@ -134,23 +142,23 @@ void Envelope::doEnvelope()
         break;
     case State_Attack:
         m_output = m_attackOffset + m_output * m_attackCoeff;
-        if (m_output >= 1.0 || m_pAttackTimeMs->value().toDouble() <= 0.0) {
+        if (m_output >= 1.0 || m_attackTimeMs <= 0.0) {
             m_output = 1.0;
             setState(State_Decay);
         }
         break;
     case State_Decay:
         m_output = m_decayOffset + m_output * m_decayCoeff;
-        if (m_output <= m_pSustainLevel->value().toDouble() || m_pDecayTimeMs->value().toDouble() <= 0.0) {
+        if (m_output <= m_sustainLevel || m_decayTimeMs <= 0.0) {
             setState(State_Sustain);
         }
         break;
     case State_Sustain:
-        m_output = m_pSustainLevel->value().toDouble();
+        m_output = m_sustainLevel;
         break;
     case State_Release:
         m_output = m_releaseOffset + m_output * m_releaseCoeff;
-        if (m_output <= 0.0 || m_pReleaseTimeMs->value().toDouble() <= 0.0) {
+        if (m_output <= 0.0 || m_releaseTimeMs <= 0.0) {
             m_output = 0.0;
             setState(State_Off);
         }
@@ -167,12 +175,12 @@ void Envelope::setState(State s)
 
         switch (m_state) {
         case State_Attack:
-            if (m_pSignalChainEnable->value().toBool()) {
+            if (m_signalChainEnable) {
                 signalChain()->enable(true);
             }
             break;
         case State_Off:
-            if (m_pSignalChainDisable->value().toBool()) {
+            if (m_signalChainDisable) {
                 signalChain()->enable(false);
             }
             break;
@@ -184,24 +192,21 @@ void Envelope::setState(State s)
 
 void Envelope::calculateAttack()
 {
-    float dt = signalChain()->timeStep();
-    float samples = m_pAttackTimeMs->value().toDouble() / dt / 1000.0;
+    float samples = m_attackTimeMs / m_dt / 1000.0;
     m_attackCoeff = exp(-log((1.0 + m_attackTCO) / m_attackTCO) / samples);
     m_attackOffset = (1.0 + m_attackTCO) * (1.0 - m_attackCoeff);
 }
 
 void Envelope::calculateDecay()
 {
-    float dt = signalChain()->timeStep();
-    float samples = m_pDecayTimeMs->value().toDouble() / dt / 1000.0;
+    float samples = m_decayTimeMs / m_dt / 1000.0;
     m_decayCoeff = exp(-log((1.0 + m_decayTCO) / m_decayTCO) / samples);
-    m_decayOffset = (m_pSustainLevel->value().toDouble() - m_decayTCO) * (1.0 - m_decayCoeff);
+    m_decayOffset = (m_sustainLevel - m_decayTCO) * (1.0 - m_decayCoeff);
 }
 
 void Envelope::calculateRelease()
 {
-    float dt = signalChain()->timeStep();
-    float samples = m_pReleaseTimeMs->value().toDouble() / dt / 1000.0;
+    float samples = m_releaseTimeMs / m_dt / 1000.0;
     m_releaseCoeff = exp(-log((1.0 + m_releaseTCO) / m_releaseTCO) / samples);
     m_releaseOffset = -m_releaseTCO * (1.0 - m_releaseCoeff);
 }

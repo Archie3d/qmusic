@@ -190,6 +190,7 @@ void MainWindow::startSignalChain()
 
     // Start signal chain
     m_pSignalChainWidget->scene()->signalChain()->start();
+    m_pSignalChainWidget->scene()->signalChain()->enable(true); // TODO: ???
     updateActions();
     logInfo(tr("Synthesizer started"));
 }
@@ -197,6 +198,7 @@ void MainWindow::startSignalChain()
 void MainWindow::stopSignalChain()
 {
     m_pSignalChainWidget->scene()->signalChain()->stop();
+    m_pSignalChainWidget->scene()->signalChain()->enable(false); // TODO: ???
     Application::instance()->audioDevicesManager()->stopAudioDevices();
 
     updateActions();

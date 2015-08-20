@@ -50,6 +50,9 @@ private:
     void createProperties();
 
     float m_phase;
+    float m_amp;
+    float m_freqScale;
+    float m_dt;
 
     InputPort *m_pInputFreq;
     OutputPort *m_pOutput;
