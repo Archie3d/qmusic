@@ -1,3 +1,4 @@
+add_subdirectory(au-poly-container)
 add_subdirectory(au-speaker)
 add_subdirectory(au-midi-in)
 add_subdirectory(au-midi-in-ctrl)

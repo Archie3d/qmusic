@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-poly-container">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
