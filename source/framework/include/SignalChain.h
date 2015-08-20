@@ -50,6 +50,7 @@ public:
     void reset() override;
     void enable(bool v) override;
     bool isEnabled() const override { return m_enabled; }
+    void sendEvent(SignalChainEvent *pEvent) override;
     void postEvent(SignalChainEvent *pEvent) override;
     void processEvents() override;
     float timeStep() const override { return m_timeStep; }

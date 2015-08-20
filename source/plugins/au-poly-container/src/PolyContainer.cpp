@@ -24,6 +24,7 @@
 #include "SignalChainScene.h"
 #include "IExposedInput.h"
 #include "IExposedOutput.h"
+#include "SignalChainEvent.h"
 #include "PolyContainer.h"
 
 const int cNumberOfVoices(8);
@@ -34,7 +35,9 @@ const QString cExposeOutputUid("0a3872cffcd4f8d00843016dc031c5d4");
 PolyphonicContainer::PolyphonicContainer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_pSignalChainScene(nullptr),
-      m_voices()
+      m_voices(),
+      m_freeVoices(),
+      m_busyVoices()
 {
     createProperties();
 }
@@ -56,6 +59,39 @@ void PolyphonicContainer::setSignalChainScene(SignalChainScene *pScene)
     createVoices();
 }
 
+void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    QString name = pEvent->name();
+    if (name == "noteOn") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        if (m_busyVoices.contains(note)) {
+            m_busyVoices.value(note)->sendEvent(new SignalChainEvent(*pEvent));
+        } else {
+            // New note
+            ISignalChain *pVoice = pickFreeVoice();
+            if (pVoice != nullptr) {
+                pVoice->sendEvent(new SignalChainEvent(*pEvent));
+                m_busyVoices.insert(note, pVoice);
+            }
+        }
+    } else if (name == "noteOff") {
+        int note = pEvent->data().toMap()["number"].toInt();
+        ISignalChain *pVoice = m_busyVoices.value(note, nullptr);
+        if (pVoice != nullptr) {
+            pVoice->sendEvent(new SignalChainEvent(*pEvent));
+        }
+    } else {
+        // Send all other events to all voices
+        foreach (ISignalChain *pSignalChain, m_voices) {
+            pSignalChain->sendEvent(new SignalChainEvent(*pEvent));
+        }
+    }
+
+    manageVoices();
+}
+
 void PolyphonicContainer::processStart()
 {
     foreach (ISignalChain *pSignalChain, m_voices) {
@@ -69,6 +105,7 @@ void PolyphonicContainer::processStop()
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->stop();
     }
+    freeAllVoices();
 }
 
 void PolyphonicContainer::process()
@@ -90,6 +127,8 @@ void PolyphonicContainer::reset()
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->reset();
     }
+
+    freeAllVoices();
 }
 
 QColor PolyphonicContainer::color() const
@@ -131,6 +170,9 @@ void PolyphonicContainer::createVoices()
         ISignalChain *pVoice = m_pSignalChainScene->signalChain()->clone();
         Q_ASSERT(pVoice != nullptr);
         m_voices.append(pVoice);
+
+        // Add to the list og free voices
+        m_freeVoices.append(pVoice);
 
         int inputIndex = 0;
         int outputIndex = 0;
@@ -178,5 +220,38 @@ void PolyphonicContainer::prepareVoicesUpdate()
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->prepareUpdate();
     }
+}
+
+void PolyphonicContainer::manageVoices()
+{
+    // Move all already disabled voices from busy to free list
+    QMap<int, ISignalChain*>::iterator it = m_busyVoices.begin();
+    while (it != m_busyVoices.end()) {
+        ISignalChain *pVoice = it.value();
+        if (!pVoice->isEnabled()) {
+            // Voice is disabled
+            it = m_busyVoices.erase(it);
+            m_freeVoices.append(pVoice);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void PolyphonicContainer::freeAllVoices()
+{
+    m_busyVoices.clear();
+    m_freeVoices = m_voices;
+}
+
+ISignalChain* PolyphonicContainer::pickFreeVoice()
+{
+    if (m_freeVoices.isEmpty()) {
+        return nullptr;
+    }
+    ISignalChain *pVoice = m_freeVoices.first();
+    m_freeVoices.removeOne(pVoice);
+
+    return pVoice;
 }
 

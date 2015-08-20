@@ -85,6 +85,14 @@ void SignalChain::enable(bool v)
     m_enabled = v;
 }
 
+void SignalChain::sendEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    processEvent(pEvent);
+    delete pEvent;
+}
+
 void SignalChain::postEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);

@@ -73,6 +73,12 @@ public:
     virtual bool isEnabled() const = 0;
 
     /**
+     * Send an event to be processed immediately.
+     * @param pEvent
+     */
+    virtual void sendEvent(SignalChainEvent *pEvent) = 0;
+
+    /**
      * Post event to this signal chain.
      * @param evt Event to be posted.
      */

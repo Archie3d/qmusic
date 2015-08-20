@@ -36,6 +36,8 @@ public:
     void setSignalChainScene(SignalChainScene *pScene) override;
     SignalChainScene* signalChainScene() const override { return m_pSignalChainScene; }
 
+    void handleEvent(SignalChainEvent *pEvent) override;
+
 protected:
 
     void processStart();
@@ -56,6 +58,15 @@ private:
     void createVoices();
     void createPorts();
     void prepareVoicesUpdate();
+    void manageVoices();
+    void freeAllVoices();
+
+    /**
+     * Pick a voice by removing it from the list of
+     * free voices.
+     * @return
+     */
+    ISignalChain* pickFreeVoice();
 
     SignalChainScene *m_pSignalChainScene;
 
@@ -65,6 +76,12 @@ private:
 
     /// List of cloned signal chains
     QList<ISignalChain*> m_voices;
+
+    /// List of available voices to play
+    QList<ISignalChain*> m_freeVoices;
+
+    /// Voices currently playing.
+    QMap<int, ISignalChain*> m_busyVoices;
 };
 
 #endif // AU_POLY_CONTAINER_H
