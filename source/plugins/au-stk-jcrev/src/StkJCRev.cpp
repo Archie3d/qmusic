@@ -79,6 +79,8 @@ void StkJCRev::process()
 void StkJCRev::reset()
 {
     m_pJCRev->clear();
+    m_pOutputLeft->setValue(0.0f);
+    m_pOutputRight->setValue(0.0f);
 }
 
 void StkJCRev::createProperties()

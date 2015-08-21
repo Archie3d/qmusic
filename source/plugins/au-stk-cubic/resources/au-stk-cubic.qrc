@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-stk-cubic">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
