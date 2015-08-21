@@ -33,7 +33,7 @@ public:
     enum {
         Ctrl_CouplingGain = 2,
         Ctrl_PickPosition = 4,
-        Ctrl_StringDumping = 11,
+        Ctrl_StringDamping = 11,
         Ctrl_Modulation = 1,
         Ctrl_Aftertouch = 128
     };
@@ -60,6 +60,7 @@ protected:
 private:
 
     void createProperties();
+    void setValues();
 
     InputPort *m_pInputFreq;
     InputPort *m_pInputVelocity;
@@ -69,7 +70,7 @@ private:
     int m_note;
 
     QtVariantProperty *m_pPropPickPosition;
-    QtVariantProperty *m_pPropStringDumping;
+    QtVariantProperty *m_pPropStringDamping;
 
     stk::Guitar *m_pGuitar;
 };

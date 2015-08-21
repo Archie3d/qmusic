@@ -45,13 +45,15 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
 
 private:
 
     void createProperties();
+    void setValues();
 
     double m_phase;
+    int m_waveform;
+    bool m_bandlimit;
 
     InputPort *m_pInputFreq;
     OutputPort *m_pOutput;

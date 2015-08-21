@@ -103,7 +103,7 @@ Generator::Generator(AudioUnitPlugin *pPlugin)
       m_phase(0.0f)
 {
     m_pInputFreq = addInput("f");
-    m_pOutput = addOutput("out");
+    m_pOutput = addOutput();
 
     createProperties();
 }
@@ -135,10 +135,12 @@ void Generator::deserialize(const QVariantMap &data, SerializationContext *pCont
 
 void Generator::processStart()
 {
+    setValues();
 }
 
 void Generator::processStop()
 {
+    reset();
 }
 
 void Generator::process()
@@ -148,22 +150,19 @@ void Generator::process()
     float f = m_pInputFreq->value();
     float dPhase = f * dt;
 
-    int waveform = m_pPropWaveform->value().toInt();
-    bool bpLimit = m_pPropBandPassLimit->value().toBool();
-
     float out = 0.0;
-    switch (waveform) {
+    switch (m_waveform) {
     case 0:
         out = sin(m_phase * 2 * M_PI);
         break;
     case 1:
-        out = bpLimit ? bpl_sawtooth(m_phase, dPhase) : sawtooth(m_phase);
+        out = m_bandlimit ? bpl_sawtooth(m_phase, dPhase) : sawtooth(m_phase);
         break;
     case 2:
-        out = bpLimit ? bpl_square(m_phase, dPhase) : square(m_phase);
+        out = m_bandlimit ? bpl_square(m_phase, dPhase) : square(m_phase);
         break;
     case 3:
-        out = bpLimit ? bpl_triangle(m_phase, dPhase) : triangle(m_phase);
+        out = m_bandlimit ? bpl_triangle(m_phase, dPhase) : triangle(m_phase);
         break;
     default:
         break;
@@ -177,10 +176,7 @@ void Generator::process()
 void Generator::reset()
 {
     m_phase = 0;
-}
-
-void Generator::control(const QString &name, const QVariant &value)
-{
+    m_pOutput->setValue(0.0f);
 }
 
 void Generator::createProperties()
@@ -198,4 +194,16 @@ void Generator::createProperties()
 
     pRoot->addSubProperty(m_pPropWaveform);
     pRoot->addSubProperty(m_pPropBandPassLimit);
+
+    // Properties change handler
+    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        Q_UNUSED(pProperty);
+        setValues();
+    });
+}
+
+void Generator::setValues()
+{
+    m_waveform = m_pPropWaveform->value().toInt();
+    m_bandlimit = m_pPropBandPassLimit->value().toBool();
 }

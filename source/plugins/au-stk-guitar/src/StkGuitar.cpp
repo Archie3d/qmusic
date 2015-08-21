@@ -57,7 +57,7 @@ void StkGuitar::serialize(QVariantMap &data, SerializationContext *pContext) con
 {
     Q_ASSERT(pContext != nullptr);
     data["pickPosition"] = m_pPropPickPosition->value();
-    data["stringDumping"] = m_pPropStringDumping->value();
+    data["stringDamping"] = m_pPropStringDamping->value();
     AudioUnit::serialize(data, pContext);
 }
 
@@ -65,7 +65,7 @@ void StkGuitar::deserialize(const QVariantMap &data, SerializationContext *pCont
 {
     Q_ASSERT(pContext != nullptr);
     m_pPropPickPosition->setValue(data["pickPosition"]);
-    m_pPropStringDumping->setValue(data["stringDumping"]);
+    m_pPropStringDamping->setValue(data["stringDamping"]);
     AudioUnit::deserialize(data, pContext);
 }
 
@@ -73,6 +73,7 @@ void StkGuitar::processStart()
 {
     m_pGuitar->setSampleRate(signalChain()->sampleRate());
     m_note = -1;
+    setValues();
 }
 
 void StkGuitar::processStop()
@@ -88,19 +89,15 @@ void StkGuitar::process()
         return;
     }
 
-    m_pGuitar->controlChange(Ctrl_PickPosition, 128.0 * m_pPropPickPosition->value().toDouble());
-    m_pGuitar->controlChange(Ctrl_StringDumping, 128.0 * m_pPropStringDumping->value().toDouble());
-
     m_pGuitar->setFrequency(freq);
-
     float sample = m_pGuitar->tick();
-
     m_pOutput->setValue(sample);
 }
 
 void StkGuitar::reset()
 {
     m_note = -1;
+    m_pOutput->setValue(0.0f);
 }
 
 void StkGuitar::noteOnEvent(NoteOnEvent *pEvent)
@@ -122,7 +119,6 @@ void StkGuitar::noteOffEvent(NoteOffEvent *pEvent)
     if (pEvent->noteNumber() == m_note) {
         m_pGuitar->noteOff(pEvent->normalizedVelocity());
     }
-
 }
 
 void StkGuitar::createProperties()
@@ -132,10 +128,21 @@ void StkGuitar::createProperties()
     m_pPropPickPosition = propertyManager()->addProperty(QVariant::Double, "Pick position");
     setCtrlPropertyAttrs(m_pPropPickPosition, 0.5, 0.01, 1.0);
 
-    m_pPropStringDumping = propertyManager()->addProperty(QVariant::Double, "String dumping");
-    setCtrlPropertyAttrs(m_pPropStringDumping, 0.5, 0.0, 0.99);
-
+    m_pPropStringDamping = propertyManager()->addProperty(QVariant::Double, "String damping");
+    setCtrlPropertyAttrs(m_pPropStringDamping, 0.5, 0.0, 0.99);
 
     pRoot->addSubProperty(m_pPropPickPosition);
-    pRoot->addSubProperty(m_pPropStringDumping);
+    pRoot->addSubProperty(m_pPropStringDamping);
+
+    // Properties change handler
+    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        Q_UNUSED(pProperty);
+        setValues();
+    });
+}
+
+void StkGuitar::setValues()
+{
+    m_pGuitar->controlChange(Ctrl_PickPosition, 128.0 * m_pPropPickPosition->value().toDouble());
+    m_pGuitar->controlChange(Ctrl_StringDamping, 128.0 * m_pPropStringDamping->value().toDouble());
 }

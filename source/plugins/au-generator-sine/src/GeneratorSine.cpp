@@ -31,7 +31,7 @@ GeneratorSine::GeneratorSine(AudioUnitPlugin *pPlugin)
       m_phase(0.0)
 {
     m_pInputFreq = addInput("f");
-    m_pOutput = addOutput("out");
+    m_pOutput = addOutput();
 
     createProperties();
 }
