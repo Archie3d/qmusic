@@ -47,6 +47,7 @@ protected:
 
     QColor color() const override;
     int flags() const;
+    QGraphicsItem* graphicsItem() override;
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
@@ -63,6 +64,8 @@ private:
 
     void allocateVoices();
     void releaseVoices();
+
+    void updateView();
 
     /**
      * Pick a voice by removing it from the list of
@@ -86,6 +89,8 @@ private:
     /// Voices currently playing.
     QMap<int, ISignalChain*> m_busyVoices;
 
+    QGraphicsSimpleTextItem *m_pLabelItem;
+    QtVariantProperty *m_pPropLabel;
     QtVariantProperty *m_pPropNumberOfVoices;
 };
 

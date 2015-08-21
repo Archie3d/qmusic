@@ -29,7 +29,7 @@
 #include "PolyContainer.h"
 
 const int cNumberOfVoices(8);
-const QColor cItemColor(220, 200, 150);
+const QColor cItemColor(220, 200, 160);
 const QString cExposeInputUid("b12c76c4ee191b4452ed951a270b4645");
 const QString cExposeOutputUid("0a3872cffcd4f8d00843016dc031c5d4");
 
@@ -38,8 +38,9 @@ PolyphonicContainer::PolyphonicContainer(AudioUnitPlugin *pPlugin)
       m_pSignalChainScene(nullptr),
       m_voices(),
       m_freeVoices(),
-      m_busyVoices()
-{
+      m_busyVoices(),
+      m_pLabelItem(nullptr)
+{    
     createProperties();
 }
 
@@ -159,11 +160,22 @@ int PolyphonicContainer::flags() const
     return Flag_NoFlags;
 }
 
+QGraphicsItem* PolyphonicContainer::graphicsItem()
+{
+    if (m_pLabelItem == nullptr) {
+        m_pLabelItem = new QGraphicsSimpleTextItem();
+        m_pLabelItem->setBrush(QBrush(QColor(80, 40, 80)));
+        updateView();
+    }
+    return m_pLabelItem;
+}
+
 void PolyphonicContainer::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
     AudioUnit::serialize(data, pContext);
     data["signalChainScene"] = pContext->serialize(m_pSignalChainScene);
+    data["label"] = m_pPropLabel->value();
     data["voices"] = m_pPropNumberOfVoices->value();
 }
 
@@ -172,6 +184,7 @@ void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationCont
     Q_ASSERT(pContext != nullptr);
     AudioUnit::deserialize(data, pContext);
     m_pSignalChainScene = pContext->deserialize<SignalChainScene>(data["signalChainScene"]);
+    m_pPropLabel->setValue(data["label"]);
     m_pPropNumberOfVoices->setValue(data["voices"]);
 
     createPorts();
@@ -181,12 +194,24 @@ void PolyphonicContainer::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
 
+    m_pPropLabel = propertyManager()->addProperty(QVariant::String, "Label");
+    QObject::connect(propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty) {
+        QtVariantProperty *pV = dynamic_cast<QtVariantProperty*>(pProperty);
+        if (pV == m_pPropLabel) {
+            updateView();
+        }
+    });
+
+    QtVariantProperty *pPolyphony = propertyManager()->addProperty(propertyManager()->groupTypeId(), "Polyphony");
+
     m_pPropNumberOfVoices = propertyManager()->addProperty(QVariant::Int, "Voices");
     m_pPropNumberOfVoices->setAttribute("minimum", 1);
     m_pPropNumberOfVoices->setAttribute("maximum", 24);
     m_pPropNumberOfVoices->setValue(8);
+    pPolyphony->addSubProperty(m_pPropNumberOfVoices);
 
-    pRoot->addSubProperty(m_pPropNumberOfVoices);
+    pRoot->addSubProperty(m_pPropLabel);
+    pRoot->addSubProperty(pPolyphony);
 }
 
 void PolyphonicContainer::createVoices(int n)
@@ -300,3 +325,10 @@ ISignalChain* PolyphonicContainer::pickFreeVoice()
     return pVoice;
 }
 
+void PolyphonicContainer::updateView()
+{
+    if (m_pLabelItem != nullptr) {
+        // TODO: this is ugly
+        m_pLabelItem->setText(QString(" %1").arg(m_pPropLabel->valueText()));
+    }
+}
