@@ -21,7 +21,8 @@
 #include <Clarinet.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkClarinet.h"
 
 const float cLowestFrequency(8.0);
@@ -59,29 +60,6 @@ StkClarinet::StkClarinet(AudioUnitPlugin *pPlugin)
 StkClarinet::~StkClarinet()
 {
     delete m_pClarinet;
-}
-
-void StkClarinet::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        if (freq > cLowestFrequency) {
-            m_note = pEvent->data().toMap()["number"].toInt();
-            m_pClarinet->noteOn(freq, amp);
-        }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pClarinet->noteOff(amp);
-        }
-    }
-
 }
 
 void StkClarinet::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -141,6 +119,26 @@ void StkClarinet::process()
 void StkClarinet::reset()
 {
     m_note = -1;
+}
+
+void StkClarinet::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    float f = pEvent->frequency();
+    if (f > cLowestFrequency) {
+        m_note = pEvent->noteNumber();
+        m_pClarinet->noteOn(f, pEvent->normalizedVelocity());
+    }
+}
+
+void StkClarinet::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pClarinet->noteOff(pEvent->normalizedVelocity());
+    }
 }
 
 void StkClarinet::createProperties()

@@ -21,7 +21,8 @@
 #include <Saxofony.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkSaxofony.h"
 
 const float cLowestFrequency(20.0);
@@ -59,28 +60,6 @@ StkSaxofony::StkSaxofony(AudioUnitPlugin *pPlugin)
 StkSaxofony::~StkSaxofony()
 {
     delete m_pSaxofony;
-}
-
-void StkSaxofony::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        if (freq > cLowestFrequency) {
-            m_note = pEvent->data().toMap()["number"].toInt();
-            m_pSaxofony->noteOn(freq, amp);
-        }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pSaxofony->noteOff(amp);
-        }
-    }
 }
 
 void StkSaxofony::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -145,6 +124,23 @@ void StkSaxofony::process()
 void StkSaxofony::reset()
 {
     m_note = -1;
+}
+
+void StkSaxofony::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    m_note = pEvent->noteNumber();
+    m_pSaxofony->noteOn(pEvent->frequency(), pEvent->normalizedVelocity());
+}
+
+void StkSaxofony::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pSaxofony->noteOff(pEvent->normalizedVelocity());
+    }
 }
 
 void StkSaxofony::createProperties()

@@ -21,9 +21,9 @@
 #include <QDebug>
 #include <QMetaType>
 
-#include "MidiApi.h"
+#include "FrameworkApi.h"
 
-class QMUSIC_MIDI_API MidiNote
+class QMUSIC_FRAMEWORK_API MidiNote
 {
 public:
 

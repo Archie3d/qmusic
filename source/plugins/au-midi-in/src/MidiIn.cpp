@@ -25,7 +25,9 @@
 #include "MidiDevice.h"
 #include "MidiInputDevice.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
+#include "PitchBendEvent.h"
 #include "MidiIn.h"
 
 const QColor cDefaultColor(230, 240, 210);
@@ -41,30 +43,6 @@ MidiIn::MidiIn(AudioUnitPlugin *pPlugin)
 
 MidiIn::~MidiIn()
 {
-}
-
-void MidiIn::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    // Handle noteOn, noteOff, and pitchBend events
-    QString name = pEvent->name();
-    QVariantMap map = pEvent->data().toMap();
-    if (name == "noteOn") {
-        m_noteNumber = map["number"].toInt();
-        m_frequency = MidiNote(m_noteNumber).frequency();
-        m_velocity = map["velocity"].toFloat() / 127.0f;
-    } else if (name == "noteOff") {
-        int number = map["number"].toInt();
-        if (m_noteNumber == number) {
-            m_velocity = map["velocity"].toFloat() / 127.0;
-        }
-    } else if (name == "pitchBend") {
-        int bend = map["value"].toInt() - 8192;
-        float dBend = float(bend) / 8192.0f;
-        dBend *= m_pPropPitchBendSemitones->value().toFloat();
-        m_frequencyBend = pow(2.0, dBend / 12.0);
-    }
 }
 
 QColor MidiIn::color() const
@@ -91,6 +69,7 @@ void MidiIn::processStart()
     m_frequency = 0.0f;
     m_frequencyBend = 1.0f;
     m_velocity = 0.0f;
+    m_semitones = m_pPropPitchBendSemitones->value().toFloat();
 }
 
 void MidiIn::processStop()
@@ -100,11 +79,34 @@ void MidiIn::processStop()
 void MidiIn::process()
 {
     m_pOutputFreq->setValue(m_frequency * m_frequencyBend);
-    m_pOutputVelocity->setValue(m_velocity);
+
+    // Perform some filtering on velocity value to avoid glitches
+    float f = 0.8f;
+    m_pOutputVelocity->setValue(m_pOutputVelocity->value() * f +
+                                m_velocity * (1.0f - f));
 }
 
 void MidiIn::reset()
 {
+}
+
+void MidiIn::noteOnEvent(NoteOnEvent *pEvent)
+{
+    m_noteNumber = pEvent->noteNumber();
+    m_frequency = MidiNote(m_noteNumber).frequency();
+    m_velocity = pEvent->normalizedVelocity();
+}
+
+void MidiIn::noteOffEvent(NoteOffEvent *pEvent)
+{
+    if (pEvent->noteNumber() == m_noteNumber) {
+        m_velocity = pEvent->normalizedVelocity();
+    }
+}
+
+void MidiIn::pitchBendEvent(PitchBendEvent *pEvent)
+{
+    m_frequencyBend = pEvent->bendFactor(m_semitones);
 }
 
 void MidiIn::createProperties()

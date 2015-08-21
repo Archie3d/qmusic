@@ -31,34 +31,56 @@ class QMUSIC_FRAMEWORK_API SignalChainEvent
 {
 public:
 
+    /// Event types
+    enum Type {
+        Invalid = 0,
+        NoteOn = 1,
+        NoteOff = 2,
+        PitchBend = 3,
+        Controller = 4
+    };
+
     /**
      * Construct an event.
      * @param name Event name.
-     * @param data Event data.
      */
-    SignalChainEvent(const QString &name = QString(),
-                     const QVariant &data = QVariant());
-
-    /// Copy-constructor.
+    SignalChainEvent(Type type = Invalid);
     SignalChainEvent(const SignalChainEvent &evt);
-
     SignalChainEvent& operator =(const SignalChainEvent &evt);
+    virtual ~SignalChainEvent() {}
 
-    // Getters & setters
+    /**
+     * Clone this event.
+     * This will create an exact copy of this event object.
+     * @return
+     */
+    virtual SignalChainEvent* clone() const = 0;
 
-    QString name() const { return m_name; }
-    void setName(const QString &name) { m_name = name; }
-    const QVariant& data() const { return m_data; }
-    void setData(const QVariant &data) { m_data = data; }
+    /**
+     * Returns the event type.
+     * @return Event type.
+     */
+    Type type() const { return m_type; }
+
+    /**
+     * Returns textual (string) representation of this event.
+     * @return
+     */
+    virtual QString toString() const;
+
+protected:
+
+    /**
+     * Returns textual representation of the event type.
+     * @param type
+     * @return
+     */
+    static QString eventTypeToString(Type type);
 
 private:
-    QString m_name;     ///< Event name.
-    QVariant m_data;    ///< Event payload data.
+
+    Type m_type;     ///< Event name.
 };
-
-Q_DECLARE_METATYPE(SignalChainEvent)
-
-QMUSIC_FRAMEWORK_API QDebug operator <<(QDebug dbg, const SignalChainEvent &evt);
 
 #endif // SIGNALCHAINEVENT_H
 

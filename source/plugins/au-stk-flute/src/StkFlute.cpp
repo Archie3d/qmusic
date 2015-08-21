@@ -21,7 +21,8 @@
 #include <Flute.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkFlute.h"
 
 const float cLowestFrequency(8.0);
@@ -60,28 +61,6 @@ StkFlute::StkFlute(AudioUnitPlugin *pPlugin)
 StkFlute::~StkFlute()
 {
     delete m_pFlute;
-}
-
-void StkFlute::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        if (freq > cLowestFrequency) {
-            m_note = pEvent->data().toMap()["number"].toInt();
-            m_pFlute->noteOn(freq, amp);
-        }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pFlute->noteOff(amp);
-        }
-    }
 }
 
 void StkFlute::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -139,6 +118,26 @@ void StkFlute::process()
 void StkFlute::reset()
 {
     m_note = -1;
+}
+
+void StkFlute::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    float f= pEvent->frequency();
+    if (f > cLowestFrequency) {
+        m_note = pEvent->noteNumber();
+        m_pFlute->noteOn(f, pEvent->normalizedVelocity());
+    }
+}
+
+void StkFlute::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pFlute->noteOff(pEvent->normalizedVelocity());
+    }
 }
 
 void StkFlute::createProperties()

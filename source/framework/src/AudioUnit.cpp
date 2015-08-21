@@ -20,6 +20,10 @@
 #include "SerializationContext.h"
 #include "SignalChain.h"
 #include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
+#include "PitchBendEvent.h"
+#include "ControllerEvent.h"
 #include "AudioUnitPlugin.h"
 #include "AudioUnit.h"
 
@@ -107,6 +111,23 @@ void AudioUnit::stop()
 void AudioUnit::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
+    switch (pEvent->type()) {
+    case SignalChainEvent::NoteOn:
+        noteOnEvent(dynamic_cast<NoteOnEvent*>(pEvent));
+        break;
+    case SignalChainEvent::NoteOff:
+        noteOffEvent(dynamic_cast<NoteOffEvent*>(pEvent));
+        break;
+    case SignalChainEvent::PitchBend:
+        pitchBendEvent(dynamic_cast<PitchBendEvent*>(pEvent));
+        break;
+    case SignalChainEvent::Controller:
+        controllerEvent(dynamic_cast<ControllerEvent*>(pEvent));
+        break;
+    default:
+        // Unknown event.
+        break;
+    }
 }
 
 QColor AudioUnit::color() const
@@ -173,4 +194,24 @@ void AudioUnit::serialize(QVariantMap &data, SerializationContext *pContext) con
 void AudioUnit::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
+}
+
+void AudioUnit::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+}
+
+void AudioUnit::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+}
+
+void AudioUnit::pitchBendEvent(PitchBendEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+}
+
+void AudioUnit::controllerEvent(ControllerEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
 }

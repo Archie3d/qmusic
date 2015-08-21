@@ -21,7 +21,8 @@
 #include <Rhodey.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkRhodey.h"
 
 StkRhodey::StkRhodey(AudioUnitPlugin *pPlugin)
@@ -50,26 +51,6 @@ StkRhodey::StkRhodey(AudioUnitPlugin *pPlugin)
 StkRhodey::~StkRhodey()
 {
     delete m_pRhodey;
-}
-
-void StkRhodey::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent);
-
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        m_note = pEvent->data().toMap()["number"].toInt();
-        m_pRhodey->noteOn(freq, amp);
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pRhodey->noteOff(amp);
-        }
-    }
 }
 
 void StkRhodey::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -115,6 +96,23 @@ void StkRhodey::process()
 void StkRhodey::reset()
 {
     m_note = -1;
+}
+
+void StkRhodey::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    m_note = pEvent->noteNumber();
+    m_pRhodey->noteOn(pEvent->frequency(), pEvent->normalizedVelocity());
+}
+
+void StkRhodey::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pRhodey->noteOff(pEvent->normalizedVelocity());
+    }
 }
 
 void StkRhodey::createProperties()

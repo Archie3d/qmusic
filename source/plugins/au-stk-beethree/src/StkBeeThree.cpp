@@ -21,7 +21,8 @@
 #include <BeeThree.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkBeeThree.h"
 
 const float cMinFrequency(8.0f);
@@ -57,26 +58,6 @@ StkBeeThree::StkBeeThree(AudioUnitPlugin *pPlugin)
 StkBeeThree::~StkBeeThree()
 {
     delete m_pBeeThree;
-}
-
-void StkBeeThree::handleEvent(SignalChainEvent *pEvent)
-{
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        if (freq > cMinFrequency) {
-            m_note = pEvent->data().toMap()["number"].toInt();
-            m_pBeeThree->noteOn(freq, amp);
-        }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pBeeThree->noteOff(amp);
-        }
-    }
 }
 
 void StkBeeThree::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -138,6 +119,27 @@ void StkBeeThree::process()
 
 void StkBeeThree::reset()
 {
+}
+
+void StkBeeThree::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    float f = pEvent->frequency();
+    if (f > cMinFrequency) {
+        m_note = pEvent->noteNumber();
+        m_pBeeThree->noteOn(f, pEvent->normalizedVelocity());
+    }
+}
+
+void StkBeeThree::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pBeeThree->noteOff(pEvent->normalizedVelocity());
+    }
+
 }
 
 void StkBeeThree::createProperties()

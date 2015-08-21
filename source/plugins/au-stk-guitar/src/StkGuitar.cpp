@@ -20,7 +20,8 @@
 #include <Guitar.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "StkGuitar.h"
 
 const float cMinFrequency(50.0f);
@@ -50,26 +51,6 @@ StkGuitar::StkGuitar(AudioUnitPlugin *pPlugin)
 StkGuitar::~StkGuitar()
 {
     delete m_pGuitar;
-}
-
-void StkGuitar::handleEvent(SignalChainEvent *pEvent)
-{
-    QString name = pEvent->name();
-
-    float freq = m_pInputFreq->value();
-    float amp = m_pInputVelocity->value();
-
-    if (name == "noteOn") {
-        if (freq > cMinFrequency) {
-            m_note = pEvent->data().toMap()["number"].toInt();
-            m_pGuitar->noteOn(freq, amp);
-        }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
-        if (note == m_note) {
-            m_pGuitar->noteOff(amp);
-        }
-    }
 }
 
 void StkGuitar::serialize(QVariantMap &data, SerializationContext *pContext) const
@@ -120,6 +101,28 @@ void StkGuitar::process()
 void StkGuitar::reset()
 {
     m_note = -1;
+}
+
+void StkGuitar::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    float f = pEvent->frequency();
+
+    if (f > cMinFrequency) {
+        m_note = pEvent->noteNumber();
+        m_pGuitar->noteOn(f, pEvent->normalizedVelocity());
+    }
+}
+
+void StkGuitar::noteOffEvent(NoteOffEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+
+    if (pEvent->noteNumber() == m_note) {
+        m_pGuitar->noteOff(pEvent->normalizedVelocity());
+    }
+
 }
 
 void StkGuitar::createProperties()

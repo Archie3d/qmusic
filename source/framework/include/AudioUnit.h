@@ -29,6 +29,10 @@ class QtVariantProperty;
 class QtProperty;
 class ISignalChain;
 class SignalChainEvent;
+class NoteOnEvent;
+class NoteOffEvent;
+class PitchBendEvent;
+class ControllerEvent;
 class AudioUnitPlugin;
 
 /**
@@ -163,6 +167,12 @@ protected:
      * based on input port values.
      */
     virtual void process() = 0;
+
+    // Event handlers stubs
+    virtual void noteOnEvent(NoteOnEvent *pEvent);
+    virtual void noteOffEvent(NoteOffEvent *pEvent);
+    virtual void pitchBendEvent(PitchBendEvent *pEvent);
+    virtual void controllerEvent(ControllerEvent *pEvent);
 
 private:
 

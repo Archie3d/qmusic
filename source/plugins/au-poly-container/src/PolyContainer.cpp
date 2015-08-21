@@ -24,7 +24,8 @@
 #include "ExposedOutput.h"
 #include "SignalChain.h"
 #include "SignalChainScene.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "PolyContainer.h"
 
 const int cNumberOfVoices(8);
@@ -63,32 +64,44 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent);
 
-    QString name = pEvent->name();
-    if (name == "noteOn") {
-        int note = pEvent->data().toMap()["number"].toInt();
+    switch (pEvent->type()) {
+    case SignalChainEvent::NoteOn: {
+        NoteOnEvent *pNoteOnEvent = dynamic_cast<NoteOnEvent*>(pEvent);
+        Q_ASSERT(pNoteOnEvent != nullptr);
+
+        int note = pNoteOnEvent->noteNumber();
         if (m_busyVoices.contains(note)) {
-            m_busyVoices.value(note)->sendEvent(new SignalChainEvent(*pEvent));
+            m_busyVoices.value(note)->sendEvent(pEvent->clone());
         } else {
             // New note
             ISignalChain *pVoice = pickFreeVoice();
             if (pVoice != nullptr) {
-                pVoice->sendEvent(new SignalChainEvent(*pEvent));
+                pVoice->sendEvent(pEvent->clone());
                 m_busyVoices.insert(note, pVoice);
             }
         }
-    } else if (name == "noteOff") {
-        int note = pEvent->data().toMap()["number"].toInt();
+        break;
+    }
+    case SignalChainEvent::NoteOff: {
+        NoteOffEvent *pNoteOffEvent = dynamic_cast<NoteOffEvent*>(pEvent);
+        Q_ASSERT(pNoteOffEvent != nullptr);
+
+        int note = pNoteOffEvent->noteNumber();
         ISignalChain *pVoice = m_busyVoices.value(note, nullptr);
         if (pVoice != nullptr) {
-            pVoice->sendEvent(new SignalChainEvent(*pEvent));
+            pVoice->sendEvent(pEvent->clone());
         }
-    } else {
+        break;
+    }
+    default:
         // Send all other events to all voices
         foreach (ISignalChain *pSignalChain, m_voices) {
-            pSignalChain->sendEvent(new SignalChainEvent(*pEvent));
+            pSignalChain->sendEvent(pEvent->clone());
         }
+        break;
     }
 
+    // Manager busy/free voices
     manageVoices();
 }
 

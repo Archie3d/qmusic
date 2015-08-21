@@ -29,8 +29,6 @@ public:
     MidiIn(AudioUnitPlugin *pPlugin);
     ~MidiIn();
 
-    void handleEvent(SignalChainEvent *pEvent) override;
-
     QColor color() const override;
 
     // ISerializable interface
@@ -44,6 +42,10 @@ protected:
     void process();
     void reset();
 
+    void noteOnEvent(NoteOnEvent *pEvent) override;
+    void noteOffEvent(NoteOffEvent *pEvent) override;
+    void pitchBendEvent(PitchBendEvent *pEvent) override;
+
 private:
 
     void createProperties();
@@ -52,6 +54,7 @@ private:
     float m_velocity;
     float m_frequencyBend;
     int m_noteNumber;
+    float m_semitones;
 
     OutputPort *m_pOutputFreq;
     OutputPort *m_pOutputVelocity;

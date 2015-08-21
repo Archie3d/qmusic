@@ -21,6 +21,10 @@
 #include "MidiInputDevice.h"
 #include "ISignalChain.h"
 #include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
+#include "PitchBendEvent.h"
+#include "ControllerEvent.h"
 #include "AudioDevicesManager.h"
 
 const int cNumberOfChannels(2);
@@ -44,42 +48,37 @@ public:
             return;
         }
 
+        SignalChainEvent *pEvent = nullptr;
+
         QString eventName;
         QVariantMap eventData;
 
         switch (msg.status()) {
         case MidiMessage::Status_NoteOn:
-            eventData["number"] = msg.noteNumber();
             if (msg.velocity() == 0) {
-                eventData["velocity"] = 64;
-                eventName = "noteOff";
+                pEvent = new NoteOffEvent(msg.noteNumber(), 64);
             } else {
-                eventData["velocity"] = msg.velocity();
-                eventName = "noteOn";
+                pEvent = new NoteOnEvent(msg.noteNumber(), msg.velocity());
             }
             break;
         case MidiMessage::Status_NoteOff:
-            eventName = "noteOff";
-            eventData["number"] = msg.noteNumber();
-            eventData["velocity"] = msg.velocity();
+            pEvent = new NoteOffEvent(msg.noteNumber(), msg.velocity());
             break;
         case MidiMessage::Status_PitchBend: {
-            eventName = "pitchBend";
-            eventData["value"] = msg.pitchBend();
+            pEvent = new PitchBendEvent(msg.pitchBend());
             break;
         }
         case MidiMessage::Status_ControlChange: {
-            eventName = "control";
-            eventData["number"] = msg.controllerNumber();
-            eventData["value"] = msg.controllerValue();
+            pEvent = new ControllerEvent(msg.controllerNumber(), msg.controllerValue());
             break;
         }
         default:
-            return;
             break;
         }
 
-        m_pSignalChain->postEvent(new SignalChainEvent(eventName, eventData));
+        if (pEvent != nullptr) {
+            m_pSignalChain->postEvent(pEvent);
+        }
     }
 
 private:

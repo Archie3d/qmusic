@@ -15,32 +15,43 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
+#include <QMap>
 #include "SignalChainEvent.h"
 
-SignalChainEvent::SignalChainEvent(const QString &name, const QVariant &data)
-    : m_name(name),
-      m_data(data)
+QMap<SignalChainEvent::Type, QString> cEventTypeToStringMap = []() {
+    QMap<SignalChainEvent::Type, QString> map;
+    map[SignalChainEvent::Invalid] = "Invalid";
+    map[SignalChainEvent::NoteOn] = "NoteOn";
+    map[SignalChainEvent::NoteOff] = "NoteOff";
+    map[SignalChainEvent::PitchBend] = "PitchBend";
+    map[SignalChainEvent::Controller] = "Controller";
+    return map;
+}();
+
+SignalChainEvent::SignalChainEvent(SignalChainEvent::Type type)
+    : m_type(type)
 {
 }
 
 SignalChainEvent::SignalChainEvent(const SignalChainEvent &evt)
-    : m_name(evt.m_name),
-      m_data(evt.m_data)
+    : m_type(evt.m_type)
 {
 }
 
 SignalChainEvent& SignalChainEvent::operator =(const SignalChainEvent &evt)
 {
     if (this != &evt) {
-        m_name = evt.m_name;
-        m_data = evt.m_data;
+        m_type = evt.m_type;
     }
     return *this;
 }
 
-QDebug operator <<(QDebug dbg, const SignalChainEvent &evt)
+QString SignalChainEvent::toString() const
 {
-    dbg.nospace() << evt.name() << " " << evt.data();
-    return dbg.maybeSpace();
+    return SignalChainEvent::eventTypeToString(m_type);
+}
+
+QString SignalChainEvent::eventTypeToString(Type type)
+{
+    return cEventTypeToStringMap.value(type, QString::number(int(type)));
 }

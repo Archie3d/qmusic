@@ -39,8 +39,6 @@ public:
     Envelope(AudioUnitPlugin *pPlugin);
     ~Envelope();
 
-    void handleEvent(SignalChainEvent *pEvent);
-
     QColor color() const override;
 
     // ISerializable interface
@@ -53,6 +51,9 @@ protected:
     void processStop();
     void process();
     void reset();
+
+    void noteOnEvent(NoteOnEvent *pEvent);
+    void noteOffEvent(NoteOffEvent *pEvent);
 
 private:
 

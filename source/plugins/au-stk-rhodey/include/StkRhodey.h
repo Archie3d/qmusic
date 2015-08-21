@@ -33,8 +33,6 @@ public:
     StkRhodey(AudioUnitPlugin *pPlugin);
     ~StkRhodey();
 
-    void handleEvent(SignalChainEvent *pEvent);
-
     QColor color() const override { return QColor(250, 240, 255); }
 
     // ISerializable interface
@@ -47,6 +45,9 @@ protected:
     void processStop();
     void process();
     void reset();
+
+    void noteOnEvent(NoteOnEvent *pEvent);
+    void noteOffEvent(NoteOffEvent *pEvent);
 
 private:
 

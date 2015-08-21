@@ -21,7 +21,8 @@
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "SignalChainEvent.h"
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "Envelope.h"
 
 const QColor cDefaultColor(230, 240, 210);
@@ -43,22 +44,6 @@ Envelope::Envelope(AudioUnitPlugin *pPlugin)
 
 Envelope::~Envelope()
 {
-}
-
-void Envelope::handleEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent);
-
-    QString name = pEvent->name();
-    if (name == "noteOn") {
-        m_noteNumber = pEvent->data().toMap()["number"].toInt();
-        setState(State_Attack);
-    } else if (name == "noteOff") {
-        int noteNumber = pEvent->data().toMap()["number"].toInt();
-        if (m_noteNumber == noteNumber) {
-            setState(State_Release);
-        }
-    }
 }
 
 QColor Envelope::color() const
@@ -165,6 +150,19 @@ void Envelope::doEnvelope()
         break;
     default:
         break;
+    }
+}
+
+void Envelope::noteOnEvent(NoteOnEvent *pEvent)
+{
+    m_noteNumber = pEvent->noteNumber();
+    setState(State_Attack);
+}
+
+void Envelope::noteOffEvent(NoteOffEvent *pEvent)
+{
+    if (m_noteNumber == pEvent->noteNumber()) {
+        setState(State_Release);
     }
 }
 
