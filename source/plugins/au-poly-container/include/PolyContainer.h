@@ -55,11 +55,14 @@ protected:
 private:
 
     void createProperties();
-    void createVoices();
+    void createVoices(int n);
     void createPorts();
     void prepareVoicesUpdate();
     void manageVoices();
     void freeAllVoices();
+
+    void allocateVoices();
+    void releaseVoices();
 
     /**
      * Pick a voice by removing it from the list of
@@ -82,6 +85,8 @@ private:
 
     /// Voices currently playing.
     QMap<int, ISignalChain*> m_busyVoices;
+
+    QtVariantProperty *m_pPropNumberOfVoices;
 };
 
 #endif // AU_POLY_CONTAINER_H

@@ -45,7 +45,7 @@ PolyphonicContainer::PolyphonicContainer(AudioUnitPlugin *pPlugin)
 
 PolyphonicContainer::~PolyphonicContainer()
 {
-    qDeleteAll(m_voices);
+    releaseVoices();
     delete m_pSignalChainScene;
 }
 
@@ -57,7 +57,6 @@ void PolyphonicContainer::setSignalChainScene(SignalChainScene *pScene)
     m_pSignalChainScene = pScene;
 
     createPorts();
-    createVoices();
 }
 
 void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
@@ -107,6 +106,7 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
 
 void PolyphonicContainer::processStart()
 {
+    allocateVoices();
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->setTimeStep(signalChain()->timeStep());
         pSignalChain->start();
@@ -119,6 +119,7 @@ void PolyphonicContainer::processStop()
         pSignalChain->stop();
     }
     freeAllVoices();
+    releaseVoices();
 }
 
 void PolyphonicContainer::process()
@@ -159,6 +160,7 @@ void PolyphonicContainer::serialize(QVariantMap &data, SerializationContext *pCo
     Q_ASSERT(pContext != nullptr);
     AudioUnit::serialize(data, pContext);
     data["signalChainScene"] = pContext->serialize(m_pSignalChainScene);
+    data["voices"] = m_pPropNumberOfVoices->value();
 }
 
 void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -166,22 +168,30 @@ void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationCont
     Q_ASSERT(pContext != nullptr);
     AudioUnit::deserialize(data, pContext);
     m_pSignalChainScene = pContext->deserialize<SignalChainScene>(data["signalChainScene"]);
+    m_pPropNumberOfVoices->setValue(data["voices"]);
 
     createPorts();
-    createVoices();
 }
 
 void PolyphonicContainer::createProperties()
 {
-    //QtVariantProperty *pRoot = rootProperty();
+    QtVariantProperty *pRoot = rootProperty();
+
+    m_pPropNumberOfVoices = propertyManager()->addProperty(QVariant::Int, "Voices");
+    m_pPropNumberOfVoices->setAttribute("minimum", 1);
+    m_pPropNumberOfVoices->setAttribute("maximum", 24);
+    m_pPropNumberOfVoices->setValue(8);
+
+    pRoot->addSubProperty(m_pPropNumberOfVoices);
 }
 
-void PolyphonicContainer::createVoices()
+void PolyphonicContainer::createVoices(int n)
 {
     Q_ASSERT(m_pSignalChainScene != nullptr);
     Q_ASSERT(m_voices.isEmpty());
+    Q_ASSERT(n > 0);
 
-    m_voices = m_pSignalChainScene->signalChain()->clone(cNumberOfVoices);
+    m_voices = m_pSignalChainScene->signalChain()->clone(n);
 
     foreach (ISignalChain *pVoice, m_voices) {
 
@@ -256,6 +266,23 @@ void PolyphonicContainer::freeAllVoices()
 {
     m_busyVoices.clear();
     m_freeVoices = m_voices;
+}
+
+void PolyphonicContainer::allocateVoices()
+{
+    Q_ASSERT(m_voices.isEmpty());
+
+    int n = m_pPropNumberOfVoices->value().toInt();
+
+    createVoices(n);
+}
+
+void PolyphonicContainer::releaseVoices()
+{
+    qDeleteAll(m_voices);
+    m_voices.clear();
+    m_busyVoices.clear();
+    m_freeVoices.clear();
 }
 
 ISignalChain* PolyphonicContainer::pickFreeVoice()
