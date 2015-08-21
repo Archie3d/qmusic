@@ -58,6 +58,8 @@ protected:
 private:
 
     void createProperties();
+    void cachePropetties();
+
     void doEnvelope();
     void setState(State s);
 

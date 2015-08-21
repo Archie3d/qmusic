@@ -106,6 +106,9 @@ void Constant::createProperties()
         if (pV == m_pPropConstant) {
             if (m_pValueItem != nullptr) {
                 m_pValueItem->setText(pV->valueText());
+
+                // Update the output immediately
+                m_pOutput->setValue(pV->value().toFloat());
             }
         }
     });

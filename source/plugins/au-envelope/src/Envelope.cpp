@@ -86,12 +86,7 @@ void Envelope::processStart()
     m_releaseTCO = m_decayTCO;
 
     m_dt = signalChain()->timeStep();
-    m_attackTimeMs = m_pAttackTimeMs->value().toFloat();
-    m_decayTimeMs = m_pDecayTimeMs->value().toFloat();
-    m_sustainLevel = m_pSustainLevel->value().toFloat();
-    m_releaseTimeMs = m_pReleaseTimeMs->value().toFloat();
-    m_signalChainEnable = m_pSignalChainEnable->value().toBool();
-    m_signalChainDisable = m_pSignalChainDisable->value().toBool();
+    cachePropetties();
 
     calculateAttack();
     calculateDecay();
@@ -263,4 +258,20 @@ void Envelope::createProperties()
     m_pSignalChainDisable->setValue(false);
     m_pSignalChainDisable->setToolTip("Release disables signal chain");
     pSignalChain->addSubProperty(m_pSignalChainDisable);
+
+    // Properties change handler
+    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        Q_UNUSED(pProperty);
+        cachePropetties();
+    });
+}
+
+void Envelope::cachePropetties()
+{
+    m_attackTimeMs = m_pAttackTimeMs->value().toFloat();
+    m_decayTimeMs = m_pDecayTimeMs->value().toFloat();
+    m_sustainLevel = m_pSustainLevel->value().toFloat();
+    m_releaseTimeMs = m_pReleaseTimeMs->value().toFloat();
+    m_signalChainEnable = m_pSignalChainEnable->value().toBool();
+    m_signalChainDisable = m_pSignalChainDisable->value().toBool();
 }

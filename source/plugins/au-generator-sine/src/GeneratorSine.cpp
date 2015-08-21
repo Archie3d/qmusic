@@ -61,7 +61,7 @@ void GeneratorSine::deserialize(const QVariantMap &data, SerializationContext *p
 
 void GeneratorSine::processStart()
 {
-    m_phase = m_pPropPhase->value().toFloat();
+    m_phase = RAD(m_pPropPhase->value().toFloat());
     m_amp = m_pPropAmplitude->value().toFloat();
     m_freqScale = m_pPropFreqScale->value().toFloat();
     m_freqScale *= signalChain()->timeStep();
@@ -83,7 +83,7 @@ void GeneratorSine::process()
 
 void GeneratorSine::reset()
 {
-    m_phase = RAD(m_pPropPhase->value().toDouble());
+    m_phase = RAD(m_pPropPhase->value().toFloat());
 }
 
 void GeneratorSine::createProperties()
@@ -109,4 +109,14 @@ void GeneratorSine::createProperties()
     pRoot->addSubProperty(m_pPropFreqScale);
     pRoot->addSubProperty(m_pPropAmplitude);
     pRoot->addSubProperty(m_pPropPhase);
+
+    // Property change handler
+    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        Q_ASSERT(pProperty);
+
+        // Update cached values from properties
+        m_phase = RAD(m_pPropPhase->value().toFloat());
+        m_amp = m_pPropAmplitude->value().toFloat();
+        m_freqScale = m_pPropFreqScale->value().toFloat();
+    });
 }
