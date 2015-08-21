@@ -48,6 +48,7 @@ protected:
 private:
 
     void createProperties();
+    void setValues();
 
     float m_phase;
     float m_amp;
