@@ -70,14 +70,15 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
         Q_ASSERT(pNoteOnEvent != nullptr);
 
         int note = pNoteOnEvent->noteNumber();
-        if (m_busyVoices.contains(note)) {
-            m_busyVoices.value(note)->sendEvent(pEvent->clone());
+        ISignalChain *pVoice = findBusyVoice(note);
+        if (pVoice != nullptr) {
+            pVoice->sendEvent(pEvent->clone());
         } else {
             // New note
             ISignalChain *pVoice = pickFreeVoice();
             if (pVoice != nullptr) {
                 pVoice->sendEvent(pEvent->clone());
-                m_busyVoices.insert(note, pVoice);
+                m_busyVoices.append(TheVoice(note, pVoice));
             }
         }
         break;
@@ -87,7 +88,7 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
         Q_ASSERT(pNoteOffEvent != nullptr);
 
         int note = pNoteOffEvent->noteNumber();
-        ISignalChain *pVoice = m_busyVoices.value(note, nullptr);
+        ISignalChain *pVoice = findBusyVoice(note);
         if (pVoice != nullptr) {
             pVoice->sendEvent(pEvent->clone());
         }
@@ -105,6 +106,11 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
     manageVoices();
 }
 
+void PolyphonicContainer::setLabel(const QString &text)
+{
+    m_pPropLabel->setValue(text);
+}
+
 void PolyphonicContainer::processStart()
 {
     // Re-allocate voices if required
@@ -113,6 +119,8 @@ void PolyphonicContainer::processStart()
         releaseVoices();
         allocateVoices();
     }
+    m_voiceStealing = m_pPropStealVoice->value().toBool();
+
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->setTimeStep(signalChain()->timeStep());
         pSignalChain->start();
@@ -177,6 +185,7 @@ void PolyphonicContainer::serialize(QVariantMap &data, SerializationContext *pCo
     data["signalChainScene"] = pContext->serialize(m_pSignalChainScene);
     data["label"] = m_pPropLabel->value();
     data["voices"] = m_pPropNumberOfVoices->value();
+    data["voiceStealing"] = m_pPropStealVoice->value();
 }
 
 void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationContext *pContext)
@@ -186,6 +195,7 @@ void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationCont
     m_pSignalChainScene = pContext->deserialize<SignalChainScene>(data["signalChainScene"]);
     m_pPropLabel->setValue(data["label"]);
     m_pPropNumberOfVoices->setValue(data["voices"]);
+    m_pPropStealVoice->setValue(data["voiceStrealing"]);
 
     createPorts();
 }
@@ -209,6 +219,10 @@ void PolyphonicContainer::createProperties()
     m_pPropNumberOfVoices->setAttribute("maximum", 24);
     m_pPropNumberOfVoices->setValue(8);
     pPolyphony->addSubProperty(m_pPropNumberOfVoices);
+
+    m_pPropStealVoice = propertyManager()->addProperty(QVariant::Bool, "Voice stealing");
+    m_pPropStealVoice->setValue(false);
+    pPolyphony->addSubProperty(m_pPropStealVoice);
 
     pRoot->addSubProperty(m_pPropLabel);
     pRoot->addSubProperty(pPolyphony);
@@ -278,9 +292,9 @@ void PolyphonicContainer::prepareVoicesUpdate()
 void PolyphonicContainer::manageVoices()
 {
     // Move all already disabled voices from busy to free list
-    QMap<int, ISignalChain*>::iterator it = m_busyVoices.begin();
+    QList<TheVoice>::iterator it = m_busyVoices.begin();
     while (it != m_busyVoices.end()) {
-        ISignalChain *pVoice = it.value();
+        ISignalChain *pVoice = (*it).second;
         if (!pVoice->isEnabled()) {
             // Voice is disabled
             it = m_busyVoices.erase(it);
@@ -314,11 +328,32 @@ void PolyphonicContainer::releaseVoices()
     m_freeVoices.clear();
 }
 
+ISignalChain* PolyphonicContainer::findBusyVoice(int noteNumber)
+{
+    foreach (const TheVoice &voice, m_busyVoices) {
+        if (voice.first == noteNumber) {
+            return voice.second;
+        }
+    }
+    return nullptr;
+}
+
 ISignalChain* PolyphonicContainer::pickFreeVoice()
 {
     if (m_freeVoices.isEmpty()) {
+        if (m_voiceStealing && !m_busyVoices.isEmpty()) {
+            // Streal the oldest voice
+            TheVoice voice = m_busyVoices.first();
+            m_busyVoices.removeFirst();
+
+            // Have to be sure the voice note is turned off
+            voice.second->sendEvent(new NoteOffEvent(voice.first, 64));
+
+            return voice.second;
+        }
         return nullptr;
     }
+
     ISignalChain *pVoice = m_freeVoices.first();
     m_freeVoices.removeOne(pVoice);
 

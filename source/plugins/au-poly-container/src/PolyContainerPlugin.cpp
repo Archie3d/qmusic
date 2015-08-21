@@ -15,6 +15,7 @@
     Lesser General Public License for more details.
 */
 
+#include <QFileInfo>
 #include <QFileDialog>
 #include "Application.h"
 #include "PolyContainerPlugin.h"
@@ -52,8 +53,11 @@ AudioUnit* PolyphonicContainerPlugin::createInstanceInteractive()
         return nullptr;
     }
 
+    QFileInfo fi(fileName);
+
     // Create container and assign a scene to it.
     PolyphonicContainer *pContainer = new PolyphonicContainer(this);
+    pContainer->setLabel(fi.baseName());
     pContainer->setSignalChainScene(pScene);
 
     return pContainer;

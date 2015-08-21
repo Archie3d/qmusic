@@ -18,6 +18,7 @@
 #ifndef AU_POLY_CONTAINER_H
 #define AU_POLY_CONTAINER_H
 
+#include <QPair>
 #include "AudioUnit.h"
 #include "ISignalChainSceneContainer.h"
 
@@ -30,6 +31,8 @@ class PolyphonicContainer : public AudioUnit,
 {
 public:
 
+    typedef QPair<int, ISignalChain*> TheVoice;
+
     PolyphonicContainer(AudioUnitPlugin *pPlugin);
     ~PolyphonicContainer();
 
@@ -37,6 +40,8 @@ public:
     SignalChainScene* signalChainScene() const override { return m_pSignalChainScene; }
 
     void handleEvent(SignalChainEvent *pEvent) override;
+
+    void setLabel(const QString &text);
 
 protected:
 
@@ -64,6 +69,7 @@ private:
 
     void allocateVoices();
     void releaseVoices();
+    ISignalChain* findBusyVoice(int noteNumber);
 
     void updateView();
 
@@ -87,11 +93,14 @@ private:
     QList<ISignalChain*> m_freeVoices;
 
     /// Voices currently playing.
-    QMap<int, ISignalChain*> m_busyVoices;
+    QList<TheVoice> m_busyVoices;
 
     QGraphicsSimpleTextItem *m_pLabelItem;
+
     QtVariantProperty *m_pPropLabel;
     QtVariantProperty *m_pPropNumberOfVoices;
+    QtVariantProperty *m_pPropStealVoice;
+    bool m_voiceStealing;
 };
 
 #endif // AU_POLY_CONTAINER_H
