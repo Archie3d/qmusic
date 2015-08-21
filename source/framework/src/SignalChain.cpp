@@ -156,7 +156,7 @@ void SignalChain::prepareUpdate()
     }
 }
 
-ISignalChain* SignalChain::clone()
+QList<ISignalChain *> SignalChain::clone(int instances)
 {
     // Clone signal chain by serializing and then
     // deserializing it back.
@@ -200,22 +200,31 @@ ISignalChain* SignalChain::clone()
     // Deserialize
     //
 
+    QList<ISignalChain*> list;
+
     SignalChainFactory factory;
-    SerializationContext deserContext(&factory);
-    deserContext.fromByteArray(serContext.toByteArray());
 
-    SignalChain *pSignalChainClone = deserContext.deserialize<SignalChain>();
+    // Create instances
+    for (int i = 0; i < instances; i++) {
 
-    // Deserialize connections
-    foreach(const Connection &conn, connections) {
-        AudioUnit *pSourceAu = deserContext.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
-        AudioUnit *pTargetAu = deserContext.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
-        OutputPort *pSourcePort = pSourceAu->outputs().at(conn.sourcePortIndex);
-        InputPort *pTargetPort = pTargetAu->inputs().at(conn.targetPortIndex);
-        pTargetPort->connect(pSourcePort);
+        SerializationContext deserContext(&factory);
+        deserContext.fromByteArray(serContext.toByteArray());
+
+        SignalChain *pSignalChainClone = deserContext.deserialize<SignalChain>();
+
+        // Deserialize connections
+        foreach(const Connection &conn, connections) {
+            AudioUnit *pSourceAu = deserContext.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
+            AudioUnit *pTargetAu = deserContext.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
+            OutputPort *pSourcePort = pSourceAu->outputs().at(conn.sourcePortIndex);
+            InputPort *pTargetPort = pTargetAu->inputs().at(conn.targetPortIndex);
+            pTargetPort->connect(pSourcePort);
+        }
+
+        list.append(pSignalChainClone);
     }
 
-    return pSignalChainClone;
+    return list;
 }
 
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const

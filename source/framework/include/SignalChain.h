@@ -60,7 +60,7 @@ public:
     void removeAudioUnit(IAudioUnit *pAudioUnit) override;
     QList<IAudioUnit*> audioUnits() const override { return m_audioUnits; }
     void prepareUpdate() override;
-    ISignalChain* clone() override;
+    QList<ISignalChain*> clone(int instances = 1) override;
 
     // ISerializable interface
     QString uid() const override final { return UID; }

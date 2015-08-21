@@ -133,9 +133,10 @@ public:
 
     /**
      * @brief Clone this signal chain.
-     * @return Pointer to cloned signal chain.
+     * @param instances Number of instances to create
+     * @return List of cloned signal chains.
      */
-    virtual ISignalChain* clone() = 0;
+    virtual QList<ISignalChain*> clone(int instances = 1) = 0;
 
     /// Destructor.
     virtual ~ISignalChain() {}

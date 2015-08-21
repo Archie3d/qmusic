@@ -179,10 +179,11 @@ void PolyphonicContainer::createProperties()
 void PolyphonicContainer::createVoices()
 {
     Q_ASSERT(m_pSignalChainScene != nullptr);
-    for (int i = 0; i < cNumberOfVoices; i++) {
-        ISignalChain *pVoice = m_pSignalChainScene->signalChain()->clone();
-        Q_ASSERT(pVoice != nullptr);
-        m_voices.append(pVoice);
+    Q_ASSERT(m_voices.isEmpty());
+
+    m_voices = m_pSignalChainScene->signalChain()->clone(cNumberOfVoices);
+
+    foreach (ISignalChain *pVoice, m_voices) {
 
         // Add to the list og free voices
         m_freeVoices.append(pVoice);
