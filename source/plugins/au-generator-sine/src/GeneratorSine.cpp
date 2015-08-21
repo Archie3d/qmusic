@@ -120,5 +120,7 @@ void GeneratorSine::setValues()
 {
     m_phase = RAD(m_pPropPhase->value().toFloat());
     m_amp = m_pPropAmplitude->value().toFloat();
-    m_freqScale = signalChain()->timeStep() * m_pPropFreqScale->value().toFloat();
+    if (signalChain() != nullptr) {
+        m_freqScale = signalChain()->timeStep() * m_pPropFreqScale->value().toFloat();
+    }
 }

@@ -97,13 +97,19 @@ void SignalChain::postEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
 
+    QMutexLocker locker(&m_eventQueueMutex);
     m_events.append(pEvent);
 }
 
 void SignalChain::processEvents()
 {
+    // Move events to a separate buffer
+    m_eventQueueMutex.lock();
     QList<SignalChainEvent*> events = m_events;
     m_events.clear();
+    m_eventQueueMutex.unlock();
+
+    // Handle events
     foreach (SignalChainEvent *pEvent, events) {
         processEvent(pEvent);
         delete pEvent;

@@ -19,6 +19,7 @@
 #define SIGNALCHAIN_H
 
 #include <QList>
+#include <QMutex>
 #include "FrameworkApi.h"
 #include "ISignalChain.h"
 
@@ -93,6 +94,9 @@ private:
 
     /// Events queue.
     QList<SignalChainEvent*> m_events;
+
+    /// Protective mutex
+    QMutex m_eventQueueMutex;
 };
 
 #endif // SIGNALCHAIN_H

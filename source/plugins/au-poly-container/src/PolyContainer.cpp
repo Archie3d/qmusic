@@ -326,6 +326,7 @@ void PolyphonicContainer::releaseVoices()
     m_voices.clear();
     m_busyVoices.clear();
     m_freeVoices.clear();
+    m_exposeOutputAudioUnits.clear();
 }
 
 ISignalChain* PolyphonicContainer::findBusyVoice(int noteNumber)
