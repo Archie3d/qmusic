@@ -106,7 +106,12 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
 
 void PolyphonicContainer::processStart()
 {
-    allocateVoices();
+    // Re-allocate voices if required
+    int n = m_pPropNumberOfVoices->value().toInt();
+    if (m_voices.count() != n) {
+        releaseVoices();
+        allocateVoices();
+    }
     foreach (ISignalChain *pSignalChain, m_voices) {
         pSignalChain->setTimeStep(signalChain()->timeStep());
         pSignalChain->start();
@@ -119,7 +124,6 @@ void PolyphonicContainer::processStop()
         pSignalChain->stop();
     }
     freeAllVoices();
-    releaseVoices();
 }
 
 void PolyphonicContainer::process()
