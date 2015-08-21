@@ -46,8 +46,6 @@ const quint32 SignalChainScene_Magic(0x7af98ed8);
 
 const QString cSignalChainMimeDataId("qmusic/signalChainSceneItems");
 
-const QString cPolyphonicContainerUid("d37746dd670118a9c1625d86ee5e182c");
-
 SignalChainScene::SignalChainScene(QObject *pParent)
     : QGraphicsScene(pParent)
 {
