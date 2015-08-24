@@ -30,7 +30,6 @@ StkRhodey::StkRhodey(AudioUnitPlugin *pPlugin)
 {
     m_pInputFreq = addInput("f");
     m_pInputVelocity = addInput("amp");
-    m_pInputNoteOn = addInput("on");
 
     m_pOutput = addOutput("out");
 
