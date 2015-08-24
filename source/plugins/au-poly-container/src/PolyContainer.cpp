@@ -195,7 +195,7 @@ void PolyphonicContainer::deserialize(const QVariantMap &data, SerializationCont
     m_pSignalChainScene = pContext->deserialize<SignalChainScene>(data["signalChainScene"]);
     m_pPropLabel->setValue(data["label"]);
     m_pPropNumberOfVoices->setValue(data["voices"]);
-    m_pPropStealVoice->setValue(data["voiceStrealing"]);
+    m_pPropStealVoice->setValue(data["voiceStealing"]);
 
     createPorts();
 }
