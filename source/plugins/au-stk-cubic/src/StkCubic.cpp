@@ -55,8 +55,8 @@ void StkCubic::deserialize(const QVariantMap &data, SerializationContext *pConte
 {
     Q_ASSERT(pContext != nullptr);
     m_pPropA1->setValue(data["a1"]);
-    m_pPropA2->setValue(data["A2"]);
-    m_pPropA3->setValue(data["A3"]);
+    m_pPropA2->setValue(data["a2"]);
+    m_pPropA3->setValue(data["a3"]);
     m_pPropThreshold->setValue(data["threshold"]);
     AudioUnit::deserialize(data, pContext);
 }
