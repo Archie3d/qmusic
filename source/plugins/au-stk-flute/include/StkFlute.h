@@ -65,7 +65,6 @@ private:
     InputPort *m_pInputFreq;
     InputPort *m_pInputVelocity;
     InputPort *m_pInputBreath;
-    InputPort *m_pInputNoteOn;
 
     OutputPort *m_pOutput;
 

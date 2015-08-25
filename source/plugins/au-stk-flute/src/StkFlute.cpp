@@ -42,7 +42,6 @@ StkFlute::StkFlute(AudioUnitPlugin *pPlugin)
     m_pInputFreq = addInput("f");
     m_pInputVelocity = addInput("amp");
     m_pInputBreath = addInput("breath");
-    m_pInputNoteOn = addInput("on");
 
     m_pOutput = addOutput("out");
 
