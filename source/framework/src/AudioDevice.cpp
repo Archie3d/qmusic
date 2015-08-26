@@ -16,6 +16,7 @@
 */
 
 #include <QDebug>
+#include <QMap>
 #include "portaudio.h"
 #include "Application.h"
 #include "AudioDevice.h"
@@ -195,9 +196,11 @@ AudioDevice::Info AudioDevice::getInfo(int index) const
 {
     Info devInfo;
     const PaDeviceInfo *pInfo = Pa_GetDeviceInfo(index);
+    const PaHostApiInfo *pHostApiInfo = Pa_GetHostApiInfo(pInfo->hostApi);
 
     devInfo.index = index;
     devInfo.name = QString::fromLatin1(pInfo->name);
+    devInfo.hostApi = QString::fromLatin1(pHostApiInfo->name);
     devInfo.nInputs = pInfo->maxInputChannels;
     devInfo.nOutputs = pInfo->maxOutputChannels;
     devInfo.sampleRate = pInfo->defaultSampleRate;

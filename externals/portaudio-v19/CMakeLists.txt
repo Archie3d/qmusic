@@ -13,9 +13,13 @@ set(INCLUDES
 file(GLOB COMMON_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/common/*.c*)
 file(GLOB HOSTAPI_ASIO ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/asio/*.c*)
 file(GLOB HOSTAPI_WDMKS ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wdmks/*.c*)
+file(GLOB HOSTAPI_WASAPI ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wasapi/*.c*)
+file(GLOB HOSTAPI_WMME ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wmme/*.c*)
 file(GLOB HOSTAPI_SRC
     ${HOSTAPI_ASIO}
     ${HOSTAPI_WDMKS}
+    ${HOSTAPI_WASAPI}
+    ${HOSTAPI_WMME}
 )
 file(GLOB HOST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/os/${HOST}/*.c*)
 
@@ -45,6 +49,8 @@ set(${PROJECT_NAME}_INCLUDES ${INCLUDES} CACHE INTERNAL "${PROJECT_NAME} library
 
 add_definitions(-DPA_USE_ASIO=1)
 add_definitions(-DPA_USE_WDMKS=1)
+add_definitions(-DPA_USE_WASAPI=1)
+add_definitions(-DPA_USE_WMME=1)
 
 # Disable compiler warnings
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")

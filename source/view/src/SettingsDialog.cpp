@@ -154,11 +154,11 @@ void SettingsDialog::enumerateDevices()
     foreach (const AudioDevice::Info info, list) {
         if (info.nInputs > 0) {
             // Input device detected
-            m_pWaveInComboBox->addItem(info.name, info.index);
+            m_pWaveInComboBox->addItem(QString("%1: %2").arg(info.hostApi, info.name), info.index);
         }
         if (info.nOutputs > 0) {
             // Output device detected
-            m_pWaveOutComboBox->addItem(info.name, info.index);
+            m_pWaveOutComboBox->addItem(QString("%1: %2").arg(info.hostApi, info.name), info.index);
         }
 
         double sampleRate = info.sampleRate;

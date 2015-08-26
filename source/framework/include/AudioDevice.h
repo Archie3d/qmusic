@@ -70,6 +70,7 @@ public:
     struct Info {
         int index;          ///< Deice index.
         QString name;       ///< Device name.
+        QString hostApi;    ///< Device host API.
         int nInputs;        ///< Number of input channels.
         int nOutputs;       ///< Number of output channels.
         double sampleRate;  ///< Sample rate.
