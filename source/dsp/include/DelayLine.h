@@ -32,10 +32,17 @@ public:
 
     /**
      * Construct delay line.
-     * @param nSamples Number of samples to be delayed.
+     * @param nSamplesMax Maximum number of samples to be delayed.
      */
-    DelayLine(int nSamples = 0);
+    DelayLine(int nSamplesMax = 4096);
     ~DelayLine();
+
+    /**
+     * @brief Set current delay (in samples).
+     * This sets delay within 0..nSamplesMax without buffer reallocation.
+     * @param nSamples Number of samples to delay
+     */
+    void setDelay(int nSamples);
 
     /**
      * Reset the delat line.
@@ -53,9 +60,11 @@ public:
 
 private:
 
-    int m_nSamples;     ///< Number of samples.
+    int m_nSamples;     ///< Number of samples to delay.
+    int m_nSamplesMax;  ///< Maximum number of samples.
     double *m_pBuffer;  ///< Samples buffer.
-    int m_index;        ///< Index within the buffer
+    int m_inIndex;      ///< Index within the buffer for input sample.
+    int m_outIndex;     ///< Index within the buffer for output sample.
 };
 
 #endif // DELAYLINE_H

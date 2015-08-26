@@ -15,15 +15,21 @@
     Lesser General Public License for more details.
 */
 
-#include <string.h>
+#include <qglobal.h>
+#include <QDebug>
 #include "DelayLine.h"
 
-DelayLine::DelayLine(int nSamples)
-    : m_nSamples(nSamples),
+DelayLine::DelayLine(int nSamplesMax)
+    : m_nSamples(0),
+      m_nSamplesMax(nSamplesMax),
       m_pBuffer(nullptr)
 {
-    if (nSamples > 0) {
-        m_pBuffer = new double[m_nSamples];
+    Q_ASSERT(nSamplesMax > 0);
+
+    m_nSamples = 0;
+
+    if (nSamplesMax > 0) {
+        m_pBuffer = new double[m_nSamplesMax];
     }
     reset();
 }
@@ -33,10 +39,29 @@ DelayLine::~DelayLine()
     delete[] m_pBuffer;
 }
 
+void DelayLine::setDelay(int nSamples)
+{
+    int delay = qMin(nSamples, m_nSamplesMax - 1);
+    if (delay == m_nSamples) {
+        // No changes
+        return;
+    }
+
+    m_nSamples = delay;
+
+    if (m_inIndex >= m_nSamples) {
+        m_outIndex = m_inIndex - m_nSamples;
+    } else {
+        m_outIndex = m_nSamplesMax - m_nSamples + m_inIndex;
+    }
+}
+
 void DelayLine::reset()
 {
-    m_index = 0;
-    memset(m_pBuffer, 0, sizeof(double) * m_nSamples);
+    memset(m_pBuffer, 0, sizeof(double) * m_nSamplesMax);
+    m_inIndex = 0;
+    m_outIndex = 0;
+    setDelay(m_nSamples);
 }
 
 double DelayLine::process(double x)
@@ -44,7 +69,12 @@ double DelayLine::process(double x)
     if (m_pBuffer == nullptr || m_nSamples == 0) {
         return x;
     }
-    m_pBuffer[m_index] = x;    
-    m_index = (m_index + 1) % m_nSamples;
-    return m_pBuffer[m_index];
+
+    m_pBuffer[m_inIndex] = x;
+    float out = m_pBuffer[m_outIndex];
+
+    m_inIndex = (m_inIndex + 1) % m_nSamplesMax;
+    m_outIndex = (m_outIndex + 1) % m_nSamplesMax;
+
+    return out;
 }

@@ -46,9 +46,12 @@ private:
     void createProperties();
 
     InputPort *m_pInput;
+    InputPort *m_pDelayRatioInput;
     OutputPort *m_pOutput;
 
     DelayLine *m_pDelayLine;
+
+    int m_delaySamples;
 
     QtVariantProperty *m_pPropDelay;
 };

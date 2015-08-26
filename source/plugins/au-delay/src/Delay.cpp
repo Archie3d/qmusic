@@ -26,8 +26,9 @@
 Delay::Delay(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInput = addInput("");
-    m_pOutput = addOutput("");
+    m_pInput = addInput("in");
+    m_pDelayRatioInput = addInput("delay");
+    m_pOutput = addOutput("out");
 
     m_pDelayLine = nullptr;
 
@@ -55,9 +56,9 @@ void Delay::deserialize(const QVariantMap &data, SerializationContext *pContext)
 
 void Delay::processStart()
 {
-    float delayMs = m_pPropDelay->value().toDouble();
-    int delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
-    m_pDelayLine = new DelayLine(delaySamples);
+    float delayMs = m_pPropDelay->value().toFloat();
+    m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
+    m_pDelayLine = new DelayLine(m_delaySamples);
 }
 
 void Delay::processStop()
@@ -66,6 +67,11 @@ void Delay::processStop()
 
 void Delay::process()
 {
+    float delayRatio = qMin(1.0f, qMax(0.0f, m_pDelayRatioInput->value()));
+    int delaySamples = int(float(m_delaySamples) * delayRatio);
+
+    m_pDelayLine->setDelay(delaySamples);
+
     float out = m_pDelayLine->process(m_pInput->value());
     m_pOutput->setValue(out);
 }
@@ -78,9 +84,10 @@ void Delay::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
 
-    m_pPropDelay = propertyManager()->addProperty(QVariant::Double, "Delay, ms");
+    m_pPropDelay = propertyManager()->addProperty(QVariant::Double, "Maximum delay, ms");
     m_pPropDelay->setValue(100.0);
     m_pPropDelay->setAttribute("minimum", 0.0);
+    m_pPropDelay->setAttribute("maximum", 5000.0);
     m_pPropDelay->setAttribute("decimals", 2);
     m_pPropDelay->setAttribute("singleStep", 1.0);
     pRoot->addSubProperty(m_pPropDelay);
