@@ -16,30 +16,54 @@
 */
 
 #include <QDebug>
-#include <QGraphicsPathItem>
-#include <QGraphicsSimpleTextItem>
+#include <QtVariantProperty>
 #include "Application.h"
 #include "ISignalChain.h"
 #include "Mixer.h"
 
-const int cNumberOfInputs(8);
+/// Range of inputs number
+const int Mixer::cMinNumberOfInputs(2);
+const int Mixer::cMaxNumberOfInputs(32);
 
 Mixer::Mixer(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    for (int i = 0; i < cNumberOfInputs; ++i) {
-        InputPort *pInput = addInput();
-        m_inputs.append(pInput);
-    }
     m_pOutput = addOutput();
+    m_mixFactor = 1.0f;
+    createProperties();
 }
 
 Mixer::~Mixer()
 {
 }
 
+void Mixer::createInputs(int nInputs)
+{
+    for (int i = 0; i < nInputs; ++i) {
+        InputPort *pInput = addInput();
+        m_inputs.append(pInput);
+    }
+}
+
+void Mixer::serialize(QVariantMap &data, SerializationContext *pContext) const
+{
+    Q_ASSERT(pContext != nullptr);
+    data["nInputs"] = m_inputs.count();
+    data["mixingFactor"] = m_pPropMixingFactor->value();
+}
+
+void Mixer::deserialize(const QVariantMap &data, SerializationContext *pContext)
+{
+    Q_ASSERT(pContext != nullptr);
+    int nInputs = data.value("nInputs", 8).toInt(); // 8 - for backward compatibility to load old chains
+    Q_ASSERT(nInputs >= cMinNumberOfInputs && nInputs <= cMaxNumberOfInputs);
+    createInputs(nInputs);
+    m_pPropMixingFactor->setValue(data.value("mixingFactor", 1.0));
+}
+
 void Mixer::processStart()
 {
+    m_mixFactor = m_pPropMixingFactor->value().toFloat();
 }
 
 void Mixer::processStop()
@@ -53,5 +77,23 @@ void Mixer::process()
         sum += pInput->value();
     }
 
-    m_pOutput->setValue(sum);
+    m_pOutput->setValue(sum * m_mixFactor);
+}
+
+void Mixer::createProperties()
+{
+    QtVariantProperty *pRoot = rootProperty();
+
+    m_pPropMixingFactor = propertyManager()->addProperty(QVariant::Double, "Mixing factor");
+    m_pPropMixingFactor->setAttribute("minimum", 0.0);
+    m_pPropMixingFactor->setAttribute("decimals", 3);
+    m_pPropMixingFactor->setAttribute("singleStep", 0.1);
+    m_pPropMixingFactor->setValue(1.0);
+
+    pRoot->addSubProperty(m_pPropMixingFactor);
+
+    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        m_mixFactor = m_pPropMixingFactor->value().toFloat();
+    });
+
 }

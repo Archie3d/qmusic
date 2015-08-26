@@ -27,8 +27,17 @@ class Mixer : public AudioUnit
 {
 public:
 
+    static const int cMinNumberOfInputs;
+    static const int cMaxNumberOfInputs;
+
     Mixer(AudioUnitPlugin *pPlugin);
     ~Mixer();
+
+    void createInputs(int nInputs);
+
+    // ISerializable interface
+    void serialize(QVariantMap &data, SerializationContext *pContext) const;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext);
 
 protected:
 
@@ -38,8 +47,13 @@ protected:
 
 private:
 
+    void createProperties();
+
     QList<InputPort*> m_inputs;
     OutputPort *m_pOutput;
+    float m_mixFactor;
+
+    QtVariantProperty *m_pPropMixingFactor;
 };
 
 #endif // AU_ADDER_H

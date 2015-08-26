@@ -15,8 +15,9 @@
     Lesser General Public License for more details.
 */
 
-#include "MixerPlugin.h"
 #include "Mixer.h"
+#include "MixerInputsDialog.h"
+#include "MixerPlugin.h"
 
 MixerPlugin::MixerPlugin(QObject *pParent)
     : AudioUnitPlugin(pParent)
@@ -31,4 +32,16 @@ QIcon MixerPlugin::icon() const
 AudioUnit* MixerPlugin::createInstance()
 {
     return new Mixer(this);
+}
+
+AudioUnit* MixerPlugin::createInstanceInteractive()
+{
+    Mixer *pMixer = nullptr;
+    MixerInputsDialog dialog;
+    if (dialog.exec() == QDialog::Accepted) {
+        pMixer = new Mixer(this);
+        pMixer->createInputs(dialog.numberOfInputs());
+    }
+
+    return pMixer;
 }
