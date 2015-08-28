@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/au-math-expression">
+        <file>icon.png</file>
+    </qresource>
+</RCC>
