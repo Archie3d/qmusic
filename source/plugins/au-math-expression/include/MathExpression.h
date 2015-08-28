@@ -36,6 +36,8 @@ public:
 
     QColor color() const { return QColor(250, 250, 250); }
 
+    QGraphicsItem *graphicsItem();
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
@@ -47,9 +49,13 @@ protected:
     void process();
     void reset();
 
+private slots:
+
+    void showScriptEditor();
+
 private:
 
-    void createProperties();
+    static QString removeScriptComments(const QString &src);
 
     InputPort *m_pInput;
     OutputPort *m_pOutput;
@@ -57,12 +63,13 @@ private:
     // exprtk
     SymbolTable m_symbolTable;
     Expression m_expression;
-    float m_t;  // Time;
-    float m_x;  // Input argument
+    float m_sampleRate; // Sample rate.
+    float m_t;  // Time.
+    float m_x;  // Input argument.
     long long m_timeStep;
     bool m_compiledOk;
 
-    QtVariantProperty *m_pPropExpression;
+    QString m_script;
 };
 
 #endif // AU_MATH_EXPRESSION_H

@@ -6,6 +6,9 @@ set(DEPENDS_QT Widgets)
 set(DEPENDS framework qtpropertybrowser)
 
 if(WIN32)
+    # Disable C4996 warning in exprtk.hpp
+    add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+
     # Disble warning C4244: 'argument' : conversion from 'std::iterator_traits<const char *>::difference_type' to 'const int', possible loss of data
     add_definitions(/wd4244)
 
