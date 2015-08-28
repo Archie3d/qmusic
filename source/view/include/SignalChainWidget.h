@@ -40,6 +40,9 @@ public:
      */
     SignalChainWidget(QWidget *pParent = nullptr);
 
+    // Delete signal chain
+    ~SignalChainWidget();
+
     SignalChainScene* scene() const { return m_pSignalChainScene; }
 
     /**

@@ -49,6 +49,11 @@ SignalChainWidget::SignalChainWidget(QWidget *pParent)
     newSignalChainScene();
 }
 
+SignalChainWidget::~SignalChainWidget()
+{
+    delete m_pSignalChainScene;
+}
+
 void SignalChainWidget::save(const QString &path)
 {
     if (m_pSignalChainScene->saveToFile(path)) {
