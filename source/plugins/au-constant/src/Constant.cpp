@@ -56,10 +56,6 @@ void Constant::reset()
 {
 }
 
-void Constant::control(const QString &name, const QVariant &value)
-{
-}
-
 QGraphicsItem* Constant::graphicsItem()
 {
     if (m_pValueItem == nullptr) {

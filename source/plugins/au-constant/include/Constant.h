@@ -36,7 +36,7 @@ protected:
     void processStop();
     void process();
     void reset();
-    void control(const QString &name, const QVariant &value);
+
     QGraphicsItem* graphicsItem();
     QColor color() const override;
     int flags() const;
