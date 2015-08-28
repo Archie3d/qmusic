@@ -41,7 +41,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     fmtReserved.setForeground(Qt::darkRed);
 
     QStringList reserved;
-    reserved << "x" << "t";
+    reserved << "x" << "y" << "t";
 
     foreach (const QString &res, reserved) {
         rule.pattern = QRegExp(QString("\\b%1\\b").arg(res));

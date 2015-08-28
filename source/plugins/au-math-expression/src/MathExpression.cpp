@@ -29,13 +29,8 @@
 MathExpression::MathExpression(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
-    m_pInput = addInput("x");
-    m_pOutput = addOutput("f(x)");
-
-    m_x = 0.0f;
     m_t = 0.0f;
     m_sampleRate = 44100.0f;    // does not matter, it will be reset on signal chain start.
-    m_symbolTable.add_variable("x", m_x);
     m_symbolTable.add_variable("t", m_t);
     m_symbolTable.add_variable("sr", m_sampleRate);
     m_symbolTable.add_constants();
@@ -43,12 +38,41 @@ MathExpression::MathExpression(AudioUnitPlugin *pPlugin)
     m_expression.register_symbol_table(m_symbolTable);
 
     m_compiledOk = false;
-
-    m_script = "x";
+    m_script = "y := 0;";
 }
 
 MathExpression::~MathExpression()
 {
+}
+
+void MathExpression::createPorts(int nInputs, int nOutputs)
+{
+    for (int i = 0; i < nInputs; ++i) {
+        QString name = nInputs > 1 ? QString("x[%1]").arg(i) : "x";
+        InputPort *pInput = addInput(name);
+        m_inputs.append(pInput);
+        m_xVector.push_back(0.0f);
+    }
+
+    for (int i = 0; i < nOutputs; ++i) {
+        QString name = nOutputs > 1 ? QString("y[%1]").arg(i) : "y";
+        OutputPort *pOutput = addOutput(name);
+        m_outputs.append(pOutput);
+        m_yVector.push_back(0.0f);
+    }
+
+    if (nInputs > 1) {
+        m_symbolTable.add_vector("x", m_xVector);
+    } else if (nInputs == 1) {
+        m_symbolTable.add_variable("x", m_xVector[0]);
+    }
+
+    if (nOutputs > 1) {
+        m_symbolTable.add_vector("y", m_yVector);
+    } else {
+        m_symbolTable.add_variable("y", m_yVector[0]);
+    }
+
 }
 
 QGraphicsItem* MathExpression::graphicsItem()
@@ -99,11 +123,27 @@ void MathExpression::processStop()
 
 void MathExpression::process()
 {
-    m_x = m_pInput->value();
-    m_t = m_timeStep * signalChain()->timeStep();
-    float out = m_compiledOk ? m_expression.value() : 0.0f;
-    m_pOutput->setValue(out);
+    if (!m_compiledOk) {
+        return;
+    }
 
+    // Copy input values
+    for (int i = 0; i < m_inputs.count(); i++) {
+        m_xVector[i] = m_inputs.at(i)->value();
+    }
+
+    // Set current time
+    m_t = m_timeStep * signalChain()->timeStep();
+
+    // Evaluate the expression
+    m_expression.value();
+
+    // Copy outputs from the script
+    for (int i = 0; i < m_outputs.count(); i++) {
+        m_outputs[i]->setValue(m_yVector.at(i));
+    }
+
+    // Advance time
     ++m_timeStep;
 }
 

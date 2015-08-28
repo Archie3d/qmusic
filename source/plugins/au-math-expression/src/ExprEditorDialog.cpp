@@ -1,5 +1,6 @@
 #include <QVBoxLayout>
 #include <QTextEdit>
+#include <QLabel>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include "ExprSyntaxHighlighter.h"
@@ -24,6 +25,12 @@ ExprEditorDialog::ExprEditorDialog(QWidget *pParent)
 
     m_pExprSyntaxHighlighter = new ExprSyntaxHighlighter(m_pTextEdit->document());
 
+    QVBoxLayout *pWarningLayout = new QVBoxLayout();
+    pWarningLayout->setMargin(6);
+    QLabel *pWarningLabel = new QLabel(tr("Watch out: errors in the script may cause the entire application to crash."));
+
+    pWarningLayout->addWidget(pWarningLabel);
+
     QVBoxLayout *pButtonsLayout = new QVBoxLayout();
     pButtonsLayout->setMargin(6);
 
@@ -37,6 +44,7 @@ ExprEditorDialog::ExprEditorDialog(QWidget *pParent)
     pButtonsLayout->addWidget(pButtonBox);
 
     pLayout->addWidget(m_pTextEdit);
+    pLayout->addLayout(pWarningLayout);
     pLayout->addLayout(pButtonsLayout);
 
     setLayout(pLayout);

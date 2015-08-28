@@ -15,8 +15,9 @@
     Lesser General Public License for more details.
 */
 
-#include "MathExpressionPlugin.h"
+#include "ExprInputsOutputsDialog.h"
 #include "MathExpression.h"
+#include "MathExpressionPlugin.h"
 
 MathExpressionPlugin::MathExpressionPlugin(QObject *pParent)
     : AudioUnitPlugin(pParent)
@@ -31,4 +32,16 @@ QIcon MathExpressionPlugin::icon() const
 AudioUnit* MathExpressionPlugin::createInstance()
 {
     return new MathExpression(this);
+}
+
+AudioUnit* MathExpressionPlugin::createInstanceInteractive()
+{
+    MathExpression *pUnit = nullptr;
+    ExprInputsOutputsDialog dlg;
+    if (dlg.exec() == QDialog::Accepted) {
+        pUnit = new MathExpression(this);
+        pUnit->createPorts(dlg.numberOfInputs(),
+                           dlg.numberOfOutputs());
+    }
+    return pUnit;
 }

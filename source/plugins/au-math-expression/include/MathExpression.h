@@ -18,6 +18,8 @@
 #ifndef AU_MATH_EXPRESSION_H
 #define AU_MATH_EXPRESSION_H
 
+#include <vector>
+#include <QVector>
 #include "exprtk.hpp"
 #include "AudioUnit.h"
 
@@ -33,6 +35,8 @@ public:
 
     MathExpression(AudioUnitPlugin *pPlugin);
     ~MathExpression();
+
+    void createPorts(int nInputs, int nOutputs);
 
     QColor color() const { return QColor(250, 250, 250); }
 
@@ -57,15 +61,16 @@ private:
 
     static QString removeScriptComments(const QString &src);
 
-    InputPort *m_pInput;
-    OutputPort *m_pOutput;
+    QVector<InputPort*> m_inputs;
+    QVector<OutputPort*> m_outputs;
 
     // exprtk
     SymbolTable m_symbolTable;
     Expression m_expression;
     float m_sampleRate; // Sample rate.
     float m_t;  // Time.
-    float m_x;  // Input argument.
+    std::vector<float> m_xVector;
+    std::vector<float> m_yVector;
     long long m_timeStep;
     bool m_compiledOk;
 
