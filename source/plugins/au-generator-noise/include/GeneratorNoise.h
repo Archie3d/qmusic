@@ -33,7 +33,7 @@ public:
 
     GeneratorNoise(AudioUnitPlugin *pPlugin);
 
-    QColor color() const { return QColor(220, 200, 186); }
+    QColor color() const { return QColor(150, 210, 190); }
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
