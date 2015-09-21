@@ -27,19 +27,17 @@ const MidiMessage MidiMessage::Stop(0x00FC0000);
 const MidiMessage MidiMessage::ActiveSensing(0x00FE0000);
 const MidiMessage MidiMessage::Reset(0x00FF0000);
 
-const QHash<MidiMessage::Status, QString> midiStatusToString = []() {
-    QHash<MidiMessage::Status, QString> map;
-    map[MidiMessage::Status_Invalid] = "Invalid";
-    map[MidiMessage::Status_NoteOff] = "Note Off";
-    map[MidiMessage::Status_NoteOn] = "Note On";
-    map[MidiMessage::Status_PolyphonicAftertouch] = "Polyphonic Aftertouch";
-    map[MidiMessage::Status_ControlChange] = "Control Change";
-    map[MidiMessage::Status_ProgramChange] = "Program Change";
-    map[MidiMessage::Status_ChannelAftertouch] = "Channel Aftertouch";
-    map[MidiMessage::Status_PitchBend] = "Pitch Bend";
-    map[MidiMessage::Status_System] = "System";
-    return map;
-}();
+const QHash<MidiMessage::Status, QString> midiStatusToString {
+    {MidiMessage::Status_Invalid, "Invalid"},
+    {MidiMessage::Status_NoteOff, "Note Off"},
+    {MidiMessage::Status_NoteOn, "Note On"},
+    {MidiMessage::Status_PolyphonicAftertouch, "Polyphonic Aftertouch"},
+    {MidiMessage::Status_ControlChange, "Control Change"},
+    {MidiMessage::Status_ProgramChange, "Program Change"},
+    {MidiMessage::Status_ChannelAftertouch, "Channel Aftertouch"},
+    {MidiMessage::Status_PitchBend, "Pitch Bend"},
+    {MidiMessage::Status_System, "System"}
+};
 
 MidiMessage::MidiMessage()
     : m_rawData(0)

@@ -21,29 +21,25 @@
 #include "Settings.h"
 
 // Settings default values
-const QMap<Settings::Setting, QVariant> cDefaultSettings = []() {
-    QMap<Settings::Setting, QVariant> map;
-    map[Settings::Setting_WaveInIndex] = -1;
-    map[Settings::Setting_WaveOutIndex] = -1;
-    map[Settings::Setting_MidiInIndex] = -1;
-    map[Settings::Setting_MidiInChannel] = 1;
-    map[Settings::Setting_MidiOutIndex] = -1;
-    map[Settings::Setting_SampleRate] = 44100.0;
-    map[Settings::Setting_BufferSize] = 1024;
-    return map;
-}();
+const QMap<Settings::Setting, QVariant> cDefaultSettings {
+    {Settings::Setting_WaveInIndex, -1},
+    {Settings::Setting_WaveOutIndex, -1},
+    {Settings::Setting_MidiInIndex, -1},
+    {Settings::Setting_MidiInChannel, 1},
+    {Settings::Setting_MidiOutIndex, -1},
+    {Settings::Setting_SampleRate, 44100.0},
+    {Settings::Setting_BufferSize, 1024}
+};
 
-const QMap<Settings::Setting, QString> cSettingsNameMap = []() {
-    QMap<Settings::Setting, QString> map;
-    map[Settings::Setting_WaveInIndex] = "waveInIndex";
-    map[Settings::Setting_WaveOutIndex] = "waveOutIndex";
-    map[Settings::Setting_MidiInIndex] = "midiInIndex";
-    map[Settings::Setting_MidiInChannel] = "midiInChannel";
-    map[Settings::Setting_MidiOutIndex] = "midiOutIndex";
-    map[Settings::Setting_SampleRate] = "sampleRate";
-    map[Settings::Setting_BufferSize] = "bufferSize";
-    return map;
-}();
+const QMap<Settings::Setting, QString> cSettingsNameMap {
+    {Settings::Setting_WaveInIndex, "waveInIndex"},
+    {Settings::Setting_WaveOutIndex, "waveOutIndex"},
+    {Settings::Setting_MidiInIndex, "midiInIndex"},
+    {Settings::Setting_MidiInChannel, "midiInChannel"},
+    {Settings::Setting_MidiOutIndex, "midiOutIndex"},
+    {Settings::Setting_SampleRate, "sampleRate"},
+    {Settings::Setting_BufferSize, "bufferSize"}
+};
 
 Settings::Settings()
     : m_settings(Application::Company, Application::Product)

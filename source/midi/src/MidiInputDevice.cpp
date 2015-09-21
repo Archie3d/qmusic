@@ -26,16 +26,14 @@
 #include "MidiMessage.h"
 #include "MidiInputDevice.h"
 
-const QMap<MMRESULT, QString> cErrToString = []() {
-    QMap<MMRESULT, QString> map;
-    map[MMSYSERR_NOERROR] = "No error";
-    map[MMSYSERR_ALLOCATED] = "The specified resource is already allocated";
-    map[MMSYSERR_BADDEVICEID] = "The specified device identifier is out of range";
-    map[MMSYSERR_INVALFLAG] = "Invalid flag specified";
-    map[MMSYSERR_INVALPARAM] = "Invalid parameter specified";
-    map[MMSYSERR_NOMEM] = "The system is unable to allocate or lock memory";
-    return map;
-}();
+const QMap<MMRESULT, QString> cErrToString = {
+    {MMSYSERR_NOERROR, "No error"},
+    {MMSYSERR_ALLOCATED, "The specified resource is already allocated"},
+    {MMSYSERR_BADDEVICEID, "The specified device identifier is out of range"},
+    {MMSYSERR_INVALFLAG, "Invalid flag specified"},
+    {MMSYSERR_INVALPARAM, "Invalid parameter specified"},
+    {MMSYSERR_NOMEM, "The system is unable to allocate or lock memory"}
+};
 
 
 // can be used for short, unsigned short, word, unsigned word (2-byte types)

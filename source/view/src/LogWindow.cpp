@@ -22,14 +22,12 @@
 #include "Application.h"
 #include "LogWindow.h"
 
-QHash<Logger::Level, QColor> cLogLevelColorMap = []() {
-    QHash<Logger::Level, QColor> map;
-    map[Logger::Level_Debug] = QColor("grey");
-    map[Logger::Level_Info] = QColor("black");
-    map[Logger::Level_Warning] = QColor("orange");
-    map[Logger::Level_Error] = QColor("red");
-    return map;
-}();
+QHash<Logger::Level, QColor> cLogLevelColorMap = {
+    {Logger::Level_Debug, QColor("grey")},
+    {Logger::Level_Info, QColor("black")},
+    {Logger::Level_Warning, QColor("orange")},
+    {Logger::Level_Error, QColor("red")}
+};
 
 LogWindow::LogWindow(QWidget *pParent)
     : QDockWidget(tr("Console"), pParent)

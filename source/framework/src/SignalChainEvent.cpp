@@ -18,15 +18,13 @@
 #include <QMap>
 #include "SignalChainEvent.h"
 
-QMap<SignalChainEvent::Type, QString> cEventTypeToStringMap = []() {
-    QMap<SignalChainEvent::Type, QString> map;
-    map[SignalChainEvent::Invalid] = "Invalid";
-    map[SignalChainEvent::NoteOn] = "NoteOn";
-    map[SignalChainEvent::NoteOff] = "NoteOff";
-    map[SignalChainEvent::PitchBend] = "PitchBend";
-    map[SignalChainEvent::Controller] = "Controller";
-    return map;
-}();
+QMap<SignalChainEvent::Type, QString> cEventTypeToStringMap {
+    {SignalChainEvent::Invalid, "Invalid"},
+    {SignalChainEvent::NoteOn, "NoteOn"},
+    {SignalChainEvent::NoteOff, "NoteOff"},
+    {SignalChainEvent::PitchBend, "PitchBend"},
+    {SignalChainEvent::Controller, "Controller"}
+};
 
 SignalChainEvent::SignalChainEvent(SignalChainEvent::Type type)
     : m_type(type)

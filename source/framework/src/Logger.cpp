@@ -18,14 +18,12 @@
 #include <QHash>
 #include "Logger.h"
 
-const QHash<Logger::Level, QString> cLogLevelToStringMap = []() {
-    QHash<Logger::Level, QString> map;
-    map[Logger::Level_Debug] = QObject::tr("Debug");
-    map[Logger::Level_Info] = QObject::tr("Info");
-    map[Logger::Level_Warning] = QObject::tr("Warning");
-    map[Logger::Level_Error] = QObject::tr("Error");
-    return map;
-}();
+const QHash<Logger::Level, QString> cLogLevelToStringMap {
+    {Logger::Level_Debug, QObject::tr("Debug")},
+    {Logger::Level_Info, QObject::tr("Info")},
+    {Logger::Level_Warning, QObject::tr("Warning")},
+    {Logger::Level_Error, QObject::tr("Error")}
+};
 
 Logger::Logger(QObject *pParent)
     : QObject(pParent)

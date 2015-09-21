@@ -27,20 +27,18 @@
 #include "ISignalChain.h"
 #include "MidiInCtrl.h"
 
-QMap<QString, MidiMessage::Controller> cNameToController = []() {
-    QMap<QString, MidiMessage::Controller> map;
-    map["Volume"] = MidiMessage::Controller_MainVolume;
-    map["Modulation"] = MidiMessage::Controller_Modulation;
-    map["Breath"] = MidiMessage::Controller_Breath;
-    map["Foot"] = MidiMessage::Controller_Foot;
-    map["Balance"] = MidiMessage::Controller_Balance;
-    map["Pan"] = MidiMessage::Controller_Pan;
-    map["Sustain pedal"] = MidiMessage::Controller_SustainPedal;
-    map["Portamento"] = MidiMessage::Controller_Portamento;
-    map["Sostenuto"] = MidiMessage::Controller_Sostenuto;
-    map["Soft pedal"] = MidiMessage::Controller_SoftPedal;
-    return map;
-}();
+QMap<QString, MidiMessage::Controller> cNameToController {
+    {"Volume", MidiMessage::Controller_MainVolume},
+    {"Modulation", MidiMessage::Controller_Modulation},
+    {"Breath", MidiMessage::Controller_Breath},
+    {"Foot", MidiMessage::Controller_Foot},
+    {"Balance", MidiMessage::Controller_Balance},
+    {"Pan", MidiMessage::Controller_Pan},
+    {"Sustain pedal", MidiMessage::Controller_SustainPedal},
+    {"Portamento", MidiMessage::Controller_Portamento},
+    {"Sostenuto", MidiMessage::Controller_Sostenuto},
+    {"Soft pedal", MidiMessage::Controller_SoftPedal}
+};
 
 const QColor cDefaultColor(230, 240, 210);
 
