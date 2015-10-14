@@ -16,6 +16,7 @@
 */
 
 #include <QDebug>
+#include <QDataStream>
 #include "ISerializable.h"
 #include "ISerializableFactory.h"
 #include "SerializationContext.h"
