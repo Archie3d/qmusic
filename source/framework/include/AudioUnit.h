@@ -68,6 +68,20 @@ public:
     int flags() const override { return Flag_NoFlags; }
 
     /**
+     * Construct an update chain starting from this audio unit
+     * and moving backwards from its inputs to source units etc.
+     * The returned list of audio units can be directly updated in specified
+     * order without unsing recursive update mechanism.
+     * @return
+     */
+    QList<AudioUnit*> updateChain(const QList<AudioUnit*> chain = QList<AudioUnit*>());
+
+    /**
+     * Perform fast update without recursive update propagation.
+     */
+    void fastUpdate();
+
+    /**
      * Returns pointer to the audio unit plugin.
      * @return
      */
@@ -145,6 +159,15 @@ public:
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
     void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
+    /**
+     * @brief Perform the actual processing.
+     *
+     * Audio unit processing is invoked upon update.
+     * The process method normally computes and assignes outputs
+     * based on input port values.
+     */
+    virtual void process() = 0;
+
 protected:
 
     /**
@@ -158,15 +181,6 @@ protected:
      * This method is called upon audio unit stop.
      */
     virtual void processStop() {}
-
-    /**
-     * @brief Perform the actual processing.
-     *
-     * Audio unit processing is invoked upon update.
-     * The process method normally computes and assignes outputs
-     * based on input port values.
-     */
-    virtual void process() = 0;
 
     // Event handlers stubs
     virtual void noteOnEvent(NoteOnEvent *pEvent);

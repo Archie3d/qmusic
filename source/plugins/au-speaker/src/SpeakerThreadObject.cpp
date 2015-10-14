@@ -20,6 +20,7 @@
 #include <QVector>
 #include "ISignalChain.h"
 #include "AudioBuffer.h"
+#include "AudioUnit.h"
 #include "SpeakerThreadObject.h"
 
 SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
@@ -65,7 +66,7 @@ void SpeakerThreadObject::setInputPorts(InputPort *pLeft, InputPort *pRight)
     m_pRightChannelInput = pRight;
 }
 
-void SpeakerThreadObject::start()
+void SpeakerThreadObject::start(AudioUnit *pEndOfChain)
 {
     Q_ASSERT(m_pSignalBuffer != nullptr);
 
@@ -78,6 +79,12 @@ void SpeakerThreadObject::start()
     setDspLoad(0.0f);
     m_signalIndex = 0;
     m_pSignalBuffer->fill(0.0f);
+
+    // Build the update chain to avoid recursive updates
+    m_updateChain.clear();
+    if (pEndOfChain != nullptr) {
+        m_updateChain = pEndOfChain->updateChain();
+    }
 
     emit started();
 }
@@ -96,10 +103,20 @@ void SpeakerThreadObject::signalUpdateOver()
     m_singnalUpdateRequested = false;
 }
 
+void SpeakerThreadObject::performChainUpdate()
+{
+    m_pSignalChain->prepareUpdate();
+    foreach (AudioUnit *pAu, m_updateChain) {
+        // Perform fast non-recursive update
+        pAu->fastUpdate();
+    }
+}
+
 float SpeakerThreadObject::getNextLeftChannelSample()
 {
     if (m_pSignalChain->isEnabled()) {
-        m_pLeftChannelInput->update();
+        // We do not update the input as it has been updated
+        // during the chain group update.
         return m_pLeftChannelInput->value();
     }
     return 0.0f;
@@ -108,7 +125,8 @@ float SpeakerThreadObject::getNextLeftChannelSample()
 float SpeakerThreadObject::getNextRightChannelSample()
 {
     if (m_pSignalChain->isEnabled()) {
-        m_pRightChannelInput->update();
+        // We do not update the input as it has been updated
+        // during the chain group update.
         return m_pRightChannelInput->value();
     }
     return 0.0f;
@@ -145,7 +163,7 @@ void SpeakerThreadObject::generateSamples()
 
         auto startTime = std::chrono::high_resolution_clock::now();
         for (long i = 0; i < available; i++) {
-            m_pSignalChain->prepareUpdate();
+            performChainUpdate();
             m_pLeftData[i] = getNextLeftChannelSample();
             m_pRightData[i] = getNextRightChannelSample();
             if (m_signalIndex < m_pSignalBuffer->size()) {

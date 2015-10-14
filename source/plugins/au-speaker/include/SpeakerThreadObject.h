@@ -24,6 +24,7 @@
 #include "InputPort.h"
 
 class ISignalChain;
+class AudioUnit;
 class AudioBuffer;
 
 /**
@@ -50,7 +51,7 @@ public:
 
 public slots:
 
-    void start();
+    void start(AudioUnit *pEndOfChain = nullptr);
     void stop();
 
     void signalUpdateOver();
@@ -71,6 +72,7 @@ signals:
 
 private slots:
 
+    void performChainUpdate();
     float getNextLeftChannelSample();
     float getNextRightChannelSample();
 
@@ -106,6 +108,8 @@ private:
 
     InputPort *m_pLeftChannelInput;
     InputPort *m_pRightChannelInput;
+
+    QList<AudioUnit*> m_updateChain;
 };
 
 #endif // SPEAKERTHREADOBJECT_H

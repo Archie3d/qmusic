@@ -124,7 +124,7 @@ void Speaker::processStart()
     m_pThreadObject->setSignalChain(signalChain());
 
     m_pThread->setPriority(QThread::TimeCriticalPriority);
-    m_pThreadObject->start();        
+    m_pThreadObject->start(this);
 }
 
 void Speaker::processStop()

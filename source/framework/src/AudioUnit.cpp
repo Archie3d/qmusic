@@ -135,6 +135,53 @@ QColor AudioUnit::color() const
     return cDefaultColor;
 }
 
+QList<AudioUnit*> AudioUnit::updateChain(const QList<AudioUnit *> chain)
+{
+    QList<AudioUnit*> newChain(chain);
+
+    if (newChain.contains(this)) {
+        return newChain;
+    } else {
+        newChain.prepend(this);
+    }
+
+    // Scan all the inputs of this unit
+    foreach (InputPort *pInputPort, m_inputs) {
+        OutputPort *pOutput = pInputPort->connectedOutputPort();
+        if (pOutput != nullptr) {
+            AudioUnit *pConnectedAu = dynamic_cast<AudioUnit*>(pOutput->audioUnit());
+            if (pConnectedAu != nullptr) {
+                // Update chain recursively
+                newChain = pConnectedAu->updateChain(newChain);
+            }
+        }
+    }
+
+    return newChain;
+}
+
+void AudioUnit::fastUpdate()
+{
+    if (!isStarted()) {
+        return;
+    }
+
+    if (m_updated) {
+        // Already updated.
+        return;
+    }
+
+    if (!m_pSignalChain->isEnabled()) {
+        // Signal chain is disabled
+        return;
+    }
+
+    // Activate already the updated flag to prevent loop recursion
+    m_updated = true;
+
+    process();
+}
+
 InputPort *AudioUnit::addInput(const QString &name)
 {
     InputPort *pInput = new InputPort(name);
