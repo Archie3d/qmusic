@@ -90,6 +90,8 @@ QGraphicsItem* MathExpression::graphicsItem()
 void MathExpression::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
+    data["nInputs"] = m_inputs.count();
+    data["nOutputs"] = m_outputs.count();
     data["expression"] = m_script;
     AudioUnit::serialize(data, pContext);
 }
@@ -97,7 +99,12 @@ void MathExpression::serialize(QVariantMap &data, SerializationContext *pContext
 void MathExpression::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
+    int nInputs = data.value("nInputs", 1).toInt();
+    int nOutputs = data.value("nOutputs", 1).toInt();
     m_script = data.value("expression").toString();
+
+    createPorts(nInputs, nOutputs);
+
     AudioUnit::deserialize(data, pContext);
 }
 
