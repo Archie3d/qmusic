@@ -141,7 +141,6 @@ void Slider::createProperties()
         }
     });
 
-    pRoot->addSubProperty(m_pPropLabel);
     pRoot->addSubProperty(m_pPropValue);
     pRoot->addSubProperty(m_pPropMin);
     pRoot->addSubProperty(m_pPropMax);
