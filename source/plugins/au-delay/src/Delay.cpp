@@ -27,7 +27,7 @@ Delay::Delay(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
 {
     m_pInput = addInput("in");
-    m_pDelayRatioInput = addInput("delay");
+    m_pDelayRatioInput = addInput("delay", 1.0f);
     m_pOutput = addOutput("out");
 
     m_pDelayLine = nullptr;
@@ -58,7 +58,11 @@ void Delay::processStart()
 {
     float delayMs = m_pPropDelay->value().toFloat();
     m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
-    m_pDelayLine = new DelayLine(m_delaySamples);
+    if (m_pDelayLine == nullptr) {
+        m_pDelayLine = new DelayLine(m_delaySamples);
+    } else {
+        m_pDelayLine->allocate(m_delaySamples);
+    }
 }
 
 void Delay::processStop()
@@ -78,6 +82,7 @@ void Delay::process()
 
 void Delay::reset()
 {
+    m_pDelayLine->reset();
 }
 
 void Delay::createProperties()

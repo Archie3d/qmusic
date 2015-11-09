@@ -37,6 +37,8 @@ public:
     DelayLine(int nSamplesMax = 4096);
     ~DelayLine();
 
+    void allocate(int nSamplesMax);
+
     /**
      * @brief Set current delay (in samples).
      * This sets delay within 0..nSamplesMax without buffer reallocation.

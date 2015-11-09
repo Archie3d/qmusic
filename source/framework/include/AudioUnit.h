@@ -95,7 +95,7 @@ public:
      * @param name Port name.
      * @return Pointer to created port.
      */
-    InputPort* addInput(const QString &name = QString());
+    InputPort* addInput(const QString &name = QString(), float defaultValue = 0.0f);
 
     /**
      * Add an input port.

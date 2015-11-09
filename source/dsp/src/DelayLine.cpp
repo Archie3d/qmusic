@@ -28,15 +28,31 @@ DelayLine::DelayLine(int nSamplesMax)
 
     m_nSamples = 0;
 
-    if (nSamplesMax > 0) {
-        m_pBuffer = new double[m_nSamplesMax];
-    }
-    reset();
+    allocate(nSamplesMax);
 }
 
 DelayLine::~DelayLine()
 {
     delete[] m_pBuffer;
+}
+
+void DelayLine::allocate(int nSamplesMax)
+{
+    Q_ASSERT(nSamplesMax > 0);
+    if (m_pBuffer == nullptr) {
+        // First time allocation
+        m_nSamplesMax = nSamplesMax;
+        m_pBuffer = new double[m_nSamplesMax];
+    } else {
+        // Buffer is already allocated
+        if (m_nSamplesMax != nSamplesMax) {
+            // But of a different size, reallocate the buffer
+            delete[] m_pBuffer;
+            m_nSamplesMax = nSamplesMax;
+            m_pBuffer = new double[m_nSamplesMax];
+        }
+    }
+    reset();
 }
 
 void DelayLine::setDelay(int nSamples)

@@ -187,9 +187,9 @@ void AudioUnit::fastUpdate()
     process();
 }
 
-InputPort *AudioUnit::addInput(const QString &name)
+InputPort *AudioUnit::addInput(const QString &name, float defaultValue)
 {
-    InputPort *pInput = new InputPort(name);
+    InputPort *pInput = new InputPort(name, defaultValue);
     addInput(pInput);
     return pInput;
 }
