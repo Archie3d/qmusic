@@ -106,9 +106,6 @@ void Slider::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
 
-    m_pPropLabel = propertyManager()->addProperty(QVariant::String, "Label");
-    m_pPropLabel->setValue("Slider");
-
     m_pPropValue = propertyManager()->addProperty(QVariant::Double, "Value");
     m_pPropValue->setValue(0.0);
     m_pPropValue->setAttribute("decimals", 2);
