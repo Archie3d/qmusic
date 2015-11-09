@@ -52,7 +52,7 @@ class QMUSIC_FRAMEWORK_API AudioUnit : public IAudioUnit
     friend class SignalChain;
 public:
 
-    AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent = nullptr);
+    AudioUnit(AudioUnitPlugin *pPlugin);
     ~AudioUnit();
 
     // IAudioUnit interface

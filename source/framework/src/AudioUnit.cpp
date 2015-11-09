@@ -30,7 +30,7 @@
 /// Default color used for audio units representation
 const QColor cDefaultColor(220, 220, 220);
 
-AudioUnit::AudioUnit(AudioUnitPlugin *pPlugin, QObject *pParent)
+AudioUnit::AudioUnit(AudioUnitPlugin *pPlugin)
     : m_pSignalChain(nullptr),
       m_pPlugin(pPlugin),
       m_inputs(),
