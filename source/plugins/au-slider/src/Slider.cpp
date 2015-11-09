@@ -177,9 +177,6 @@ void Slider::updateSliderOrientation()
     }
 
     Qt::Orientation orientation = m_pPropOrientation->value().toInt() == 0 ? Qt::Horizontal : Qt::Vertical;
-    //if (m_pSlider->orientation() == orientation) {
-    //    return;
-    //}
 
     // Swap width <-> height when changing the orientation
     QRect r = m_pSlider->geometry();
