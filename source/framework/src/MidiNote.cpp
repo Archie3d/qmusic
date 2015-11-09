@@ -143,6 +143,28 @@ MidiNote::Note MidiNote::note() const
     return (Note)((m_number - C0) % 12);
 }
 
+bool MidiNote::isNatural() const
+{
+    Note n = note();
+    return n == Note_C
+            || n == Note_D
+            || n == Note_E
+            || n == Note_F
+            || n == Note_G
+            || n == Note_A
+            || n == Note_B;
+}
+
+bool MidiNote::hasFlat() const
+{
+    return !flat().isNatural();
+}
+
+bool MidiNote::hasSharp() const
+{
+    return !sharp().isNatural();
+}
+
 int MidiNote::octave() const
 {
     return (m_number - C0) / 12;

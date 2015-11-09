@@ -27,6 +27,7 @@ class LogWindow;
 class AudioUnitsManagerWindow;
 class AudioUnitPropertiesWindow;
 class SpectrumWindow;
+class PianoKeyboardWindow;
 class SignalChainWidget;
 
 /**
@@ -44,6 +45,7 @@ public:
     AudioUnitsManagerWindow* audioUnitsManagerWindow() const { return m_pAudioUnitsManagerWindow; }
     AudioUnitPropertiesWindow* audioUnitPropertiesWindow() const { return m_pAudioUnitPropertiesWindow; }
     SpectrumWindow* spectrumWindow() const { return m_pSpectrumWindow; }
+    PianoKeyboardWindow* pianoKeyboardWindow() const { return m_pPianoKeyboardWindow; }
 
 public slots:
 
@@ -82,6 +84,7 @@ private:
     AudioUnitsManagerWindow *m_pAudioUnitsManagerWindow;
     AudioUnitPropertiesWindow *m_pAudioUnitPropertiesWindow;
     SpectrumWindow *m_pSpectrumWindow;
+    PianoKeyboardWindow *m_pPianoKeyboardWindow;
 
     /// Central widget showing a signal chain.
     SignalChainWidget *m_pSignalChainWidget;

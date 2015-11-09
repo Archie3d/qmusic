@@ -73,6 +73,24 @@ public:
     Note note() const;
 
     /**
+     * Tells whether the note is natural (neither flat nor sharp).
+     * @return true if note is natiral;
+     */
+    bool isNatural() const;
+
+    /**
+     * Tells whether the note has a corresponding flat note.
+     * @return
+     */
+    bool hasFlat() const;
+
+    /**
+     * Tells whether the note has a corresponding sharp note.
+     * @return
+     */
+    bool hasSharp() const;
+
+    /**
      * Returns note's octave number [-1..9].
      * @return
      */

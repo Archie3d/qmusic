@@ -32,6 +32,7 @@
 #include "AudioDevicesManager.h"
 #include "AudioUnitsManagerWindow.h"
 #include "AudioUnitPropertiesWindow.h"
+#include "PianoKeyboardWindow.h"
 #include "SpectrumWindow.h"
 #include "SignalChainWidget.h"
 #include "SignalChainScene.h"
@@ -220,8 +221,14 @@ void MainWindow::editSettings()
 
 void MainWindow::createDockingWindows()
 {
+    setDockOptions(QMainWindow::ForceTabbedDocks);
+
     m_pLogWindow = new LogWindow(this);
     addDockWidget(Qt::BottomDockWidgetArea, m_pLogWindow);
+
+    m_pPianoKeyboardWindow = new PianoKeyboardWindow(this);
+    addDockWidget(Qt::BottomDockWidgetArea, m_pPianoKeyboardWindow);
+    tabifyDockWidget(m_pLogWindow, m_pPianoKeyboardWindow);
 
     m_pAudioUnitsManagerWindow = new AudioUnitsManagerWindow(this);
     addDockWidget(Qt::LeftDockWidgetArea, m_pAudioUnitsManagerWindow);
