@@ -58,15 +58,13 @@ void Delay::processStart()
 {
     float delayMs = m_pPropDelay->value().toFloat();
     m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
-    if (m_pDelayLine == nullptr) {
-        m_pDelayLine = new DelayLine(m_delaySamples);
-    } else {
-        m_pDelayLine->allocate(m_delaySamples);
-    }
+    m_pDelayLine = new DelayLine(m_delaySamples);
 }
 
 void Delay::processStop()
 {
+    delete m_pDelayLine;
+    m_pDelayLine = nullptr;
 }
 
 void Delay::process()
@@ -82,7 +80,9 @@ void Delay::process()
 
 void Delay::reset()
 {
-    m_pDelayLine->reset();
+    if (m_pDelayLine != nullptr) {
+        m_pDelayLine->reset();
+    }
 }
 
 void Delay::createProperties()
