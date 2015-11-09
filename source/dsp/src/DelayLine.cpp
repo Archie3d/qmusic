@@ -16,7 +16,6 @@
 */
 
 #include <qglobal.h>
-#include <QDebug>
 #include "DelayLine.h"
 
 DelayLine::DelayLine(int nSamplesMax)
