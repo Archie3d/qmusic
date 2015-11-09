@@ -22,19 +22,21 @@
 
 InputPort::InputPort()
     : Port(Direction_Input),
-      m_pConnectedOutputPort(nullptr)
+      m_pConnectedOutputPort(nullptr),
+      m_defaultValue(0.0f)
 {
 }
 
-InputPort::InputPort(const QString &name)
+InputPort::InputPort(const QString &name, float defaultValue)
     : Port(Direction_Input, name),
-      m_pConnectedOutputPort(nullptr)
+      m_pConnectedOutputPort(nullptr),
+      m_defaultValue(defaultValue)
 {
 }
 
 float InputPort::value() const
 {
-    return m_pConnectedOutputPort == nullptr ? 0.0f : m_pConnectedOutputPort->value();
+    return m_pConnectedOutputPort == nullptr ? m_defaultValue : m_pConnectedOutputPort->value();
 }
 
 void InputPort::update()

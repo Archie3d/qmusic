@@ -43,8 +43,9 @@ public:
     /**
      * Construct an input port.
      * @param name Port name.
+     * @param defaultValue Default value reported by disconnected input.
      */
-    InputPort(const QString &name);
+    InputPort(const QString &name, float defaultValue = 0.0f);
 
     /**
      * Returns port value.
@@ -64,6 +65,19 @@ public:
      * @return
      */
     int index() const override final;
+
+    /**
+     * Returns port's default value.
+     * Default value is used when port is not connected to any output.
+     * @return Default value.
+     */
+    float defaultValue() const { return m_defaultValue; }
+
+    /**
+     * Assign port default value.
+     * @param v Value to be set.
+     */
+    void setDefaultValue(float v) { m_defaultValue = v; }
 
     /**
      * Connect to an output port.
@@ -86,6 +100,7 @@ private:
 
     /// Pointer to connected output port, if any.
     OutputPort *m_pConnectedOutputPort;
+    float m_defaultValue;
 };
 
 #endif // INPUTPORT_H
