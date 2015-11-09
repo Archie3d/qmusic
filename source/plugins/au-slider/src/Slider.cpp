@@ -15,7 +15,6 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
 #include <QSlider>
