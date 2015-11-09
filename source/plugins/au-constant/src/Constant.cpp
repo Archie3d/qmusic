@@ -60,7 +60,7 @@ QGraphicsItem* Constant::graphicsItem()
 {
     if (m_pValueItem == nullptr) {
         m_pValueItem = new QGraphicsSimpleTextItem();
-        m_pValueItem->setText(m_pPropConstant->valueText());
+        m_pValueItem->setText(QString::number(m_pPropConstant->value().toFloat(), 'f', 2));
     }
     return m_pValueItem;
 }
@@ -102,7 +102,7 @@ void Constant::createProperties()
         QtVariantProperty *pV = dynamic_cast<QtVariantProperty*>(pProperty);
         if (pV == m_pPropConstant) {
             if (m_pValueItem != nullptr) {
-                m_pValueItem->setText(pV->valueText());
+                m_pValueItem->setText(QString::number(pV->value().toFloat(), 'f', 2));
 
                 // Update the output immediately
                 m_pOutput->setValue(pV->value().toFloat());
