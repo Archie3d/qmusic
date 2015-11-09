@@ -119,10 +119,15 @@ void SignalChainAudioUnitItem::updateView()
     qreal headerHeight = 0.0;
     qreal headerWidth = 0.0;
     if (m_pTitleTextItem != nullptr) {
+        m_pTitleTextItem->setText(m_pAudioUnit->title());
         headerRect = m_pTitleTextItem->boundingRect();
-        m_pTitleTextItem->setPos(cHeaderMargin*2 + cIconSize.width(), cHeaderMargin);
-        headerHeight = qMax(headerRect.height(), (qreal)cIconSize.height());
-        headerWidth = headerRect.width() + cHeaderMargin + (qreal)cIconSize.width();
+        QSize iconSize(0, 0);
+        if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoIcon) == 0) {
+            iconSize = cIconSize;
+        }
+        m_pTitleTextItem->setPos(cHeaderMargin*2 + iconSize.width(), cHeaderMargin);
+        headerHeight = qMax(headerRect.height(), (qreal)iconSize.height());
+        headerWidth = headerRect.width() + cHeaderMargin + (qreal)iconSize.width();
     }
 
     qreal contentWidth = 0.0;
@@ -231,10 +236,13 @@ void SignalChainAudioUnitItem::paint(QPainter *pPainter, const QStyleOptionGraph
 
     // Draw icon if there is header present
     if (m_pTitleTextItem != nullptr) {
-        QPixmap pixmap = m_pAudioUnit->plugin()->icon().pixmap(cIconSize);
-        pPainter->drawPixmap(rect.x() + cHeaderMargin, rect.y() + cHeaderMargin,
-                             cIconSize.width(), cIconSize.height(),
-                             pixmap);
+        // But only if not disabled
+        if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoIcon) == 0) {
+            QPixmap pixmap = m_pAudioUnit->plugin()->icon().pixmap(cIconSize);
+            pPainter->drawPixmap(rect.x() + cHeaderMargin, rect.y() + cHeaderMargin,
+                                 cIconSize.width(), cIconSize.height(),
+                                 pixmap);
+        }
     }
 }
 
@@ -255,7 +263,7 @@ void SignalChainAudioUnitItem::createDecoration()
 
     if ((m_pAudioUnit->flags() & IAudioUnit::Flag_NoTitle) == 0) {
         m_pTitleTextItem = new QGraphicsSimpleTextItem(this);
-        m_pTitleTextItem->setText(m_pAudioUnit->plugin()->name());
+        m_pTitleTextItem->setText(m_pAudioUnit->title());
         m_pTitleTextItem->setBrush(QBrush(cTitleColor));
     }
 
@@ -263,12 +271,6 @@ void SignalChainAudioUnitItem::createDecoration()
     if (m_pAudioUnitGraphicsItem != nullptr) {
         m_pAudioUnitGraphicsItem->setParentItem(this);
     }
-
-    // Drop shadow effect
-    //QGraphicsDropShadowEffect *pShadowEffect = new QGraphicsDropShadowEffect();
-    //pShadowEffect->setOffset(3.0);
-    //pShadowEffect->setBlurRadius(15.0);
-    //setGraphicsEffect(pShadowEffect);
 }
 
 void SignalChainAudioUnitItem::createPortItems()

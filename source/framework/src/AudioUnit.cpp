@@ -135,6 +135,11 @@ QColor AudioUnit::color() const
     return cDefaultColor;
 }
 
+QString AudioUnit::title() const
+{
+    return m_pPlugin->name();
+}
+
 QList<AudioUnit*> AudioUnit::updateChain(const QList<AudioUnit *> chain)
 {
     QList<AudioUnit*> newChain(chain);

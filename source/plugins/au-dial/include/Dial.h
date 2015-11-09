@@ -44,6 +44,8 @@ protected:
     QGraphicsItem* graphicsItem();
     int flags() const;
 
+    QString title() const;
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);

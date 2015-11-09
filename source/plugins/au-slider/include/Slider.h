@@ -44,6 +44,8 @@ protected:
     QGraphicsItem* graphicsItem();
     int flags() const;
 
+    QString title() const;
+
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const;
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
@@ -56,6 +58,7 @@ private:
     void onSliderValueChanged(int pos);
 
     OutputPort *m_pOutput;
+    QtVariantProperty *m_pPropLabel;
     QtVariantProperty *m_pPropValue;
     QtVariantProperty *m_pPropMin;
     QtVariantProperty *m_pPropMax;

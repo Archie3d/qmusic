@@ -15,16 +15,13 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
 #include <QDial>
 #include <QGraphicsProxyWidget>
-#include <QGraphicsSimpleTextItem>
-#include <QVBoxLayout>
-#include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
+#include "AudioUnitPlugin.h"
 #include "Dial.h"
 
 const int cDefaultSize = 48;
@@ -83,13 +80,19 @@ QGraphicsItem* Dial::graphicsItem()
 
 int Dial::flags() const
 {
-    return Flag_NoFrame;
+    return Flag_NoFrame | Flag_NoIcon;
+}
+
+QString Dial::title() const
+{
+    return m_pPropLabel->valueText();
 }
 
 void Dial::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
     AudioUnit::serialize(data, pContext);
+    data["label"] = m_pPropLabel->value();
     data["value"] = m_pPropValue->value();
     data["min"] = m_pPropMin->value();
     data["max"] = m_pPropMax->value();
@@ -101,12 +104,16 @@ void Dial::deserialize(const QVariantMap &data, SerializationContext *pContext)
     m_pPropMin->setValue(data["min"]);
     m_pPropMax->setValue(data["max"]);
     m_pPropValue->setValue(data["value"]);
+    m_pPropLabel->setValue(data["label"]);
     AudioUnit::deserialize(data, pContext);
 }
 
 void Dial::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
+
+    m_pPropLabel = propertyManager()->addProperty(QVariant::String, "Label");
+    m_pPropLabel->setValue(plugin()->name());
 
     m_pPropValue = propertyManager()->addProperty(QVariant::Double, "Value");
     m_pPropValue->setValue(0.0);
@@ -129,10 +136,11 @@ void Dial::createProperties()
     m_pPropSteps->setAttribute("minimum", 2);
 
     QObject::connect(propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
-        QtVariantProperty *pVariantProperty = dynamic_cast<QtVariantProperty*>(pProperty);
+        Q_UNUSED(pProperty);
         updateDialValues();
     });
 
+    pRoot->addSubProperty(m_pPropLabel);
     pRoot->addSubProperty(m_pPropValue);
     pRoot->addSubProperty(m_pPropMin);
     pRoot->addSubProperty(m_pPropMax);

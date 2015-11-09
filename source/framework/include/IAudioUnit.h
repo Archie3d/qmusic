@@ -44,7 +44,8 @@ public:
         Flag_NoFlags = 0,
         Flag_NoTitle = 1,   ///< No title should be drawn.
         Flag_NoFrame = 2,   ///< No frame should ne drawn.
-        Flag_SingleInstance = 4 ///< Only one instance of the unit is allowed.
+        Flag_NoIcon = 4,    ///< No icon should be drawn.
+        Flag_SingleInstance = 8 ///< Only one instance of the unit is allowed.
     };
 
 
@@ -100,6 +101,12 @@ public:
      * @return
      */
     virtual QColor color() const = 0;
+
+    /**
+     * @brief Audio unit title to be used when drawing.
+     * @return
+     */
+    virtual QString title() const = 0;
 
     /**
      * Returns audio unit flags.

@@ -65,6 +65,7 @@ public:
     void handleEvent(SignalChainEvent *pEvent) override;
     QGraphicsItem* graphicsItem() override { return nullptr; }
     QColor color() const override;
+    QString title() const override;
     int flags() const override { return Flag_NoFlags; }
 
     /**
