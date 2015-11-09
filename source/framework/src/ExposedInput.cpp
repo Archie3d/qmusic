@@ -50,7 +50,8 @@ void ExposedInput::processStop()
 void ExposedInput::process()
 {
     if (m_pReferencedInputPort) {
-        m_pReferencedInputPort->update();
+        // Do no update, should be already updated.
+        //m_pReferencedInputPort->update();
         m_pOutput->setValue(m_pReferencedInputPort->value());
     }
 }
