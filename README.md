@@ -4,9 +4,11 @@
 QMusic is a visual dataflow programing environment that allows quick prototyping of audio processing
 and synthesis signal chains.
 
-![Screenshot](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshot.png)
+![Screenshot 1](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_1.png)
 
-![Screenshot 2](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshot_2.png)
+![Screenshot 2](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_2.png)
+
+![Screenshot 3](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_3.png)
 
 # Building
 CMake is required to configure and build the project.
