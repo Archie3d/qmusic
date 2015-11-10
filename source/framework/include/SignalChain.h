@@ -51,9 +51,6 @@ public:
     void reset() override;
     void enable(bool v) override;
     bool isEnabled() const override { return m_enabled; }
-    void sendEvent(SignalChainEvent *pEvent) override;
-    void postEvent(SignalChainEvent *pEvent) override;
-    void processEvents() override;
     float timeStep() const override { return m_timeStep; }
     void setTimeStep(double dt) override { m_timeStep = dt; }
     float sampleRate() const override { return 1.0f / m_timeStep; }
@@ -62,6 +59,9 @@ public:
     QList<IAudioUnit*> audioUnits() const override { return m_audioUnits; }
     void prepareUpdate() override;
     QList<ISignalChain*> clone(int instances = 1) override;
+
+    // IEventHandler interface
+    void handleEvent(SignalChainEvent *pEvent) override;
 
     // ISerializable interface
     QString uid() const override final { return UID; }
@@ -74,8 +74,6 @@ private:
     void startAllAudioUnits();
     void stopAllAudioUnits();
     void resetAllAudioUnits();
-    void clearEventsQueue();
-    void processEvent(SignalChainEvent *pEvent);
 
     /// Current global time, s
     float m_timeStep;
@@ -91,12 +89,6 @@ private:
 
     /// Audio units in this chain.
     QList<IAudioUnit*> m_audioUnits;
-
-    /// Events queue.
-    QList<SignalChainEvent*> m_events;
-
-    /// Protective mutex
-    QMutex m_eventQueueMutex;
 };
 
 #endif // SIGNALCHAIN_H

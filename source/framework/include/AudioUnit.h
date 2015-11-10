@@ -20,6 +20,7 @@
 
 #include <QMap>
 #include "FrameworkApi.h"
+#include "IEventRouter.h"
 #include "IAudioUnit.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -62,11 +63,13 @@ public:
     void stop() override final;
     bool isStarted() const override final { return m_started; }   
     void reset() override {}
-    void handleEvent(SignalChainEvent *pEvent) override;
     QGraphicsItem* graphicsItem() override { return nullptr; }
     QColor color() const override;
     QString title() const override;
     int flags() const override { return Flag_NoFlags; }
+
+    // IEventHandler interface
+    void handleEvent(SignalChainEvent *pEvent) override;
 
     /**
      * Construct an update chain starting from this audio unit

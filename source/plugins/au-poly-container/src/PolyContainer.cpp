@@ -72,12 +72,12 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
         int note = pNoteOnEvent->noteNumber();
         ISignalChain *pVoice = findBusyVoice(note);
         if (pVoice != nullptr) {
-            pVoice->sendEvent(pEvent->clone());
+            pVoice->handleEvent(pEvent);
         } else {
             // New note
             ISignalChain *pVoice = pickFreeVoice();
             if (pVoice != nullptr) {
-                pVoice->sendEvent(pEvent->clone());
+                pVoice->handleEvent(pEvent);
                 m_busyVoices.append(TheVoice(note, pVoice));
             }
         }
@@ -90,14 +90,14 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
         int note = pNoteOffEvent->noteNumber();
         ISignalChain *pVoice = findBusyVoice(note);
         if (pVoice != nullptr) {
-            pVoice->sendEvent(pEvent->clone());
+            pVoice->handleEvent(pEvent);
         }
         break;
     }
     default:
         // Send all other events to all voices
         foreach (ISignalChain *pSignalChain, m_voices) {
-            pSignalChain->sendEvent(pEvent->clone());
+            pSignalChain->handleEvent(pEvent);
         }
         break;
     }
@@ -347,8 +347,9 @@ ISignalChain* PolyphonicContainer::pickFreeVoice()
             TheVoice voice = m_busyVoices.first();
             m_busyVoices.removeFirst();
 
-            // Have to be sure the voice note is turned off
-            voice.second->sendEvent(new NoteOffEvent(voice.first, 64));
+            // Make sure the voice note is turned off
+            NoteOffEvent noteOffEvent(voice.first, 64);
+            voice.second->handleEvent(&noteOffEvent);
 
             return voice.second;
         }

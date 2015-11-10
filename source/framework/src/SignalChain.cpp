@@ -35,14 +35,12 @@ SignalChain::SignalChain()
       m_started(false),
       m_enabled(false),
       m_updateEventsCounter(0),
-      m_audioUnits(),
-      m_events()
+      m_audioUnits()
 {
 }
 
 SignalChain::~SignalChain()
 {
-    clearEventsQueue();
     qDeleteAll(m_audioUnits);
 }
 
@@ -63,7 +61,6 @@ void SignalChain::stop()
         return;
     }
 
-    clearEventsQueue();
     stopAllAudioUnits();
     m_started = false;
 }
@@ -75,7 +72,6 @@ void SignalChain::reset()
         return;
     }
 
-    clearEventsQueue();
     resetAllAudioUnits();
     m_enabled = false;
 }
@@ -83,37 +79,6 @@ void SignalChain::reset()
 void SignalChain::enable(bool v)
 {
     m_enabled = v;
-}
-
-void SignalChain::sendEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    processEvent(pEvent);
-    delete pEvent;
-}
-
-void SignalChain::postEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-
-    QMutexLocker locker(&m_eventQueueMutex);
-    m_events.append(pEvent);
-}
-
-void SignalChain::processEvents()
-{
-    // Move events to a separate buffer
-    m_eventQueueMutex.lock();
-    QList<SignalChainEvent*> events = m_events;
-    m_events.clear();
-    m_eventQueueMutex.unlock();
-
-    // Handle events
-    foreach (SignalChainEvent *pEvent, events) {
-        processEvent(pEvent);
-        delete pEvent;
-    }
 }
 
 void SignalChain::addAudioUnit(IAudioUnit *pAudioUnit)
@@ -145,7 +110,9 @@ void SignalChain::prepareUpdate()
     // Decimate the event processing occurrence in order to
     // decrease overhead of events handling for every sample.
     if ((m_updateEventsCounter++) % EVENTS_PROCESS_PERIOD == 0) {
-        processEvents();
+
+        // Force event router to distribute events
+        Application::instance()->eventRouter()->processEvents();
     }
 
     // Events have to be processed even when signal chain is disabled
@@ -233,6 +200,14 @@ QList<ISignalChain *> SignalChain::clone(int instances)
     return list;
 }
 
+void SignalChain::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+        pAudioUnit->handleEvent(pEvent);
+    }
+}
+
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
@@ -277,19 +252,5 @@ void SignalChain::resetAllAudioUnits()
 {
     foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
         pAudioUnit->reset();
-    }
-}
-
-void SignalChain::clearEventsQueue()
-{
-    qDeleteAll(m_events);
-    m_events.clear();
-}
-
-void SignalChain::processEvent(SignalChainEvent *pEvent)
-{
-    Q_ASSERT(pEvent != nullptr);
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
-        pAudioUnit->handleEvent(pEvent);
     }
 }

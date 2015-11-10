@@ -22,6 +22,7 @@
 class Logger;
 class AudioDevicesManager;
 class AudioUnitsManager;
+class IEventRouter;
 
 /**
  * The application.
@@ -58,6 +59,7 @@ public:
     Logger* logger() const { return m_pLogger; }
     AudioDevicesManager* audioDevicesManager() const { return m_pAudioDevicesManager; }
     AudioUnitsManager* audioUnitsManager() const { return m_pAudioUnitsManager; }
+    IEventRouter* eventRouter() const { return m_pEventRouter; }
 
     void setMainWindow(QMainWindow *pMainWindow);
     QMainWindow* mainWindow() const { return m_pMainWindow; }
@@ -102,6 +104,9 @@ private:
 
     /// Pointer to audio units manager (single instance per application).
     AudioUnitsManager *m_pAudioUnitsManager;
+
+    /// Events router.
+    IEventRouter *m_pEventRouter;
 };
 
 QMUSIC_FRAMEWORK_API void logDebug0(const QString &text);

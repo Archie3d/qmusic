@@ -17,8 +17,10 @@
 
 #include <QDebug>
 #include "Settings.h"
+#include "Application.h"
 #include "AudioDevice.h"
 #include "MidiInputDevice.h"
+#include "IEventRouter.h"
 #include "ISignalChain.h"
 #include "SignalChainEvent.h"
 #include "NoteOnEvent.h"
@@ -34,24 +36,26 @@ class MidiEventTranslator : public IMidiInputListener
 public:
     MidiEventTranslator()
     {
-        m_pSignalChain = nullptr;
+        m_running = false;
     }
 
-    void setSignalChain(ISignalChain *pSignalChain)
+    void start()
     {
-        m_pSignalChain = pSignalChain;
+        m_running = true;
+    }
+
+    void stop()
+    {
+        m_running = false;
     }
 
     void inputMidiMessage(const MidiMessage &msg)
     {
-        if (m_pSignalChain == nullptr) {
+        if (!m_running) {
             return;
         }
 
         SignalChainEvent *pEvent = nullptr;
-
-        QString eventName;
-        QVariantMap eventData;
 
         switch (msg.status()) {
         case MidiMessage::Status_NoteOn:
@@ -77,13 +81,15 @@ public:
         }
 
         if (pEvent != nullptr) {
-            m_pSignalChain->postEvent(pEvent);
+            // Route MIDI event via the global router
+            Application::instance()->eventRouter()->postEvent(pEvent);
         }
     }
 
 private:
 
-    ISignalChain *m_pSignalChain;
+    bool m_running;
+
 };
 
 /*
@@ -109,15 +115,13 @@ AudioDevicesManager::~AudioDevicesManager()
     delete m_pMidiEventTranslator;
 }
 
-void AudioDevicesManager::startAudioDevices(ISignalChain *pSignalChain)
+void AudioDevicesManager::startAudioDevices()
 {
     Settings settings;
 
     Q_ASSERT(m_pAudioInputDevice != nullptr);
     Q_ASSERT(m_pAudioOutputDevice != nullptr);
     Q_ASSERT(m_pMidiInputDevice != nullptr);
-
-    m_pMidiEventTranslator->setSignalChain(pSignalChain);
 
     int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
     int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
@@ -142,6 +146,10 @@ void AudioDevicesManager::startAudioDevices(ISignalChain *pSignalChain)
         }
     }
 
+    // Make sure to clear all events
+    Application::instance()->eventRouter()->purge();
+    m_pMidiEventTranslator->start();
+
     if (midiInDeviceIndex >= 0) {
         m_pMidiInputDevice->setNumber(midiInDeviceIndex);
         m_pMidiInputDevice->setChannel(midiInChannel);
@@ -159,6 +167,8 @@ void AudioDevicesManager::stopAudioDevices()
     Q_ASSERT(m_pAudioOutputDevice != nullptr);
     Q_ASSERT(m_pMidiInputDevice != nullptr);
 
+    m_pMidiEventTranslator->stop();
+
     if (m_pAudioInputDevice->isOpen()) {
         m_pAudioInputDevice->stop();
         m_pAudioInputDevice->close();
@@ -173,4 +183,7 @@ void AudioDevicesManager::stopAudioDevices()
         m_pMidiInputDevice->stop();
         m_pMidiInputDevice->close();
     }
+
+    // Purge unhandled events
+    Application::instance()->eventRouter()->purge();
 }

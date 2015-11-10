@@ -37,6 +37,7 @@
 #include "SignalChainWidget.h"
 #include "SignalChainScene.h"
 #include "SignalChain.h"
+#include "IEventRouter.h"
 #include "SettingsDialog.h"
 #include "MainWindow.h"
 
@@ -186,21 +187,30 @@ void MainWindow::startSignalChain()
     double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
     m_pSignalChainWidget->scene()->signalChain()->setTimeStep(1.0 / sampleRate);
 
+    // Subscribe signal chain for events
+    Application::instance()->eventRouter()->registerHandler(m_pSignalChainWidget->scene()->signalChain());
+
     // Start audio devices
-    Application::instance()->audioDevicesManager()->startAudioDevices(m_pSignalChainWidget->scene()->signalChain());
+    Application::instance()->audioDevicesManager()->startAudioDevices();
 
     // Start signal chain
     m_pSignalChainWidget->scene()->signalChain()->start();
-    m_pSignalChainWidget->scene()->signalChain()->enable(true); // TODO: ???
+    m_pSignalChainWidget->scene()->signalChain()->enable(true); // Enable signal chain by default
     updateActions();
     logInfo(tr("Synthesizer started"));
 }
 
 void MainWindow::stopSignalChain()
 {
+    // Unregister signal chain and purge event router
+    Application::instance()->eventRouter()->unregisterHandler(m_pSignalChainWidget->scene()->signalChain());
+
     m_pSignalChainWidget->scene()->signalChain()->stop();
-    m_pSignalChainWidget->scene()->signalChain()->enable(false); // TODO: ???
+    m_pSignalChainWidget->scene()->signalChain()->enable(false); // Disable signal chain
     Application::instance()->audioDevicesManager()->stopAudioDevices();
+
+    // Purge event router
+    Application::instance()->eventRouter()->purge();
 
     updateActions();
     m_pDspLoadBar->setValue(0);

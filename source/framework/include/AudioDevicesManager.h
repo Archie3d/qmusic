@@ -21,8 +21,6 @@
 #include <QObject>
 #include "FrameworkApi.h"
 
-class ISignalChain;
-class SignalChainEvent;
 class AudioDevice;
 class MidiInputDevice;
 class MidiEventTranslator;
@@ -44,7 +42,7 @@ public:
 
 public slots:
 
-    void startAudioDevices(ISignalChain *pSignalChain = nullptr);
+    void startAudioDevices();
     void stopAudioDevices();
 
 private:

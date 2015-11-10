@@ -19,6 +19,7 @@
 #define ISIGNALCHAIN_H
 
 #include "FrameworkApi.h"
+#include "IEventRouter.h"
 #include "ISerializable.h"
 
 class IAudioUnit;
@@ -30,7 +31,8 @@ class SignalChainEvent;
  * Signal chain is an agglomeration of audio units connected together.
  * The chain keep track of the global time.
  */
-class QMUSIC_FRAMEWORK_API ISignalChain : public ISerializable
+class QMUSIC_FRAMEWORK_API ISignalChain : public ISerializable,
+                                          public IEventHandler
 {
 public:
 
@@ -71,23 +73,6 @@ public:
      * @return true if signal chain is enabled.
      */
     virtual bool isEnabled() const = 0;
-
-    /**
-     * Send an event to be processed immediately.
-     * @param pEvent
-     */
-    virtual void sendEvent(SignalChainEvent *pEvent) = 0;
-
-    /**
-     * Post event to this signal chain.
-     * @param evt Event to be posted.
-     */
-    virtual void postEvent(SignalChainEvent *pEvent) = 0;
-
-    /**
-     * Process all events waiting in the events queue.
-     */
-    virtual void processEvents() = 0;
 
     /**
      * @brief Returns time step used to advance time

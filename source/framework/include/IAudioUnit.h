@@ -22,6 +22,7 @@
 #include <QVariant>
 #include <QGraphicsItem>
 #include "ISerializable.h"
+#include "IEventRouter.h"
 #include "FrameworkApi.h"
 
 class SignalChainEvent;
@@ -33,7 +34,8 @@ class SignalChainEvent;
  * a signle step of signal ptocessing. It takes whatever is currently
  * provided on its inputs and generates outputs.
  */
-class QMUSIC_FRAMEWORK_API IAudioUnit : public ISerializable
+class QMUSIC_FRAMEWORK_API IAudioUnit : public ISerializable,
+                                        public IEventHandler
 {
 public:
 
@@ -82,13 +84,6 @@ public:
      * @brief Reset the audio unit to its initial state.
      */
     virtual void reset() = 0;
-
-    /**
-     * @brief Process an event.
-     * @note Defautl behavior should be doing nothing.
-     * @param pEvent Pointer to an event.
-     */
-    virtual void handleEvent(SignalChainEvent *pEvent) = 0;
 
     /**
      * @brief Create a custom graphics view for this item
