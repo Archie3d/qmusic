@@ -16,9 +16,6 @@ QMusic depends on Qt 5.x framework.
 There are some examples provided in **patches** folder of the source tree.
 [See wiki to hear how it sounds](https://github.com/Archie3d/qmusic/wiki)
 
-# Limitations
-Polyphonic synthesis is limited to 8 voices.
-
 # Issues
 This software is work in progress.
 At the moment it can only be compiled for MS Windows targets with Visual C++ 2013.
