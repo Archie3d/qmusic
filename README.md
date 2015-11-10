@@ -16,7 +16,7 @@ QMusic depends on Qt 5.x framework.
 
 # Playing
 There are some examples provided in **patches** folder of the source tree.
-[See wiki to hear how it sounds](https://github.com/Archie3d/qmusic/wiki)
+[See wiki to hear how it sounds](https://github.com/Archie3d/qmusic/wiki).
 
 # Issues
 This software is work in progress.
