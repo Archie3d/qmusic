@@ -90,5 +90,6 @@ void EventRouter::processEvent(SignalChainEvent *pEvent)
 void EventRouter::purgeUnsafe()
 {
     qDeleteAll(m_events);
+    m_events.clear();
 }
 
