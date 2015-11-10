@@ -6,6 +6,8 @@ and synthesis signal chains.
 
 ![Screenshot](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshot.png)
 
+![Screenshot 2](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshot_2.png)
+
 # Building
 CMake is required to configure and build the project.
 QMusic depends on Qt 5.x framework.
