@@ -231,12 +231,13 @@ void MainWindow::editSettings()
 
 void MainWindow::createDockingWindows()
 {
-    setDockOptions(QMainWindow::ForceTabbedDocks);
+    //setDockOptions(QMainWindow::ForceTabbedDocks);
 
     m_pLogWindow = new LogWindow(this);
     addDockWidget(Qt::BottomDockWidgetArea, m_pLogWindow);
 
     m_pPianoKeyboardWindow = new PianoKeyboardWindow(this);
+    Application::instance()->eventRouter()->registerHandler(m_pPianoKeyboardWindow);
     addDockWidget(Qt::BottomDockWidgetArea, m_pPianoKeyboardWindow);
     tabifyDockWidget(m_pLogWindow, m_pPianoKeyboardWindow);
 

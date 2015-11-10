@@ -80,7 +80,7 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
 
     // Draw white keys
     for (int i = 0; i < numberOfWhiteKeys(); i++) {
-        int octave = i / 7;
+        int octave = (i / 7) - 1;
         int n = i % 7;
         MidiNote note(cWhiteNotes.at(n), octave);
 
@@ -95,8 +95,8 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
 
         // Draw black keys
         if (note.hasFlat() &&  i > 0) { // Skip C-1b
-            note = note.flat();
-            if (isNoteOn(note.number())) {
+            MidiNote flatNote = note.flat();
+            if (isNoteOn(flatNote.number())) {
                 painter.setBrush(onBrush);
             } else {
                 painter.setBrush(blackBrush);
@@ -107,8 +107,8 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
         }
 
         // Draw C keys labels.
-        if (n == 0) {
-            painter.drawText(pos + 1, height() - 2, QString("C%1").arg(octave - 1));
+        if (note.note() == MidiNote::Note_C) {
+            painter.drawText(pos + 1, height() - 2, note.toString());
         }
     }
 }

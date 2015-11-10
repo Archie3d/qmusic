@@ -20,15 +20,18 @@
 
 #include <QList>
 #include <QMutex>
+#include <QObject>
 #include "IEventRouter.h"
 
 /**
  * @brief Signal chain events router implementation.
  */
-class EventRouter : public IEventRouter
+class EventRouter : public QObject,
+                    public IEventRouter
 {
+    Q_OBJECT
 public:
-    EventRouter();
+    EventRouter(QObject *pParent = nullptr);
     ~EventRouter();
 
     // IEventRouter interface
@@ -38,6 +41,14 @@ public:
     void registerHandler(IEventHandler *pHandler);
     void unregisterHandler(IEventHandler *pHandler);
     void purge();
+
+signals:
+
+    void triggerProcessEvents();
+
+private slots:
+
+    void doPprocessEvents();
 
 private:
 

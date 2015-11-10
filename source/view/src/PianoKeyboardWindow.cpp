@@ -16,6 +16,8 @@
 */
 
 #include <QHBoxLayout>
+#include "NoteOnEvent.h"
+#include "NoteOffEvent.h"
 #include "PianoWidget.h"
 #include "PianoKeyboardWindow.h"
 
@@ -27,4 +29,35 @@ PianoKeyboardWindow::PianoKeyboardWindow(QWidget *pParent)
 
     m_pPianoWidget = new PianoWidget();
     setWidget(m_pPianoWidget);
+}
+
+void PianoKeyboardWindow::handleEvent(SignalChainEvent *pEvent)
+{
+    Q_ASSERT(pEvent != nullptr);
+    switch (pEvent->type()) {
+    case SignalChainEvent::NoteOn: {
+        NoteOnEvent *pNoteOnEvent = dynamic_cast<NoteOnEvent*>(pEvent);
+        Q_ASSERT(pNoteOnEvent != nullptr);
+        handleNoteOn(pNoteOnEvent->noteNumber());
+        break;
+    }
+    case SignalChainEvent::NoteOff: {
+        NoteOffEvent *pNoteOffEvent = dynamic_cast<NoteOffEvent*>(pEvent);
+        Q_ASSERT(pNoteOffEvent != nullptr);
+        handleNoteOff(pNoteOffEvent->noteNumber());
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void PianoKeyboardWindow::handleNoteOn(int number)
+{
+    m_pPianoWidget->setNote(number, true);
+}
+
+void PianoKeyboardWindow::handleNoteOff(int number)
+{
+    m_pPianoWidget->setNote(number, false);
 }

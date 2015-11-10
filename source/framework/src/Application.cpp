@@ -68,7 +68,7 @@ Application::Application(int argc, char **argv)
     m_pLogger = new Logger(this);
     m_pAudioDevicesManager = new AudioDevicesManager(this);
     m_pAudioUnitsManager = new AudioUnitsManager(this);
-    m_pEventRouter = new EventRouter();
+    m_pEventRouter = new EventRouter(this);
 
     loadStylesheet();
 
@@ -80,8 +80,6 @@ Application::~Application()
     if (m_pAudioUnitsManager != nullptr) {
         m_pAudioUnitsManager->cleanup();
     }
-
-    delete m_pEventRouter;
 
     s_pApplicationInstance = nullptr;
 }

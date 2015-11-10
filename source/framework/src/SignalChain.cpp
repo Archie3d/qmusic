@@ -26,7 +26,7 @@
 #include "SignalChain.h"
 
 // Event process period in samples
-#define EVENTS_PROCESS_PERIOD  (50)
+#define EVENTS_PROCESS_PERIOD  (64)
 
 const QString SignalChain::UID("SignalChain");
 
@@ -109,9 +109,9 @@ void SignalChain::prepareUpdate()
 {
     // Decimate the event processing occurrence in order to
     // decrease overhead of events handling for every sample.
-    if ((m_updateEventsCounter++) % EVENTS_PROCESS_PERIOD == 0) {
-
-        // Force event router to distribute events
+    m_updateEventsCounter = (m_updateEventsCounter + 1) % EVENTS_PROCESS_PERIOD;
+    if (m_updateEventsCounter == 0) {
+        // Make event router to distribute events
         Application::instance()->eventRouter()->processEvents();
     }
 

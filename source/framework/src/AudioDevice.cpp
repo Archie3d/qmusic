@@ -114,7 +114,8 @@ bool AudioDevice::open(int index, int nInputs, int nOutputs, double sampleRate, 
 
     if (err != paNoError) {
         qCritical() << "Unable to open audio device (" << m_openDeviceInfo.name << ")"
-                    << Pa_GetErrorText(err);
+                    << Pa_GetErrorText(err)
+                    << "Error code" << Pa_GetLastHostErrorInfo()->errorCode;
         return false;
     }
 
@@ -130,7 +131,9 @@ bool AudioDevice::close()
 
     int err = Pa_CloseStream(m_pStream);
     if (err != paNoError) {
-        qCritical() << "Unable to close audio device" << Pa_GetErrorText(err);
+        qCritical() << "Unable to close audio device (" << m_openDeviceInfo.name << ")"
+                    << Pa_GetErrorText(err)
+                    << "Error code" << Pa_GetLastHostErrorInfo()->errorCode;
         return false;
     }
 
@@ -152,7 +155,8 @@ bool AudioDevice::start()
 
     int err = Pa_StartStream(m_pStream);
     if (err != paNoError) {
-        qCritical() << "Unable to start audio stream:" << Pa_GetErrorText(err);
+        qCritical() << "Unable to start audio stream:" << Pa_GetErrorText(err)
+                    << "Error code:" << Pa_GetLastHostErrorInfo()->errorCode;
         return false;
     }
 
@@ -167,7 +171,8 @@ bool AudioDevice::stop()
 
     int err = Pa_StopStream(m_pStream);
     if (err != paNoError) {
-        qCritical() << "Unable to stop audio sttream:" << Pa_GetErrorText(err);
+        qCritical() << "Unable to stop audio stream:" << Pa_GetErrorText(err)
+                    << "Error code:" << Pa_GetLastHostErrorInfo()->errorCode;
         return false;
     }
 

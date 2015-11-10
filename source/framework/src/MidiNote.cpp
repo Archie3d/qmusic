@@ -140,7 +140,7 @@ double MidiNote::frequency() const
 
 MidiNote::Note MidiNote::note() const
 {
-    return (Note)((m_number - C0) % 12);
+    return (Note)(m_number % 12);
 }
 
 bool MidiNote::isNatural() const
@@ -167,7 +167,7 @@ bool MidiNote::hasSharp() const
 
 int MidiNote::octave() const
 {
-    return (m_number - C0) / 12;
+    return m_number / 12 - 1;
 }
 
 MidiNote MidiNote::sharp() const

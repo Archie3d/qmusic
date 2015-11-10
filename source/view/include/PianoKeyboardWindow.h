@@ -20,15 +20,25 @@
 
 #include <QDockWidget>
 #include "ViewApi.h"
+#include "IEventRouter.h"
 
 class PianoWidget;
 
-class QMUSIC_VIEW_API PianoKeyboardWindow : public QDockWidget
+class QMUSIC_VIEW_API PianoKeyboardWindow : public QDockWidget,
+                                            public IEventHandler
 {
     Q_OBJECT
 public:
 
     PianoKeyboardWindow(QWidget *pParent = nullptr);
+
+    // IEventHandler interface
+    void handleEvent(SignalChainEvent *pEvent);
+
+protected:
+
+    void handleNoteOn(int number);
+    void handleNoteOff(int number);
 
 private:
 

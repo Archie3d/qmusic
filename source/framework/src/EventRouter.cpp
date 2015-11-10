@@ -15,14 +15,17 @@
     Lesser General Public License for more details.
 */
 
+#include "Application.h"
 #include "SignalChainEvent.h"
 #include "EventRouter.h"
 
-EventRouter::EventRouter()
-    : m_handlers(),
+EventRouter::EventRouter(QObject *pParent)
+    : QObject(pParent),
+      m_handlers(),
       m_events(),
       m_mutex()
 {
+    connect(this, SIGNAL(triggerProcessEvents()), this, SLOT(doPprocessEvents()), Qt::QueuedConnection);
 }
 
 EventRouter::~EventRouter()
@@ -43,21 +46,13 @@ void EventRouter::postEvent(SignalChainEvent *pEvent)
     Q_ASSERT(pEvent != nullptr);
     QMutexLocker lock(&m_mutex);
     m_events.append(pEvent);
+
+    logInfo(QString("Post event %1").arg((int)pEvent->type()));
 }
 
 void EventRouter::processEvents()
 {
-    // Move pending events to a seeparate buffer for processing
-    m_mutex.lock();
-    QList<SignalChainEvent*> events = m_events;
-    m_events.clear();
-    m_mutex.unlock();
-
-    // Process events
-    foreach (SignalChainEvent *pEvent, events) {
-        processEvent(pEvent);
-        delete pEvent;
-    }
+    emit triggerProcessEvents();
 }
 
 void EventRouter::registerHandler(IEventHandler *pHandler)
@@ -84,6 +79,25 @@ void EventRouter::processEvent(SignalChainEvent *pEvent)
     Q_ASSERT(pEvent != nullptr);
     foreach (IEventHandler *pHandler, m_handlers) {
         pHandler->handleEvent(pEvent);
+    }
+}
+
+void EventRouter::doPprocessEvents()
+{
+    // Move pending events to a seeparate buffer for processing
+    m_mutex.lock();
+    QList<SignalChainEvent*> events = m_events;
+    m_events.clear();
+    m_mutex.unlock();
+
+    if (events.count() > 0) {
+        logInfo(QString("Process %1 events").arg(events.count()));
+    }
+
+    // Process events
+    foreach (SignalChainEvent *pEvent, events) {
+        processEvent(pEvent);
+        delete pEvent;
     }
 }
 
