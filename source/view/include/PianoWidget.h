@@ -46,6 +46,9 @@ protected:
 
     void paintEvent(QPaintEvent *pEvent);
 
+    void keyPressEvent(QKeyEvent *pEvent);
+    void keyReleaseEvent(QKeyEvent *pEvent);
+
 private:
 
     int numberOfOctaves() const;
