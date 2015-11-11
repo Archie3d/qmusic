@@ -215,6 +215,9 @@ void MainWindow::stopSignalChain()
     // Purge event router
     Application::instance()->eventRouter()->purge();
 
+    // Clear piano keyboard
+    m_pPianoKeyboardWindow->reset();
+
 #ifdef PROFILING
     pSignalChain->profilingLog();
 #endif // PROFILING

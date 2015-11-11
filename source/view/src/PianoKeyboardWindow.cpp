@@ -31,6 +31,11 @@ PianoKeyboardWindow::PianoKeyboardWindow(QWidget *pParent)
     setWidget(m_pPianoWidget);
 }
 
+void PianoKeyboardWindow::reset()
+{
+    m_pPianoWidget->reset();
+}
+
 void PianoKeyboardWindow::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);

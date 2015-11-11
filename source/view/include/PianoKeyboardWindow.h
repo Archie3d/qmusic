@@ -32,6 +32,11 @@ public:
 
     PianoKeyboardWindow(QWidget *pParent = nullptr);
 
+    /**
+     * @brief Turn all notes off.
+     */
+    void reset();
+
     // IEventHandler interface
     void handleEvent(SignalChainEvent *pEvent);
 

@@ -46,6 +46,7 @@ void PianoWidget::reset()
     for (int i = 0; i < 128; i++) {
         m_onNotes[i] = false;
     }
+    repaint();
 }
 
 void PianoWidget::setNote(int number, bool on)
