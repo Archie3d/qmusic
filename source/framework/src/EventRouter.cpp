@@ -46,6 +46,8 @@ void EventRouter::postEvent(SignalChainEvent *pEvent)
     Q_ASSERT(pEvent != nullptr);
     QMutexLocker lock(&m_mutex);
     m_events.append(pEvent);
+
+    emit triggerProcessEvents();
 }
 
 void EventRouter::processEvents()

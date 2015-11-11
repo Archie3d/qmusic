@@ -39,8 +39,16 @@ ExposedOutput::~ExposedOutput()
 {
 }
 
+void ExposedOutput::fastUpdate()
+{
+    foreach (AudioUnit *pAu, m_updateChain) {
+        pAu->fastUpdate();
+    }
+}
+
 void ExposedOutput::processStart()
 {
+    m_updateChain = updateChain();
 }
 
 void ExposedOutput::processStop()

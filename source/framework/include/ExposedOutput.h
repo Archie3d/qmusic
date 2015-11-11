@@ -37,6 +37,8 @@ public:
     QString exposedOutputName() const;
     void setRefOutputPort(OutputPort *pOutputPort);
 
+    void fastUpdate();
+
 protected:
 
     void processStart();
@@ -62,6 +64,8 @@ private:
 
     InputPort *m_pInput;
     QtVariantProperty *m_pPropName;
+
+    QList<AudioUnit*> m_updateChain;
 };
 
 #endif // EXPOSEDOUTPUT_H

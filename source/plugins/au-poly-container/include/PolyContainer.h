@@ -24,7 +24,7 @@
 
 class QtVariantProperty;
 class QGraphicsSimpleTextItem;
-
+class ExposedOutput;
 
 class PolyphonicContainer : public AudioUnit,
                                    ISignalChainSceneContainer
@@ -84,7 +84,7 @@ private:
 
     QList<InputPort*> m_inputs;
     QList<OutputPort*> m_outputs;
-    QList<IAudioUnit*> m_exposeOutputAudioUnits;
+    QList<ExposedOutput*> m_exposeOutputAudioUnits;
 
     /// List of cloned signal chains
     QList<ISignalChain*> m_voices;

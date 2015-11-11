@@ -139,13 +139,15 @@ void PolyphonicContainer::process()
 {
     prepareVoicesUpdate();
 
+    // Set outputs to zero, since
+    // further all voices will add up to them
     foreach (OutputPort *pOutputPort, m_outputs) {
         pOutputPort->setValue(0.0f);
     }
 
     // The following will trigger update of internal signal chains
-    foreach (IAudioUnit *pAu, m_exposeOutputAudioUnits) {
-        pAu->update();
+    foreach (ExposedOutput *pAu, m_exposeOutputAudioUnits) {
+        pAu->fastUpdate();
     }
 }
 
@@ -238,7 +240,7 @@ void PolyphonicContainer::createVoices(int n)
 
     foreach (ISignalChain *pVoice, m_voices) {
 
-        // Add to the list og free voices
+        // Add to the list of free voices
         m_freeVoices.append(pVoice);
 
         int inputIndex = 0;
@@ -256,7 +258,7 @@ void PolyphonicContainer::createVoices(int n)
                 ExposedOutput *pExpOutput = dynamic_cast<ExposedOutput*>(pAu);
                 Q_ASSERT(pExpOutput != nullptr);
                 pExpOutput->setRefOutputPort(m_outputs.at(outputIndex++));
-                m_exposeOutputAudioUnits.append(pAu);
+                m_exposeOutputAudioUnits.append(pExpOutput);
             }
         }
     }

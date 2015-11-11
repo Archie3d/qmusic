@@ -21,8 +21,8 @@ set(${PROJECT_NAME}_VERSION
 
 add_definitions(-DQMUSIC_VERSION="${${PROJECT_NAME}_VERSION}")
 
-set(PROFILING 1)
-if(PROFILING)
+set(QMUSIC_PROFILING OFF CACHE BOOL "Audio units profiling")
+if(QMUSIC_PROFILING)
     add_definitions(-DPROFILING)
 endif()
 

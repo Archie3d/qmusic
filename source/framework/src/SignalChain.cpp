@@ -26,9 +26,6 @@
 #include "SignalChainEvent.h"
 #include "SignalChain.h"
 
-// Event process period in samples
-#define EVENTS_PROCESS_PERIOD  (64)
-
 const QString SignalChain::UID("SignalChain");
 
 SignalChain::SignalChain()
@@ -108,18 +105,6 @@ void SignalChain::removeAudioUnit(IAudioUnit *pAudioUnit)
 
 void SignalChain::prepareUpdate()
 {
-    // Decimate the event processing occurrence in order to
-    // decrease overhead of events handling for every sample.
-    m_updateEventsCounter = (m_updateEventsCounter + 1) % EVENTS_PROCESS_PERIOD;
-    if (m_updateEventsCounter == 0) {
-        // Make event router to distribute events
-        Application::instance()->eventRouter()->processEvents();
-    }
-
-    // Events have to be processed even when signal chain is disabled
-    // (that is how it can get enabled actually), audio units
-    // however can be skipped.
-
     if (!m_enabled) {
         return;
     }
