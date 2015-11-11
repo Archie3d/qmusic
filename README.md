@@ -1,4 +1,4 @@
-[Download demo release for Windows 64-bit](https://github.com/Archie3d/qmusic/releases/download/v1.0.0-demo1/qmusic-1.0.0-demo1-win64.zip)
+[Download demo release for Windows 64-bit](https://github.com/Archie3d/qmusic/releases/download/v1.0.0-demo2/qmusic-1.0.0-demo2-win64.zip)
 
 # qmusic
 QMusic is a visual dataflow programing environment that allows quick prototyping of audio processing
