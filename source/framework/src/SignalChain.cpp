@@ -20,6 +20,7 @@
 #include "MidiInputDevice.h"
 #include "AudioDevice.h"
 #include "AudioUnit.h"
+#include "AudioUnitPlugin.h"
 #include "SerializationContext.h"
 #include "SignalChainFactory.h"
 #include "SignalChainEvent.h"
@@ -207,6 +208,28 @@ void SignalChain::handleEvent(SignalChainEvent *pEvent)
         pAudioUnit->handleEvent(pEvent);
     }
 }
+
+#ifdef PROFILING
+void SignalChain::profilingLog()
+{
+    QList<AudioUnitPlugin*> plugins;
+    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+        AudioUnit *pAu = dynamic_cast<AudioUnit*>(pAudioUnit);
+        if (pAu != nullptr) {
+            AudioUnitPlugin *pPlugin = pAu->plugin();
+            if (!plugins.contains(pPlugin)) {
+                plugins.append(pPlugin);
+            }
+        }
+    }
+
+    logInfo("========= profiling =========");
+    foreach(AudioUnitPlugin *pPlugin, plugins) {
+        pPlugin->profilingLog();
+    }
+
+}
+#endif // PROFILING
 
 void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) const
 {

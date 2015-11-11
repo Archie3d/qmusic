@@ -200,6 +200,11 @@ private:
      */
     void setSignalChain(ISignalChain *pSignalChain) { m_pSignalChain = pSignalChain; }
 
+#ifdef PROFILING
+    void profilingReset();
+    void profilingRegister(double processTimeUs);
+#endif
+
     /// Pointer to corresponding plugin
     AudioUnitPlugin *m_pPlugin;
 

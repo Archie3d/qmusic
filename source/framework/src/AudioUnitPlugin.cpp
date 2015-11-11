@@ -15,6 +15,7 @@
     Lesser General Public License for more details.
 */
 
+#include "Application.h"
 #include "AudioUnitPlugin.h"
 
 const QString AudioUnitPlugin::MimeDataFormat("qmusic/AudioUnitPlugin");
@@ -28,3 +29,28 @@ AudioUnit* AudioUnitPlugin::createInstanceInteractive()
 {
     return createInstance();
 }
+
+#ifdef PROFILING
+
+void AudioUnitPlugin::profilingLog()
+{
+    logInfo(QString("%1 - %2: %3")
+            .arg(category())
+            .arg(name())
+            .arg(m_nUpdates > 0 ? m_totalProcessTimeUs / m_nUpdates : 0)
+            );
+}
+
+void AudioUnitPlugin::profilingReset()
+{
+    m_totalProcessTimeUs = 0.0;
+    m_nUpdates = 0;
+}
+
+void AudioUnitPlugin::profilingRegister(double processTimeUs)
+{
+    m_nUpdates++;
+    m_totalProcessTimeUs += processTimeUs;
+}
+
+#endif // PROFILING

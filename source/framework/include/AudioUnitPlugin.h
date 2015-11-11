@@ -86,6 +86,12 @@ public:
     QString version() const { return m_version; }
     virtual QIcon icon() const { return QIcon(); }
 
+#ifdef PROFILING
+    void profilingReset();
+    void profilingRegister(double processTimeUs);
+    void profilingLog();
+#endif // PROFILING
+
 protected:
 
     void setUid(const QString &uid) { m_uid = uid; }
@@ -99,6 +105,11 @@ private:
     QString m_name;     ///< Audio unit plugin name.
     QString m_category; ///< Audio unit category.
     QString m_version;  ///< Version info.
+
+#ifdef PROFILING
+    double m_totalProcessTimeUs;
+    long long m_nUpdates;
+#endif // PROFILING
 };
 
 Q_DECLARE_INTERFACE(AudioUnitPlugin, "qmusic.audiounit.plugin")

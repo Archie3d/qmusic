@@ -46,8 +46,6 @@ void EventRouter::postEvent(SignalChainEvent *pEvent)
     Q_ASSERT(pEvent != nullptr);
     QMutexLocker lock(&m_mutex);
     m_events.append(pEvent);
-
-    logInfo(QString("Post event %1").arg((int)pEvent->type()));
 }
 
 void EventRouter::processEvents()
@@ -90,10 +88,6 @@ void EventRouter::doPprocessEvents()
     m_events.clear();
     m_mutex.unlock();
 
-    if (events.count() > 0) {
-        logInfo(QString("Process %1 events").arg(events.count()));
-    }
-
     // Process events
     foreach (SignalChainEvent *pEvent, events) {
         processEvent(pEvent);
@@ -106,4 +100,3 @@ void EventRouter::purgeUnsafe()
     qDeleteAll(m_events);
     m_events.clear();
 }
-

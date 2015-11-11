@@ -69,6 +69,10 @@ public:
     void deserialize(const QVariantMap &data, SerializationContext *pContext);
     static ISerializable* create() { return new SignalChain(); }
 
+#ifdef PROFILING
+    void profilingLog();
+#endif // PROFILING
+
 private:
 
     void startAllAudioUnits();

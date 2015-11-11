@@ -205,12 +205,19 @@ void MainWindow::stopSignalChain()
     // Unregister signal chain and purge event router
     Application::instance()->eventRouter()->unregisterHandler(m_pSignalChainWidget->scene()->signalChain());
 
-    m_pSignalChainWidget->scene()->signalChain()->stop();
-    m_pSignalChainWidget->scene()->signalChain()->enable(false); // Disable signal chain
+    SignalChain *pSignalChain = m_pSignalChainWidget->scene()->signalChain();
+    Q_ASSERT(pSignalChain != nullptr);
+
+    pSignalChain->stop();
+    pSignalChain->enable(false); // Disable signal chain
     Application::instance()->audioDevicesManager()->stopAudioDevices();
 
     // Purge event router
     Application::instance()->eventRouter()->purge();
+
+#ifdef PROFILING
+    pSignalChain->profilingLog();
+#endif // PROFILING
 
     updateActions();
     m_pDspLoadBar->setValue(0);

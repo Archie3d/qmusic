@@ -38,9 +38,8 @@ void OutputPort::setValue(float value)
 
 void OutputPort::update()
 {
-    if (audioUnit() != nullptr) {
-        audioUnit()->update();
-    }
+    Q_ASSERT(audioUnit() != nullptr);
+    audioUnit()->update();
 }
 
 int OutputPort::index() const

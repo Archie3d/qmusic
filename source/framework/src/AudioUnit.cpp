@@ -15,8 +15,12 @@
     Lesser General Public License for more details.
 */
 
+#ifdef PROFILING
+#   include <chrono>
+#endif
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
+#include "Application.h"
 #include "SerializationContext.h"
 #include "SignalChain.h"
 #include "SignalChainEvent.h"
@@ -64,9 +68,9 @@ void AudioUnit::prepareUpdate()
 
 void AudioUnit::update()
 {
-    if (!isStarted()) {
-        return;
-    }
+    //if (!isStarted()) {
+    //    return;
+    //}
 
     if (m_updated) {
         // Already updated.
@@ -84,8 +88,15 @@ void AudioUnit::update()
     foreach (InputPort *pInput, m_inputs) {
         pInput->update();
     }
-
+#ifdef PROFILING
+    auto startTime = std::chrono::high_resolution_clock::now();
+#endif // PROFILING
     process();
+#ifdef PROFILING
+    auto processTime = std::chrono::high_resolution_clock::now() - startTime;
+    double processTimeUs = double(std::chrono::duration_cast<std::chrono::microseconds>(processTime).count());
+    profilingRegister(processTimeUs);
+#endif // PROFILING
 }
 
 void AudioUnit::start()
@@ -93,6 +104,10 @@ void AudioUnit::start()
     if (isStarted()) {
         return;
     }
+
+#ifdef PROFILING
+    profilingReset();
+#endif // PROFILING
 
     processStart();
     m_started = true;
@@ -167,9 +182,9 @@ QList<AudioUnit*> AudioUnit::updateChain(const QList<AudioUnit *> chain)
 
 void AudioUnit::fastUpdate()
 {
-    if (!isStarted()) {
-        return;
-    }
+    //if (!isStarted()) {
+    //    return;
+    //}
 
     if (m_updated) {
         // Already updated.
@@ -184,7 +199,15 @@ void AudioUnit::fastUpdate()
     // Activate already the updated flag to prevent loop recursion
     m_updated = true;
 
+#ifdef PROFILING
+    auto startTime = std::chrono::high_resolution_clock::now();
+#endif // PROFILING
     process();
+#ifdef PROFILING
+    auto processTime = std::chrono::high_resolution_clock::now() - startTime;
+    double processTimeUs = double(std::chrono::duration_cast<std::chrono::microseconds>(processTime).count());
+    profilingRegister(processTimeUs);
+#endif // PROFILING
 }
 
 InputPort *AudioUnit::addInput(const QString &name, float defaultValue)
@@ -266,4 +289,14 @@ void AudioUnit::pitchBendEvent(PitchBendEvent *pEvent)
 void AudioUnit::controllerEvent(ControllerEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
+}
+
+void AudioUnit::profilingReset()
+{
+    m_pPlugin->profilingReset();
+}
+
+void AudioUnit::profilingRegister(double processTimeUs)
+{
+    m_pPlugin->profilingRegister(processTimeUs);
 }

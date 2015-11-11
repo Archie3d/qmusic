@@ -21,6 +21,11 @@ set(${PROJECT_NAME}_VERSION
 
 add_definitions(-DQMUSIC_VERSION="${${PROJECT_NAME}_VERSION}")
 
+set(PROFILING 1)
+if(PROFILING)
+    add_definitions(-DPROFILING)
+endif()
+
 # API version
 set(${PROJECT_NAME}_API_VERSION "1.0.0")
 add_definitions(-DQMUSIC_API_VERSION="${${PROJECT_NAME}_API_VERSION}")
