@@ -16,9 +16,9 @@ set(QT_PLATFORM_LIBS
 )
 
 set(ICU_LIBS
-    icudt53
-    icuin53
-    icuuc53
+    icudt54
+    icuin54
+    icuuc54
 )
 
 if(WIN32)
