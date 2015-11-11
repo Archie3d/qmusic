@@ -291,6 +291,7 @@ void AudioUnit::controllerEvent(ControllerEvent *pEvent)
     Q_ASSERT(pEvent != nullptr);
 }
 
+#ifdef PROFILING
 void AudioUnit::profilingReset()
 {
     m_pPlugin->profilingReset();
@@ -300,3 +301,4 @@ void AudioUnit::profilingRegister(double processTimeUs)
 {
     m_pPlugin->profilingRegister(processTimeUs);
 }
+#endif // PROFILING
