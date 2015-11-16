@@ -93,6 +93,7 @@ void Slider::serialize(QVariantMap &data, SerializationContext *pContext) const
     data["value"] = m_pPropValue->value();
     data["min"] = m_pPropMin->value();
     data["max"] = m_pPropMax->value();
+    data["steps"] = m_pPropSteps->value();
     data["orientation"] = m_pPropOrientation->value();
 }
 
@@ -102,6 +103,7 @@ void Slider::deserialize(const QVariantMap &data, SerializationContext *pContext
     m_pPropMin->setValue(data["min"]);
     m_pPropMax->setValue(data["max"]);
     m_pPropValue->setValue(data["value"]);
+    m_pPropSteps->setValue(data["steps"]);
     m_pPropLabel->setValue(data["label"]);
     m_pPropOrientation->setValue(data["orientation"]);
     AudioUnit::deserialize(data, pContext);

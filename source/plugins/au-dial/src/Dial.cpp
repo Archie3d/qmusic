@@ -94,6 +94,7 @@ void Dial::serialize(QVariantMap &data, SerializationContext *pContext) const
     AudioUnit::serialize(data, pContext);
     data["label"] = m_pPropLabel->value();
     data["value"] = m_pPropValue->value();
+    data["steps"] = m_pPropSteps->value();
     data["min"] = m_pPropMin->value();
     data["max"] = m_pPropMax->value();
 }
@@ -103,6 +104,7 @@ void Dial::deserialize(const QVariantMap &data, SerializationContext *pContext)
     Q_ASSERT(pContext != nullptr);
     m_pPropMin->setValue(data["min"]);
     m_pPropMax->setValue(data["max"]);
+    m_pPropSteps->setValue(data["steps"]);
     m_pPropValue->setValue(data["value"]);
     m_pPropLabel->setValue(data["label"]);
     AudioUnit::deserialize(data, pContext);
