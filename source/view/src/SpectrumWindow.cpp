@@ -39,17 +39,17 @@ SpectrumWindow::SpectrumWindow(QWidget *pParent)
     setObjectName("spectrumWindow");
     setWindowTitle(tr("Spectrum"));
 
-    m_pPlot = new QwtPlot();
-    m_pPlot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    m_pPlot->setMinimumSize(0, 0);
-    m_pPlot->setBaseSize(0, 0);
-    m_pPlot->enableAxis(QwtPlot::xBottom, true);
-    m_pPlot->enableAxis(QwtPlot::yLeft, false);
-    m_pPlot->setAxisAutoScale(QwtPlot::xBottom, false);
-    m_pPlot->setAxisScale(QwtPlot::xBottom, 0.0, cMaxFrequency);
-    m_pPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
-    m_pPlot->setAxisAutoScale(QwtPlot::yLeft, false);
-    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
+    m_pSpectrumPlot = new QwtPlot();
+    m_pSpectrumPlot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_pSpectrumPlot->setMinimumSize(0, 0);
+    m_pSpectrumPlot->setBaseSize(0, 0);
+    m_pSpectrumPlot->enableAxis(QwtPlot::xBottom, true);
+    m_pSpectrumPlot->enableAxis(QwtPlot::yLeft, false);
+    m_pSpectrumPlot->setAxisAutoScale(QwtPlot::xBottom, false);
+    m_pSpectrumPlot->setAxisScale(QwtPlot::xBottom, 0.0, cMaxFrequency);
+    m_pSpectrumPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
+    m_pSpectrumPlot->setAxisAutoScale(QwtPlot::yLeft, false);
+    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
     m_yAxisScale = 1.0;
 
 
@@ -57,16 +57,16 @@ SpectrumWindow::SpectrumWindow(QWidget *pParent)
     pGrid->enableXMin(true);
     pGrid->setMajorPen(Qt::darkGray, 0, Qt::DotLine);
     pGrid->setMinorPen(Qt::gray, 0, Qt::DotLine);
-    pGrid->attach(m_pPlot);
+    pGrid->attach(m_pSpectrumPlot);
 
     QPen pen;
     pen.setColor(cSpectrumColor);
-    m_pCurve = new QwtPlotCurve();
-    m_pCurve->setPen(pen);
-    m_pCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-    m_pCurve->attach(m_pPlot);
+    m_pSpectrumCurve = new QwtPlotCurve();
+    m_pSpectrumCurve->setPen(pen);
+    m_pSpectrumCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
+    m_pSpectrumCurve->attach(m_pSpectrumPlot);
 
-    setWidget(m_pPlot);
+    setWidget(m_pSpectrumPlot);
 }
 
 void SpectrumWindow::plotSpectrum()
@@ -88,7 +88,7 @@ void SpectrumWindow::plotSpectrum()
 
 void SpectrumWindow::reset()
 {
-    m_pCurve->setSamples(QVector<QPointF>());
+    m_pSpectrumCurve->setSamples(QVector<QPointF>());
 
     m_yAxisScale = 1.0;
     updateYAxisScale();
@@ -117,13 +117,13 @@ void SpectrumWindow::plotCurve(const QVector<float> &curve)
         f = df * (++i);
     }
 
-    m_pCurve->setSamples(samples);
+    m_pSpectrumCurve->setSamples(samples);
 
     updateYAxisScale();
-    m_pPlot->replot();
+    m_pSpectrumPlot->replot();
 }
 
 void SpectrumWindow::updateYAxisScale()
 {    
-    m_pPlot->setAxisScale(QwtPlot::yLeft, 0.0, qMin(100.0f, m_yAxisScale));
+    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, qMin(100.0f, m_yAxisScale));
 }

@@ -56,8 +56,8 @@ private:
     /// Incoming signal.
     QVector<float> m_signal;
 
-    QwtPlot *m_pPlot;
-    QwtPlotCurve *m_pCurve;
+    QwtPlot *m_pSpectrumPlot;
+    QwtPlotCurve *m_pSpectrumCurve;
     float m_yAxisScale;
 };
 
