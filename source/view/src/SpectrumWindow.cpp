@@ -27,9 +27,11 @@
 
 const QColor cWaveformColor("red");
 const QColor cSpectrumColor("navy");
+const QColor cAxisTitleColor("navy");
 const float cMaxFrequency(20000.0f);
 const float cDbScale(-240.0f);
 const QFont cAxisFont("Verdana", 7);
+const QFont cAxisTitleFont("Verdana", 7, QFont::Bold);
 
 // Number of samples used to compute spectrum
 const int cSignalSize(4096);
@@ -103,6 +105,10 @@ void SpectrumWindow::createWaveformPlot()
     m_pWaveformPlot->enableAxis(QwtPlot::xBottom, true);
     m_pWaveformPlot->enableAxis(QwtPlot::yLeft, true);
     m_pWaveformPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
+    QwtText title(tr("Time, ms"));
+    title.setFont(cAxisTitleFont);
+    title.setColor(cAxisTitleColor);
+    m_pWaveformPlot->setAxisTitle(QwtPlot::xBottom, title);
     m_pWaveformPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
     m_pWaveformPlot->setAxisAutoScale(QwtPlot::yLeft, false);
     m_pWaveformPlot->setAxisScale(QwtPlot::yLeft, -1.0, 1.0);
@@ -128,11 +134,15 @@ void SpectrumWindow::createSpectrumPlot()
     m_pSpectrumPlot->setMinimumSize(0, 0);
     m_pSpectrumPlot->setBaseSize(0, 0);
     m_pSpectrumPlot->enableAxis(QwtPlot::xBottom, true);
-    m_pSpectrumPlot->enableAxis(QwtPlot::yLeft, true);
+    m_pSpectrumPlot->enableAxis(QwtPlot::yLeft, false);
     m_pSpectrumPlot->setAxisAutoScale(QwtPlot::xBottom, false);
     m_pSpectrumPlot->setAxisScale(QwtPlot::xBottom, 0.0, cMaxFrequency);
     m_pSpectrumPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
     m_pSpectrumPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
+    QwtText title(tr("Frequency, Hz"));
+    title.setFont(cAxisTitleFont);
+    title.setColor(cAxisTitleColor);
+    m_pSpectrumPlot->setAxisTitle(QwtPlot::xBottom, title);
     m_pSpectrumPlot->setAxisAutoScale(QwtPlot::yLeft, false);
     m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
     //m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, cDbScale, 0.0);
