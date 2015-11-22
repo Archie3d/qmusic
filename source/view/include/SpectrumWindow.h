@@ -32,6 +32,7 @@ public:
 
     SpectrumWindow(QWidget *pParent = nullptr);
 
+    void plotWaveform();
     void plotSpectrum();
 
     void reset();
@@ -49,12 +50,19 @@ signals:
 
 private:
 
-    void plotCurve(const QVector<float> &curve);
+    void createWaveformPlot();
+    void createSpectrumPlot();
+
+    void plotWaveformCurve(const QVector<float> &curve);
+    void plotSpectrumCurve(const QVector<float> &curve);
 
     void updateYAxisScale();
 
     /// Incoming signal.
     QVector<float> m_signal;
+
+    QwtPlot *m_pWaveformPlot;
+    QwtPlotCurve *m_pWaveformCurve;
 
     QwtPlot *m_pSpectrumPlot;
     QwtPlotCurve *m_pSpectrumCurve;
