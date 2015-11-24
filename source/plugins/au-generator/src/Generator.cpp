@@ -84,10 +84,12 @@ float triangle(float phase)
     return 2.0f * fabs(sawtooth(phase)) - 1.0f;
 }
 
-float blep_triange(float phase, float dPhase, float prev = 0.0f)
+// Poly-BLEP triangle
+float blep_triangle(float phase, float dPhase, float prev = 0.0f)
 {
     float value = -1.0 + (2.0 * phase);
     value = 2.0 * (fabs(value) - 0.5);
+    dPhase = dPhase * 3.1415926 * 8;
     value = dPhase * value + (1 - dPhase) * prev;
     return value;
 }
@@ -117,6 +119,7 @@ float square(float phase)
     return phase - 0.5f > 0.0f ? 1.0f : -1.0f;
 }
 
+// Poly-BLEP square
 float blep_square(float phase, float dt)
 {
     float pwm = 0.5f;
@@ -201,10 +204,10 @@ void Generator::process()
         out = sin(m_phase * 2 * M_PI);
         break;
     case 1:
-        out = m_bandlimit ? bpl_sawtooth(m_phase, dPhase) : sawtooth(m_phase);
+        out = m_bandlimit ? blep_sawtooth(m_phase, dPhase) : sawtooth(m_phase);
         break;
     case 2:
-        out = m_bandlimit ? bpl_square(m_phase, dPhase) : square(m_phase);
+        out = m_bandlimit ? blep_square(m_phase, dPhase) : square(m_phase);
         break;
     case 3:
         out = m_bandlimit ? bpl_triangle(m_phase, dPhase) : triangle(m_phase);
