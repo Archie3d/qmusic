@@ -27,10 +27,38 @@ const QColor cDefaultColor(140, 200, 180);
 
 const int cMaxHarmonics(32);
 
+/**
+ * Polynomial BLEP function.
+ * @param t Time (phase), 0 <= t <= 1.0
+ * @param dt Time step.
+ * @return
+ */
+double poly_blep(double t, float dt)
+{
+    // 0 <= t < 1
+    if (t < dt) {
+        t /= dt;
+        return t+t - t*t - 1.0;
+    }
+    // -1 < t < 0
+    else if (t > 1.0 - dt) {
+        t = (t - 1.0) / dt;
+        return t*t + t+t + 1.0;
+    }
+    // 0 otherwise
+    else return 0.0;
+}
+
 // Naive sawtooth generator implementation
 float sawtooth(float phase)
 {
     return 2.0f * phase - 1.0f;
+}
+
+// Poly-BLEP sawtooth
+float blep_sawtooth(float phase, float dt)
+{
+    return sawtooth(phase) - poly_blep(phase, dt);
 }
 
 // Bandpass-limited sawtooth using Fourier series
@@ -56,6 +84,14 @@ float triangle(float phase)
     return 2.0f * fabs(sawtooth(phase)) - 1.0f;
 }
 
+float blep_triange(float phase, float dPhase, float prev = 0.0f)
+{
+    float value = -1.0 + (2.0 * phase);
+    value = 2.0 * (fabs(value) - 0.5);
+    value = dPhase * value + (1 - dPhase) * prev;
+    return value;
+}
+
 // Bandpass limited triangle waveform using Fourier series
 float bpl_triangle(float phase, float delta)
 {
@@ -79,6 +115,15 @@ float bpl_triangle(float phase, float delta)
 float square(float phase)
 {
     return phase - 0.5f > 0.0f ? 1.0f : -1.0f;
+}
+
+float blep_square(float phase, float dt)
+{
+    float pwm = 0.5f;
+    float value = phase < pwm ? 1.0 : -1.0;
+    value += poly_blep(phase, dt);
+    value -= poly_blep(fmod(phase + 1.0 - pwm, 1.0), dt);
+    return value;
 }
 
 // Bandpass limited square waveform using Fourier series
