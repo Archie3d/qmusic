@@ -25,7 +25,12 @@ class QtVariantProperty;
 class QGraphicsSimpleTextItem;
 
 /**
- * This is a special kind of audio unit that represents an exposed input port.
+ * @brief A special kind of audio unit that represents an exposed input port.
+ *
+ * Exposed input unit is used in sub-chains. It acts as areference point for
+ * the sub-chains containers, making the input being exposed outside of the container.
+ *
+ * @see ExposedOutput
  */
 class QMUSIC_FRAMEWORK_API ExposedInput : public AudioUnit
 {

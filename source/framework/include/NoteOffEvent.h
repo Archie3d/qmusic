@@ -21,9 +21,23 @@
 #include "FrameworkApi.h"
 #include "SignalChainEvent.h"
 
+/**
+ * @brief Note off signal chain event.
+ *
+ * This event is sent when the note key is released by the
+ * MIDI input or other source.
+ *
+ * @see NoteOnEvent
+ */
 class QMUSIC_FRAMEWORK_API NoteOffEvent : public SignalChainEvent
 {
 public:
+
+    /**
+     * Construct Note off event.
+     * @param number Note number, [0..127]
+     * @param velocity Note release velocity [0..127].
+     */
     NoteOffEvent(int number = -1, int velocity = 0);
     NoteOffEvent(const NoteOffEvent &evt);
     NoteOffEvent& operator =(const NoteOffEvent &evt);

@@ -32,6 +32,8 @@ class OutputPort;
  * connected output port.
  *
  * Input port does not perform any caching of sugnal data.
+ *
+ * @see OutputPort
  */
 class QMUSIC_FRAMEWORK_API InputPort : public Port
 {

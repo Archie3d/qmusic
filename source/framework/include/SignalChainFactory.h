@@ -23,7 +23,10 @@
 #include "FrameworkApi.h"
 
 /**
- * Factory of signal chain items.
+ * @brief Factory of signal chain items.
+ *
+ * This factory is used when deserializing a signel chain from a
+ * file or copy-paste buffer.
  */
 class QMUSIC_FRAMEWORK_API SignalChainFactory : public ISerializableFactory
 {

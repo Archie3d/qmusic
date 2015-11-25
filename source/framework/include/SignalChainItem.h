@@ -24,7 +24,7 @@
 #include "FrameworkApi.h"
 
 /**
- * Abstract base class for signal chain graphics items.
+ * @brief Abstract base class for signal chain graphics items.
  */
 class QMUSIC_FRAMEWORK_API SignalChainItem : public QGraphicsPathItem
 {
@@ -33,15 +33,24 @@ public:
     /// Item tyype.
     enum Type {
         Type_First = QGraphicsItem::UserType + 1,
-        Type_Invalid = Type_First,
-        Type_InputPort = Type_First + 1,
-        Type_OutputPort = Type_First + 2,
-        Type_Connection = Type_First + 3,
-        Type_AudioUnit = Type_First + 4
+        Type_Invalid = Type_First,          ///< Invalid item (not used).
+        Type_InputPort = Type_First + 1,    ///< Input port item.
+        Type_OutputPort = Type_First + 2,   ///< Output port item.
+        Type_Connection = Type_First + 3,   ///< Connection path item.
+        Type_AudioUnit = Type_First + 4     ///< Audio unit item.
     };
 
+    /**
+     * Construct a signal chain item.
+     * @param type Item type.
+     * @param pParent Pointer to parent item.
+     */
     SignalChainItem(Type type = Type_Invalid, QGraphicsItem *pParent = nullptr);
 
+    /**
+     * Returns signal chain item type.
+     * @return
+     */
     int type() const override { return m_type; }
 
 private:

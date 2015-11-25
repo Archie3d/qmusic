@@ -26,7 +26,9 @@ class MidiInputDevice;
 class MidiEventTranslator;
 
 /**
- * Single point of access to the audio devices.
+ * @brief Single point of access to the audio devices.
+ *
+ * This class is used to centralize access to available audio devices.
  */
 class QMUSIC_FRAMEWORK_API AudioDevicesManager : public QObject
 {
@@ -36,13 +38,34 @@ public:
     AudioDevicesManager(QObject *pParent = nullptr);
     ~AudioDevicesManager();
 
+    /**
+     * Returns pointer to the current audio input device.
+     * @return
+     */
     AudioDevice* audioInputDevice() const { return m_pAudioInputDevice; }
+
+    /**
+     * Returns pointer to the current audio output device.
+     * @return
+     */
     AudioDevice* audioOutputDevice() const {return m_pAudioOutputDevice; }
+
+    /**
+     * Returns pointer to the current MIDI input device.
+     * @return
+     */
     MidiInputDevice* midiInputDevice() const { return m_pMidiInputDevice; }
 
 public slots:
 
+    /**
+     * Start all audio devices.
+     */
     void startAudioDevices();
+
+    /**
+     * Stop all audio devices.
+     */
     void stopAudioDevices();
 
 private:

@@ -26,7 +26,9 @@ class QPluginLoader;
 class AudioUnitPlugin;
 
 /**
- * This class manages loading and unloading audio unit plugins.
+ * @brief This class manages loading and unloading audio unit plugins.
+ *
+ * Audio unit plugins are loaded immediately after the application startup.
  */
 class QMUSIC_FRAMEWORK_API AudioUnitsManager : public QObject
 {

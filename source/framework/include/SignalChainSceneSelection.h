@@ -26,6 +26,8 @@ class SignalChainAudioUnitItem;
 class SignalChainConnectionItem;
 
 /**
+ * @brief Container for signal chain selected items.
+ *
  * This class handles partial selection of audio unit items on the signal chain scene.
  * It is used for copy and paste operations.
  */

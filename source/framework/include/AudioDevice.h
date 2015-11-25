@@ -22,7 +22,7 @@
 #include "FrameworkApi.h"
 
 /**
- * Audio device listener interface.
+ * @brief Audio device listener interface.
  *
  * Audio device will notify listeners via this interface.
  * Listeners normally should provide output audio data or consume

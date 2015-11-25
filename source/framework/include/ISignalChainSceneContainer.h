@@ -21,6 +21,13 @@
 #include "FrameworkApi.h"
 #include "SignalChainScene.h"
 
+/**
+ * @brief Interface to a signal chain container.
+ *
+ * Signal chain container encapsulates signal sub-chain
+ * and exposes it as an audio unit. In this way sub-chains
+ * can be used in the upper-level signal chains.
+ */
 class QMUSIC_FRAMEWORK_API ISignalChainSceneContainer
 {
 public:

@@ -23,6 +23,7 @@
 
 /**
  * @brief Signal chain event.
+ *
  * Signal chain may produce and consume events. Events are distinguished
  * by their name. Each event can have an arbitrary payload data attached.
  * Signal chain normally dispatches events to its audio units.

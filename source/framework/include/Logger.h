@@ -22,7 +22,7 @@
 #include "FrameworkApi.h"
 
 /**
- * This object is used to log application events (log book).
+ * @brief This object is used to log application events (log book).
  */
 class QMUSIC_FRAMEWORK_API Logger : public QObject
 {
@@ -31,14 +31,23 @@ public:
 
     /// Logging level.
     enum Level {
-        Level_Debug,
-        Level_Info,
-        Level_Warning,
-        Level_Error
+        Level_Debug,    ///< Debug information (not visible in release builds).
+        Level_Info,     ///< Informative message.
+        Level_Warning,  ///< Warning message.
+        Level_Error     ///< Error message.
     };
 
+    /**
+     * Construct a logger.
+     * @param pParent
+     */
     Logger(QObject *pParent = nullptr);
 
+    /**
+     * Convert log level to its textual representation.
+     * @param level
+     * @return
+     */
     static QString levelToString(Level level);
 
 public slots:

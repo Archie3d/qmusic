@@ -23,7 +23,7 @@
 #include "FrameworkApi.h"
 
 /**
- * This class handles storing serialized data into a file.
+ * @brief This class handles storing serialized data into a file.
  *
  * A 'magic' number is added to the file header. As well the context
  * if 'signed' with CRC32.

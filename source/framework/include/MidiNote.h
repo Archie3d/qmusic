@@ -23,10 +23,18 @@
 
 #include "FrameworkApi.h"
 
+/**
+ * @brief A note according to the MIDI standard.
+ *
+ * A note is defined by its number (in MIDI). This class
+ * provides some helper methods to map notes to their frequencies.
+ * Equally tempered tuning is used for frequency mapping.
+ */
 class QMUSIC_FRAMEWORK_API MidiNote
 {
 public:
 
+    /// Musical note.
     enum Note {
         Note_C  = 0,
         Note_Db = 1,
@@ -68,8 +76,23 @@ public:
     MidiNote& operator +=(int n);
     MidiNote& operator -=(int n);
 
+    /**
+     * Returns note number.
+     * @return
+     */
     int number() const { return m_number; }
+
+    /**
+     * Returns note frequence according to the equally
+     * tempered tuning.
+     * @return
+     */
     double frequency() const;
+
+    /**
+     * Tells the note, discarding its octave.
+     * @return
+     */
     Note note() const;
 
     /**
@@ -108,12 +131,18 @@ public:
      */
     MidiNote flat() const;
 
+    /**
+     * Returns textual representation of this note, e.g. "C4".
+     * @return
+     */
     QString toString() const;
 
 private:
 
+    /// Clamp note number to MIDI [0..127] range.
     void clamp();
 
+    /// Note number.
     int m_number;
 };
 

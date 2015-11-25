@@ -28,6 +28,8 @@
  * Outgoing signal port.
  * Output port keeps the value stored by its audio unit.
  * This value is then supplied to all connected input ports.
+ *
+ * @see InputPort
  */
 class QMUSIC_FRAMEWORK_API OutputPort : public Port
 {

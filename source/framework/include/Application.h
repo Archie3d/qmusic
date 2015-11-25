@@ -25,7 +25,7 @@ class AudioUnitsManager;
 class IEventRouter;
 
 /**
- * The application.
+ * @brief The main application class.
  *
  * This class is a singleton of the global aplpication object.
  *

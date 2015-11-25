@@ -25,7 +25,7 @@
 class IAudioUnit;
 
 /**
- * Abstract implementation of a signal port.
+ * @brief Abstract implementation of a signal port.
  *
  * This class is further specialized into InputPort and OutputPort.
  */

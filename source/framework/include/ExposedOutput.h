@@ -25,7 +25,12 @@ class QtVariantProperty;
 class QGraphicsSimpleTextItem;
 
 /**
- * This is a special kind of audio unit that represents an exposed output.
+ * @brief A special kind of audio unit that represents an exposed output.
+ *
+ * Exposed output unit is used in sub-chains. It acts as areference point for
+ * the sub-chains containers, making the output being exposed outside of the container.
+ *
+ * @see ExposedInput
  */
 class QMUSIC_FRAMEWORK_API ExposedOutput : public AudioUnit
 {

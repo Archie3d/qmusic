@@ -22,6 +22,7 @@ class SignalChainEvent;
 
 /**
  * @brief Interface to events handler.
+ *
  * This interface to be implemented by entities willing to
  * receive signal chain events.
  */
@@ -42,6 +43,9 @@ public:
 
 /**
  * @brief Interface for signal chain events router.
+ *
+ * Event router accepts signal chain events and distributes them
+ * to the registered listeners.
  */
 class IEventRouter
 {

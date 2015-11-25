@@ -21,9 +21,22 @@
 #include "FrameworkApi.h"
 #include "SignalChainEvent.h"
 
+/**
+ * @brief Note on signal chain event.
+ *
+ * Note on event is generated when the key is pressed.
+ *
+ * @see NoteOffEvent.
+ */
 class QMUSIC_FRAMEWORK_API NoteOnEvent : public SignalChainEvent
 {
 public:
+
+    /**
+     * Construct note on event.
+     * @param number Note number [0..127].
+     * @param velocity Note velocity [0..127].
+     */
     NoteOnEvent(int number = -1, int velocity = 0);
     NoteOnEvent(const NoteOnEvent &evt);
     NoteOnEvent& operator =(const NoteOnEvent &evt);

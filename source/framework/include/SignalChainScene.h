@@ -33,7 +33,7 @@ class AudioUnit;
 class AudioUnitPlugin;
 
 /**
- * Graphics scene used to visualize and edit signal chain.
+ * @brief Graphics scene used to visualize and edit signal chain.
  *
  * The scene handles drag-and-drop operations between the sudio units library
  * and the signal chain canvas.

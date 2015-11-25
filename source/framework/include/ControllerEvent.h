@@ -21,24 +21,54 @@
 #include "FrameworkApi.h"
 #include "SignalChainEvent.h"
 
+/**
+ * @brief Controller change event.
+ *
+ * This class represents a MIDI controller value change event.
+ * A controler is identified by its number.
+ * Controller's value is limited (in MIDI) to [0..127] range.
+ */
 class QMUSIC_FRAMEWORK_API ControllerEvent : public SignalChainEvent
 {
 public:
-    ControllerEvent(int number = 0, int value = 0);
-    ControllerEvent(const ControllerEvent &evt);
-    ControllerEvent& operator =(const ControllerEvent &evt);
-    SignalChainEvent* clone() const;
 
+    /**
+     * Construct controller event.
+     * @param number Controller number.
+     * @param value Controller value.
+     */
+    ControllerEvent(int number = 0, int value = 0);
+
+    /**
+     * Copy constructor.
+     * @param evt
+     */
+    ControllerEvent(const ControllerEvent &evt);
+
+    /**
+     * Assignment operator.
+     * @param evt
+     * @return
+     */
+    ControllerEvent& operator =(const ControllerEvent &evt);
+
+    // from SignalChainEvent
+    SignalChainEvent* clone() const;
     QString toString() const;
 
     int controlNumber() const { return m_number; }
     int controlValue() const { return m_value; }
 
+    /**
+     * Returns controller value within [0..1] range as
+     * a floating point number.
+     * @return
+     */
     float normalizedControlValue() const;
 
 private:
-    int m_number;
-    int m_value;
+    int m_number;   ///< Controller number.
+    int m_value;    ///< Controller value.
 };
 
 #endif // CONTROLLEREVENT_H

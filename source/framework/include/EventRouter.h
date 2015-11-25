@@ -25,12 +25,23 @@
 
 /**
  * @brief Signal chain events router implementation.
+ *
+ * Event router accepts signal chain events and distributes
+ * them to the rigistered listeners.
+ *
+ * There is normally a global event router residing in the
+ * main \ref Application class.
  */
 class EventRouter : public QObject,
                     public IEventRouter
 {
     Q_OBJECT
 public:
+
+    /**
+     * Construct event router.
+     * @param pParent
+     */
     EventRouter(QObject *pParent = nullptr);
     ~EventRouter();
 
@@ -44,14 +55,19 @@ public:
 
 signals:
 
+    /// Internal signal used to trigger event handlers.
     void triggerProcessEvents();
 
 private slots:
 
+    /// Internal slot used to perform queued event processing.
     void doPprocessEvents();
 
 private:
 
+    /**
+     * Clear an delete all unhandled events.
+     */
     void purgeUnsafe();
 
     /**
