@@ -15,8 +15,8 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
 #include <QThread>
+#include <QGraphicsPixmapItem>
 #include "Application.h"
 #include "Settings.h"
 #include "AudioDevicesManager.h"
@@ -76,6 +76,20 @@ Speaker::~Speaker()
 QColor Speaker::color() const
 {
     return cDefaultColor;
+}
+
+int Speaker::flags() const
+{
+     return Flag_SingleInstance
+             | Flag_NoTitle
+             | Flag_NoFrame;
+
+}
+
+QGraphicsItem* Speaker::graphicsItem()
+{
+    QGraphicsPixmapItem *pItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":/au-speaker/speaker_48.png")));
+    return pItem;
 }
 
 void Speaker::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
