@@ -30,6 +30,8 @@ public:
     ~MidiIn();
 
     QColor color() const override;
+    int flags() const override;
+    QGraphicsItem* graphicsItem() override;
 
     // ISerializable interface
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;

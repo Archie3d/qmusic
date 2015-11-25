@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/au-midi-in">
         <file>icon.png</file>
+        <file>piano_48.png</file>
     </qresource>
 </RCC>

@@ -50,6 +50,19 @@ QColor MidiIn::color() const
     return cDefaultColor;
 }
 
+int MidiIn::flags() const
+{
+     return Flag_NoTitle
+             | Flag_NoFrame;
+
+}
+
+QGraphicsItem* MidiIn::graphicsItem()
+{
+    QGraphicsPixmapItem *pItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":/au-midi-in/piano_48.png")));
+    return pItem;
+}
+
 void MidiIn::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
