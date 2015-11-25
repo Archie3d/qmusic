@@ -15,7 +15,7 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
+#include <QGraphicsPixmapItem>
 #include <QtVariantPropertyManager>
 #include <QtVariantProperty>
 #include <qmath.h>
