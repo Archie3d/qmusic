@@ -47,10 +47,12 @@ endforeach()
 
 set(${PROJECT_NAME}_INCLUDES ${INCLUDES} CACHE INTERNAL "${PROJECT_NAME} library includes" FORCE)
 
-add_definitions(-DPA_USE_ASIO=1)
-add_definitions(-DPA_USE_WDMKS=1)
-add_definitions(-DPA_USE_WASAPI=1)
-add_definitions(-DPA_USE_WMME=1)
+if(WIN32)
+    add_definitions(-DPA_USE_ASIO=1)
+    add_definitions(-DPA_USE_WDMKS=1)
+    add_definitions(-DPA_USE_WASAPI=1)
+    add_definitions(-DPA_USE_WMME=1)
+endif()
 
 # Disable compiler warnings
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
