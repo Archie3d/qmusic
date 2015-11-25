@@ -23,6 +23,8 @@
 #include "AudioUnit.h"
 #include "SpeakerThreadObject.h"
 
+#define CLAMP(v)    qMax(-1.0f, qMin((v), 1.0f))
+
 SpeakerThreadObject::SpeakerThreadObject(long bufferSize, QObject *pParent)
     : QObject(pParent),
       m_bufferSize(bufferSize)
@@ -117,7 +119,8 @@ float SpeakerThreadObject::getNextLeftChannelSample()
     if (m_pSignalChain->isEnabled()) {
         // We do not update the input as it has been updated
         // during the chain group update.
-        return m_pLeftChannelInput->value();
+        float value = m_pLeftChannelInput->value();
+        return CLAMP(value);
     }
     return 0.0f;
 }
@@ -127,7 +130,8 @@ float SpeakerThreadObject::getNextRightChannelSample()
     if (m_pSignalChain->isEnabled()) {
         // We do not update the input as it has been updated
         // during the chain group update.
-        return m_pRightChannelInput->value();
+        float value = m_pRightChannelInput->value();
+        return CLAMP(value);
     }
     return 0.0f;
 }
