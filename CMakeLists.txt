@@ -82,12 +82,10 @@ add_subdirectory(externals)
 add_subdirectory(source)
 
 # Install patches
-# Process help files
 set(PATCHES_SRC "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 set(PATCHES_DIRECTORY ${PROJECT_BINARY_DIR}/target/bin)
 file(COPY ${PATCHES_SRC} DESTINATION ${PATCHES_DIRECTORY})
 install(DIRECTORY ${PATCHES_SRC} DESTINATION ${INSTALL_PATCHES_PATH} COMPONENT patches)
-
 
 include(install_qt)
 include(make_package)
