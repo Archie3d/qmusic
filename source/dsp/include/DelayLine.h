@@ -60,6 +60,12 @@ public:
      */
     double process(double x);
 
+    /**
+     * Returns maximum possible delay (in samples).
+     * @return
+     */
+    int samplesMax() const { return m_nSamplesMax; }
+
 private:
 
     int m_nSamples;     ///< Number of samples to delay.

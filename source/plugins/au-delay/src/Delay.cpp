@@ -58,13 +58,18 @@ void Delay::processStart()
 {
     float delayMs = m_pPropDelay->value().toFloat();
     m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
-    m_pDelayLine = new DelayLine(m_delaySamples);
+    if (m_pDelayLine == nullptr || m_pDelayLine->samplesMax() != m_delaySamples) {
+        // (re-)allocate delay line object
+        delete m_pDelayLine;
+        m_pDelayLine = new DelayLine(m_delaySamples);
+    }
+    m_pDelayLine->reset();
 }
 
 void Delay::processStop()
 {
-    delete m_pDelayLine;
-    m_pDelayLine = nullptr;
+    // We do not delete delay line here to avoid
+    // race condition when processing is still running.
 }
 
 void Delay::process()

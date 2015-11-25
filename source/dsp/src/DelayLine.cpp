@@ -26,6 +26,8 @@ DelayLine::DelayLine(int nSamplesMax)
     Q_ASSERT(nSamplesMax > 0);
 
     m_nSamples = 0;
+    m_inIndex = 0;
+    m_outIndex = 0;
 
     allocate(nSamplesMax);
 }
