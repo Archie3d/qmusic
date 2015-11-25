@@ -25,14 +25,15 @@ ExprEditorDialog::ExprEditorDialog(QWidget *pParent)
 
     m_pExprSyntaxHighlighter = new ExprSyntaxHighlighter(m_pTextEdit->document());
 
-    QVBoxLayout *pWarningLayout = new QVBoxLayout();
-    pWarningLayout->setMargin(6);
-    QLabel *pWarningLabel = new QLabel(tr("Watch out: errors in the script may cause the entire application to crash."));
+    QVBoxLayout *pNoteLayout = new QVBoxLayout();
+    pNoteLayout->setMargin(3);
+    QLabel *pNoteLabel = new QLabel(tr("<a href=\"http://www.partow.net/programming/exprtk/\">ExprTk syntax description</a>"));
+    pNoteLabel->setOpenExternalLinks(true);
 
-    pWarningLayout->addWidget(pWarningLabel);
+    pNoteLayout->addWidget(pNoteLabel);
 
     QVBoxLayout *pButtonsLayout = new QVBoxLayout();
-    pButtonsLayout->setMargin(6);
+    pButtonsLayout->setMargin(3);
 
     QDialogButtonBox *pButtonBox = new QDialogButtonBox();
     QPushButton *pOkButton = pButtonBox->addButton(QDialogButtonBox::Ok);
@@ -44,7 +45,7 @@ ExprEditorDialog::ExprEditorDialog(QWidget *pParent)
     pButtonsLayout->addWidget(pButtonBox);
 
     pLayout->addWidget(m_pTextEdit);
-    pLayout->addLayout(pWarningLayout);
+    pLayout->addLayout(pNoteLayout);
     pLayout->addLayout(pButtonsLayout);
 
     setLayout(pLayout);
