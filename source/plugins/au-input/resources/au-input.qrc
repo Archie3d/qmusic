@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/au-input">
         <file>icon.png</file>
+        <file>microphone_48.png</file>
     </qresource>
 </RCC>

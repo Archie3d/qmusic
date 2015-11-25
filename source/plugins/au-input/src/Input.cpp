@@ -15,7 +15,7 @@
     Lesser General Public License for more details.
 */
 
-#include <QDebug>
+#include <QGraphicsPixmapItem>
 #include "portaudio.h"
 #include "Application.h"
 #include "Settings.h"
@@ -51,6 +51,19 @@ Input::~Input()
 QColor Input::color() const
 {
     return cDefaultColor;
+}
+
+int Input::flags() const
+{
+    return Flag_SingleInstance
+            | Flag_NoTitle
+            | Flag_NoFrame;
+}
+
+QGraphicsItem* Input::graphicsItem()
+{
+    QGraphicsPixmapItem *pItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":/au-input/microphone_48.png")));
+    return pItem;
 }
 
 void Input::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)

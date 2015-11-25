@@ -33,8 +33,8 @@ public:
     ~Input();
 
     QColor color() const override;
-
-    int flags() const override { return Flag_SingleInstance; }
+    int flags() const override;
+    QGraphicsItem* graphicsItem() override;
 
     void processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples) override;
 
