@@ -1,5 +1,12 @@
 # Install Qt libraries
 
+# Getting Qt version
+find_package(Qt5Core)
+string(REPLACE "." ";" QT_VERSION_LIST ${Qt5Core_VERSION_STRING})
+list(GET QT_VERSION_LIST 0 QT_MAJOR_VERSION)
+list(GET QT_VERSION_LIST 1 QT_MINOR_VERSION)
+list(GET QT_VERSION_LIST 2 QT_PATCH_LEVEL)
+
 set(QT_LIBS
     Qt5Core
     Qt5Gui
@@ -15,10 +22,16 @@ set(QT_PLATFORM_LIBS
     qwindows
 )
 
+set(ICU_VERSION "53")
+
+if (QT_MINOR_VERSION EQUAL 5)
+    set(ICU_VERSION "54")
+endif()
+
 set(ICU_LIBS
-    icudt54
-    icuin54
-    icuuc54
+    icudt${ICU_VERSION}
+    icuin${ICU_VERSION}
+    icuuc${ICU_VERSION}
 )
 
 if(WIN32)

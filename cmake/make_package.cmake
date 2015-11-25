@@ -14,8 +14,8 @@ if(WIN32 AND NOT UNIX)
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\QMusic.bmp")
     set(CPACK_NSIS_INSTALLED_ICON_NAME "QMusic.exe")
     set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} QMusic")
-    set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\github.com")
-    set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\github.com")
+    set(CPACK_NSIS_HELP_LINK "http://github.com/Archie3d/qmusic")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://github.com/Archie3d/qmusic")
     set(CPACK_NSIS_CONTACT "arthur.benilov@gmail.com")
     set(CPACK_NSIS_MODIFY_PATH ON)
     set(CPACK_CREATE_DESKTOP_LINKS "QMusic")
@@ -33,6 +33,14 @@ cpack_add_component(runtime
 cpack_add_component(plugins
     DISPLAY_NAME "Plug-ins"
     DESCRIPTION "QMusic plug-ins"
+    DEPENDS runtime
+    GROUP "Application"
+    INSTALL_TYPES Full
+)
+
+cpack_add_component(patches
+    DISPLAY_NAME "Patches"
+    DESCRIPTION "QMusic ready to use patches"
     DEPENDS runtime
     GROUP "Application"
     INSTALL_TYPES Full

@@ -41,6 +41,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 # Installation destination
 set(INSTALL_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin)
 set(INSTALL_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+set(INSTALL_PATCHES_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+
 
 # Path to look for custom CMake scripts
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -78,6 +80,14 @@ add_subdirectory(externals)
 
 # Process source code
 add_subdirectory(source)
+
+# Install patches
+# Process help files
+set(PATCHES_SRC "${CMAKE_CURRENT_SOURCE_DIR}/patches")
+set(PATCHES_DIRECTORY ${PROJECT_BINARY_DIR}/target/bin)
+file(COPY ${PATCHES_SRC} DESTINATION ${PATCHES_DIRECTORY})
+install(DIRECTORY ${PATCHES_SRC} DESTINATION ${INSTALL_PATCHES_PATH} COMPONENT patches)
+
 
 include(install_qt)
 include(make_package)
