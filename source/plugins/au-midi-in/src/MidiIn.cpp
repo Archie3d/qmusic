@@ -54,7 +54,6 @@ int MidiIn::flags() const
 {
      return Flag_NoTitle
              | Flag_NoFrame;
-
 }
 
 QGraphicsItem* MidiIn::graphicsItem()
