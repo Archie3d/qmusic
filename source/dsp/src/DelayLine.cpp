@@ -77,9 +77,6 @@ void DelayLine::reset()
 {
     Q_ASSERT(m_pBuffer != nullptr);
     memset(m_pBuffer, 0, sizeof(double) * m_nSamplesMax);
-    m_inIndex = 0;
-    m_outIndex = 0;
-    setDelay(m_nSamples);
 }
 
 double DelayLine::process(double x)

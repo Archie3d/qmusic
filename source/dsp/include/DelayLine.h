@@ -47,7 +47,7 @@ public:
     void setDelay(int nSamples);
 
     /**
-     * Reset the delat line.
+     * Reset the delay line.
      * This will clear the internal buffer by setting all the
      * samples to zero.
      */
