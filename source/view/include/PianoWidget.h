@@ -49,6 +49,8 @@ protected:
     void keyPressEvent(QKeyEvent *pEvent);
     void keyReleaseEvent(QKeyEvent *pEvent);
 
+    bool eventFilter(QObject *pObject, QEvent *pEvent);
+
 private:
 
     int numberOfOctaves() const;

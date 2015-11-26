@@ -27,8 +27,13 @@ PianoKeyboardWindow::PianoKeyboardWindow(QWidget *pParent)
     setObjectName("pianoKeyboardWindow");
     setWindowTitle(tr("Piano keyboard"));
 
-    m_pPianoWidget = new PianoWidget();
+    m_pPianoWidget = new PianoWidget();    
     setWidget(m_pPianoWidget);
+
+    // Install parent widget event filtering to capture key events
+    if (pParent != nullptr) {
+        pParent->installEventFilter(m_pPianoWidget);
+    }
 }
 
 void PianoKeyboardWindow::reset()

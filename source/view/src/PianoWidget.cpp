@@ -195,6 +195,20 @@ void PianoWidget::keyReleaseEvent(QKeyEvent *pEvent)
     QWidget::keyReleaseEvent(pEvent);
 }
 
+bool PianoWidget::eventFilter(QObject *pObject, QEvent *pEvent)
+{
+    Q_UNUSED(pObject);
+
+    if (pEvent->type() == QEvent::KeyPress) {
+        QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent*>(pEvent);
+        keyPressEvent(pKeyEvent);
+    } else if (pEvent->type() == QEvent::KeyRelease) {
+        QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent*>(pEvent);
+        keyReleaseEvent(pKeyEvent);
+    }
+    return false;
+}
+
 int PianoWidget::numberOfOctaves() const
 {
     return 10;
