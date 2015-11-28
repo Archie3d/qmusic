@@ -9,6 +9,7 @@ and synthesis signal chains.
 # Playing
 There are some signal chains examples provided in **patches** folder of the source tree.
 [See wiki to hear how it sounds](https://github.com/Archie3d/qmusic/wiki).
+
 [Listen to even more sounds](https://soundcloud.com/arthur-benilov/sets/qmusic-synthesizer).
 
 ![Screenshot 1](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_1.png)
