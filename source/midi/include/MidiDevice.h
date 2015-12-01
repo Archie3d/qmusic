@@ -56,8 +56,6 @@ public:
     int channel() const { return m_channel; }
     void setChannel(int ch) { m_channel = ch; }
     QString name() const { return m_name; }
-    quint16 manufacturerId() const { return m_manufacturerId; }
-    quint16 productId() const { return m_productId; }
 
     /**
      * @brief Tells whether this device is valid and can be used.
@@ -80,8 +78,6 @@ protected:
 
     void setValid(bool v) { m_valid = v; }
     void setName(const QString &n) { m_name = n; }
-    void setManufacturerId(quint16 id) { m_manufacturerId = id; }
-    void setProductId(quint16 id) { m_productId = id; }
 
 private:
 
@@ -90,8 +86,6 @@ private:
     int m_channel;  ///< Midi channel.
     Type m_type;    ///< Device type.
     QString m_name; ///< Device name.
-    quint16 m_manufacturerId;   ///< Device manufacturer ID.
-    quint16 m_productId;        ///< Device product ID.
 };
 
 #endif // MIDIDEVICE_H

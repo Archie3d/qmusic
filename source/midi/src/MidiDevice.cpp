@@ -16,10 +16,7 @@
 */
 
 #include <qglobal.h>
-#ifdef Q_OS_WIN
-#   include <Windows.h>
-#   include <mmsystem.h>
-#endif
+#include "RtMidi.h"
 #include "mididevice.h"
 
 MidiDevice::MidiDevice(Type type, int number)
@@ -27,20 +24,20 @@ MidiDevice::MidiDevice(Type type, int number)
       m_number(number),
       m_channel(1),
       m_type(type),
-      m_name(),
-      m_manufacturerId(0),
-      m_productId(0)
+      m_name()
 {
 }
 
 int MidiDevice::getNumberOfInputDevices()
 {
-    return midiInGetNumDevs();
+    RtMidiIn midiIn;
+    return midiIn.getPortCount();
 }
 
 int MidiDevice::getNumberOfOutputDevices()
 {
-    return midiOutGetNumDevs();
+    RtMidiOut midiOut;
+    return midiOut.getPortCount();
 }
 
 QList<MidiDevice::Description> MidiDevice::enumerateDevices()
@@ -52,21 +49,19 @@ QList<MidiDevice::Description> MidiDevice::enumerateDevices()
 
 QList<MidiDevice::Description> MidiDevice::enumerateInputDevices()
 {
-    QList<MidiDevice::Description> devs;
-    int n = getNumberOfInputDevices();
-    for (int i = 0; i < n; i++) {
-        MIDIINCAPS devCaps;
-        MMRESULT r = midiInGetDevCaps(i,
-                                      &devCaps,
-                                      sizeof(MIDIINCAPS));
+    RtMidiIn midiIn;
 
-        if (r == MMSYSERR_NOERROR) {
-            Description desc;
-            desc.number = i;
-            desc.type = Type_Input;
-            //desc.name = QString::fromWCharArray(devCaps.szPname);
-            desc.name = QString::fromLatin1(devCaps.szPname);
+    QList<MidiDevice::Description> devs;
+    int n = midiIn.getPortCount();
+    for (int i = 0; i < n; i++) {
+        Description desc;
+        desc.number = i;
+        desc.type = Type_Input;
+        try {
+            desc.name = QString::fromStdString(midiIn.getPortName(i));
             devs.append(desc);
+        } catch (RtMidiError &err) {
+            Q_UNUSED(err);
         }
     }
     return devs;
@@ -74,21 +69,19 @@ QList<MidiDevice::Description> MidiDevice::enumerateInputDevices()
 
 QList<MidiDevice::Description> MidiDevice::enumerateOutputDevices()
 {
-    QList<MidiDevice::Description> devs;
-    int n = getNumberOfOutputDevices();
-    for (int i = 0; i < n; i++) {
-        MIDIOUTCAPS devCaps;
-        MMRESULT r = midiOutGetDevCaps(i,
-                                      &devCaps,
-                                      sizeof(MIDIOUTCAPS));
+    RtMidiOut midiOut;
 
-        if (r == MMSYSERR_NOERROR) {
-            Description desc;
-            desc.number = i;
-            desc.type = Type_Output;
-            //desc.name = QString::fromWCharArray(devCaps.szPname);
-            desc.name = QString::fromLatin1(devCaps.szPname);
+    QList<MidiDevice::Description> devs;
+    int n = midiOut.getPortCount();
+    for (int i = 0; i < n; i++) {
+        Description desc;
+        desc.number = i;
+        desc.type = Type_Output;
+        try {
+           desc.name = QString::fromStdString(midiOut.getPortName(i));
             devs.append(desc);
+        } catch (RtMidiError &err) {
+            Q_UNUSED(err);
         }
     }
     return devs;
