@@ -18,5 +18,7 @@ include(parse_tests)
 
 # Install this shared library
 install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${INSTALL_BIN_PATH} COMPONENT plugins)
+        RUNTIME DESTINATION ${INSTALL_BIN_PATH}
+        LIBRARY DESTINATION ${INSTALL_LIB_PATH}
+        COMPONENT plugins)
 

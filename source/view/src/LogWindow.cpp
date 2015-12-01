@@ -41,8 +41,6 @@ LogWindow::LogWindow(QWidget *pParent)
 
     setWidget(m_pLogText);
 
-    QListView;
-
     connect(Application::instance()->logger(), SIGNAL(logged(Logger::Level,QString)),
             this, SLOT(onLogged(Logger::Level,QString)));
 }

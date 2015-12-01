@@ -199,7 +199,7 @@ void SpeakerThreadObject::generateSamples()
 
 void SpeakerThreadObject::setDspLoad(float l)
 {
-    float dl = fabs(m_dspLoad - l);
+    float dl = qAbs(m_dspLoad - l);
     if (dl >= 0.05) {
         // Do some averaging to filter rapid changes
         m_dspLoad = m_dspLoad * 0.9 + l * 0.1;

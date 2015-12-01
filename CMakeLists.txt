@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.10)
 
 if(${CMAKE_MAJOR_VERSION} GREATER 2)
+    cmake_policy(SET CMP0042 OLD)
     cmake_policy(SET CMP0043 OLD)
     cmake_policy(SET CMP0054 OLD)
 endif()
@@ -36,7 +37,8 @@ set(CMAKE_BUILD_TESTS ON CACHE BOOL "Build unit tests")
 # Target directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/target/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/target/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Installation destination
 set(INSTALL_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin)
@@ -66,6 +68,11 @@ if(WIN32)
     set(QT_DIR $ENV{QT5_PATH})
     set(WINSDK_LIB_DIR $ENV{WINSDK_PATH})
     set(CMAKE_LIBRARY_PATH "${QT_DIR};${WINSDK_LIB_DIR}")
+endif()
+
+if(APPLE)
+    # Enable C++11 for clang on OS X
+    set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
 endif()
 
 # Qt-related flags

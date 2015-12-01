@@ -156,6 +156,9 @@ unsigned int MidiMessage::pressure() const
     case Status_ChannelAftertouch:
         p = (m_rawData & 0x00007F00) >> 8;
         break;
+    default:
+        // No pressure value associated with this message
+        break;
     }
     return p;
 }

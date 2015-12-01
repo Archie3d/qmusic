@@ -548,5 +548,5 @@ SignalChainAudioUnitItem* SignalChainScene::findAudioUnitInstance(const QString 
             }
         }
     }
-    return false;
+    return nullptr;
 }

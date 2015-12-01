@@ -18,6 +18,15 @@ if(WIN32)
     list(APPEND SRCS
          ${CMAKE_CURRENT_SOURCE_DIR}/host/pc/asiolist.cpp
     )
+elseif(APPLE)
+    list(APPEND INCLUDES
+         ${CMAKE_CURRENT_SOURCE_DIR}/host/mac
+    )
+
+    list(APPEND SRCS
+         ${CMAKE_CURRENT_SOURCE_DIR}/host/mac/asioshlib.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/host/mac/codefragments.cpp
+    )
 endif()
 
 include_directories(${INCLUDES})
