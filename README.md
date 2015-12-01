@@ -28,4 +28,3 @@ Compilation tested with MS Windows (Visual C++ 2013), and Mac OS X.
 
 # Issues
 This software is work in progress.
-At the moment it can be compiled for MS Windows (with Visual C++ 2013).
