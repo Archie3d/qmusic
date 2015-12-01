@@ -16,24 +16,11 @@
 */
 
 #include <qglobal.h>
-#include <QDebug>
-#ifdef Q_OS_WIN
-#   include <Windows.h>
-#   include <mmsystem.h>
-#endif
 #include <QMap>
 #include <QList>
+#include "RtMidi.h"
 #include "MidiMessage.h"
 #include "MidiInputDevice.h"
-
-const QMap<MMRESULT, QString> cErrToString = {
-    {MMSYSERR_NOERROR, "No error"},
-    {MMSYSERR_ALLOCATED, "The specified resource is already allocated"},
-    {MMSYSERR_BADDEVICEID, "The specified device identifier is out of range"},
-    {MMSYSERR_INVALFLAG, "Invalid flag specified"},
-    {MMSYSERR_INVALPARAM, "Invalid parameter specified"},
-    {MMSYSERR_NOMEM, "The system is unable to allocate or lock memory"}
-};
 
 
 // can be used for short, unsigned short, word, unsigned word (2-byte types)
@@ -47,36 +34,31 @@ const QMap<MMRESULT, QString> cErrToString = {
 
 struct MidiInputDevicePrivate
 {
-    HMIDIIN handle; ///< System handle.
+    RtMidiIn *pMidiIn;
     bool deviceIsOpen;
     QList<IMidiInputListener*> listeners;
 };
 
-void CALLBACK midiInProc(HMIDIIN hMidiIn, UINT msg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+/// MIDI input callback function
+void midiInCallback(double deltatime, std::vector<unsigned char> *pMessage, void *pUserData )
 {
-    Q_ASSERT(dwInstance);
-    Q_UNUSED(hMidiIn);
-    Q_UNUSED(dwParam1);
-    Q_UNUSED(dwParam2);
-    MidiInputDevice *pDev = reinterpret_cast<MidiInputDevice*>(dwInstance);
+    Q_ASSERT(pUserData != nullptr);
+    MidiInputDevice *pDev = static_cast<MidiInputDevice*>(pUserData);
 
-    switch(msg) {
-    case MIM_OPEN:
-        break;
-    case MIM_CLOSE:
-        break;
-    case MIM_DATA:
-        pDev->acceptMessage(BYTESWAP32(dwParam1) >> 8);
-        break;
-    default:
-        break;
+    size_t nBytes = pMessage->size();
+    for (unsigned int i = 0; i < nBytes; i++) {
+        qDebug() << i << (int)pMessage->at(i);
     }
+
+    // TODO pass word value here
+    pDev->acceptMessage(0);
 }
 
 MidiInputDevice::MidiInputDevice(int number)
     : MidiDevice(Type_Input, number)
 {
     m = new MidiInputDevicePrivate;
+    m->pMidiIn = new RtMidiIn();
     m->deviceIsOpen = false;
     setValid(validateDevice());
 }
@@ -84,27 +66,23 @@ MidiInputDevice::MidiInputDevice(int number)
 MidiInputDevice::~MidiInputDevice()
 {
     close();
+    delete m->pMidiIn;
     delete m;
 }
 
 bool MidiInputDevice::open()
 {
+    Q_ASSERT(m->pMidiIn != nullptr);
+
     if (isOpen()) {
         // Device is already open.
         qWarning() << "MIDI In device is already open";
         return true;
     }
 
-    MMRESULT r = midiInOpen(&m->handle,
-                            number(),
-                            reinterpret_cast<DWORD_PTR>(midiInProc),
-                            reinterpret_cast<DWORD_PTR>(this),
-                            CALLBACK_FUNCTION);
-
-    if (r != MMSYSERR_NOERROR) {
-        qCritical() << "MIDI In:" << cErrToString.value(r, "Unknown error");
-        return false;
-    }
+    m->pMidiIn->openPort(number());
+    // Do not ignore  sysex, timing, or active sensing
+    m->pMidiIn->ignoreTypes(false, false, false);
 
     m->deviceIsOpen = true;
     return true;
@@ -121,8 +99,9 @@ bool MidiInputDevice::start()
         qCritical() << "MIDI In device is open open, unable to start";
         return false;
     }
-    MMRESULT r = midiInStart(m->handle);
-    return r != MMSYSERR_NOERROR;
+
+    m->pMidiIn->setCallback(&midiInCallback, this);
+    return true;
 }
 
 bool MidiInputDevice::stop()
@@ -131,8 +110,9 @@ bool MidiInputDevice::stop()
         qCritical() << "MIDI In device is not open, unable to stop";
         return false;
     }
-    MMRESULT r = midiInStop(m->handle);
-    return r != MMSYSERR_NOERROR;
+
+    m->pMidiIn->cancelCallback();
+    return true;
 }
 
 
@@ -142,11 +122,7 @@ bool MidiInputDevice::close()
         return true;
     }
 
-    MMRESULT r = midiInClose(m->handle);
-    if (r != MMSYSERR_NOERROR) {
-        qCritical() << "Failed to close MIDI In device";
-        return false;
-    }
+    m->pMidiIn->closePort();
 
     m->deviceIsOpen = false;
     return true;
@@ -166,6 +142,10 @@ void MidiInputDevice::removeListener(IMidiInputListener *pListener)
 
 void MidiInputDevice::acceptMessage(unsigned int msg)
 {
+    if (!m->deviceIsOpen) {
+        return;
+    }
+
     // Message received.
     MidiMessage midiMessage(msg);
 
@@ -182,22 +162,8 @@ bool MidiInputDevice::validateDevice()
         return false;
     }
 
-    MIDIINCAPS devCaps;
-    MMRESULT r = midiInGetDevCaps(number(),
-                                  &devCaps,
-                                  sizeof(MIDIINCAPS));
-
-    if (r != MMSYSERR_NOERROR) {
-        // Unable to get device capabilities
-        return false;
-    }
-
-    //QString devName = QString::fromWCharArray(devCaps.szPname);
-    QString devName = QString::fromLatin1(devCaps.szPname);
+    QString devName = QString::fromStdString(m->pMidiIn->getPortName(number()));
     setName(devName);
-    setManufacturerId(devCaps.wMid);
-    setProductId(devCaps.wPid);
-
     return true;
 }
 
