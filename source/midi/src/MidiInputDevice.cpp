@@ -23,15 +23,6 @@
 #include "MidiInputDevice.h"
 
 
-// can be used for short, unsigned short, word, unsigned word (2-byte types)
-#define BYTESWAP16(n) (((n&0xFF00)>>8)|((n&0x00FF)<<8))
-
-// can be used for int or unsigned int or float (4-byte types)
-#define BYTESWAP32(n) ((BYTESWAP16((n&0xFFFF0000)>>16))|((BYTESWAP16(n&0x0000FFFF))<<16))
-
-// can be used for unsigned long long or double (8-byte types)
-#define BYTESWAP64(n) ((BYTESWAP32((n&0xFFFFFFFF00000000)>>32))|((BYTESWAP32(n&0x00000000FFFFFFFF))<<32))
-
 struct MidiInputDevicePrivate
 {
     RtMidiIn *pMidiIn;
@@ -42,16 +33,19 @@ struct MidiInputDevicePrivate
 /// MIDI input callback function
 void midiInCallback(double deltatime, std::vector<unsigned char> *pMessage, void *pUserData )
 {
+    Q_UNUSED(deltatime);
     Q_ASSERT(pUserData != nullptr);
     MidiInputDevice *pDev = static_cast<MidiInputDevice*>(pUserData);
 
     size_t nBytes = pMessage->size();
-    for (unsigned int i = 0; i < nBytes; i++) {
-        qDebug() << i << (int)pMessage->at(i);
-    }
+    if (nBytes <= 4) {
+        unsigned int msg = 0;
+        for (unsigned int i = 0; i < nBytes; i++) {
+            msg = (msg << 8) |((unsigned char)pMessage->at(i));
+        }
 
-    // TODO pass word value here
-    pDev->acceptMessage(0);
+        pDev->acceptMessage(msg);
+    }
 }
 
 MidiInputDevice::MidiInputDevice(int number)
