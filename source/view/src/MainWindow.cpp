@@ -293,6 +293,11 @@ void MainWindow::createActions()
 
 void MainWindow::createMenu()
 {
+#ifdef Q_OS_OSX
+    // Qt5 has some problems with menubar on OS X
+    menuBar()->setNativeMenuBar(false);
+#endif
+
     m_pFileMenu = menuBar()->addMenu(tr("&File"));
     m_pFileMenu->addAction(m_pNewSignalChainAction);
     m_pFileMenu->addAction(m_pOpenSignalChainAction);

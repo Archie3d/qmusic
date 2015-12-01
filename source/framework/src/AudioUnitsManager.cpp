@@ -23,6 +23,13 @@
 #include "AudioUnitPlugin.h"
 #include "AudioUnitsManager.h"
 
+const QString cPluginPrefix =
+#ifdef Q_OS_OSX
+    "libau-";
+#elif Q_OS_WIN32
+    "au-";
+#endif
+
 AudioUnitsManager::AudioUnitsManager(QObject *pParent)
     : QObject(pParent),
       m_loaders()
@@ -60,7 +67,7 @@ void AudioUnitsManager::initialize()
     // Compose list of plugin candidates
     QStringList list;
     foreach (QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot)) {
-        if (info.fileName().left(3) == "au-") {
+        if (info.fileName().left(cPluginPrefix.length()) == cPluginPrefix) {
             QString absolutePath = info.absoluteFilePath();
             if (QLibrary::isLibrary(absolutePath)) {
                 list.append(absolutePath);
