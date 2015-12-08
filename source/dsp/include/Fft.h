@@ -29,6 +29,13 @@ class QMUSIC_DSP_API Fft
 {
 public:
 
+    typedef enum {
+        Window_None,
+        Window_Hann,
+        Window_Hamming,
+        Window_Blackman
+    } Window;
+
     typedef std::complex<float> Complex;
     typedef std::valarray<Complex> Array;
 
@@ -36,7 +43,7 @@ public:
      * Perform direct FFT.
      * @param x Input data.
      */
-    static void direct(Array &x);
+    static void direct(Array &x, Window win = Window_None);
 
     /**
      * Perform inverse FFT.

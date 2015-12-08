@@ -15,14 +15,36 @@
     Lesser General Public License for more details.
 */
 
+#include <functional>
 #include <qmath.h>
+#include <QMap>
 #include "Fft.h"
+
+const QMap<Fft::Window, std::function<double(int, int)> > cWindows {
+    { Fft::Window_None, [](int i, int n) { return 1.0; } },
+    { Fft::Window_Hann, [](int i, int n) { return 0.5 * (1.0 - cos(2.0*M_PI*i/(n-1))); } },
+    { Fft::Window_Hamming, [](int i, int n) { return 0.53836 + 0.46164*cos(2.0*M_PI*i/(n - 1)); } },
+    { Fft::Window_Blackman, [](int i, int n) {
+            double x = 2.0*M_PI*i / (n-1);
+            return 0.42659 - 0.49656*cos(x) + 0.076849*cos(2.0*x);
+        }
+    }
+};
 
 // Source: http://rosettacode.org/wiki/Fast_Fourier_transform
 
+
+
 // Cooley-Tukey FFT
-void Fft::direct(Fft::Array &x)
+void Fft::direct(Fft::Array &x, Window win)
 {
+    if (win != Window_None) {
+        // Apply window
+        for (int i = 0; i < x.size(); i++) {
+            x[i] *= cWindows[win](i, static_cast<int>(x.size()));
+        }
+    }
+
     // DFT
     unsigned int N = (unsigned int)x.size(), k = N, n;
     double thetaT = M_PI / N;

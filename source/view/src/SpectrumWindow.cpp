@@ -19,6 +19,7 @@
 #include <qwt_plot.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_curve.h>
+#include <qwt_scale_engine.h>
 #include "Fft.h"
 #include "Application.h"
 #include "AudioDevicesManager.h"
@@ -28,8 +29,9 @@
 const QColor cWaveformColor("red");
 const QColor cSpectrumColor("navy");
 const QColor cAxisTitleColor("navy");
-const float cMaxFrequency(20000.0f);
-const float cDbScale(-240.0f);
+const float cMinFrequency(100.0f);
+const float cMaxFrequency(22000.0f);
+const float cDbScale(-320.0f);
 const QFont cAxisFont("Verdana", 7);
 const QFont cAxisTitleFont("Verdana", 7, QFont::Bold);
 
@@ -65,14 +67,14 @@ void SpectrumWindow::plotSpectrum()
         input[i] = m_signal.at(i);
     }
 
-    Fft::direct(input);
+    Fft::direct(input, Fft::Window_Hann);
 
     QVector<float> curve;
     for (int i = 0; i < input.size() / 2; i++) {
         float v = std::abs(input[i]);
-#if 0
+#if 1
         // Spectrum in dB.
-        v = 20 * log(v / 32.0f);
+        v = 20 * log(v / 16.0);
 #endif
         curve.append(v);
     }
@@ -134,18 +136,23 @@ void SpectrumWindow::createSpectrumPlot()
     m_pSpectrumPlot->setMinimumSize(0, 0);
     m_pSpectrumPlot->setBaseSize(0, 0);
     m_pSpectrumPlot->enableAxis(QwtPlot::xBottom, true);
-    m_pSpectrumPlot->enableAxis(QwtPlot::yLeft, false);
+    m_pSpectrumPlot->enableAxis(QwtPlot::yLeft, true);
+    QwtLogScaleEngine *pLogScale = new QwtLogScaleEngine();
+    m_pSpectrumPlot->setAxisScaleEngine(QwtPlot::xBottom, pLogScale);
     m_pSpectrumPlot->setAxisAutoScale(QwtPlot::xBottom, false);
-    m_pSpectrumPlot->setAxisScale(QwtPlot::xBottom, 0.0, cMaxFrequency);
+    m_pSpectrumPlot->setAxisScale(QwtPlot::xBottom, cMinFrequency, cMaxFrequency);
     m_pSpectrumPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
+
     m_pSpectrumPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
+
+
     QwtText title(tr("Frequency, Hz"));
     title.setFont(cAxisTitleFont);
     title.setColor(cAxisTitleColor);
     m_pSpectrumPlot->setAxisTitle(QwtPlot::xBottom, title);
     m_pSpectrumPlot->setAxisAutoScale(QwtPlot::yLeft, false);
-    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
-    //m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, cDbScale, 0.0);
+    //m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
+    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, cDbScale, 0.0);
     m_yAxisScale = 1.0;
 
     QwtPlotGrid *pGrid = new QwtPlotGrid();
@@ -201,6 +208,6 @@ void SpectrumWindow::plotSpectrumCurve(const QVector<float> &curve)
 
 void SpectrumWindow::updateYAxisScale()
 {    
-    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, qMin(100.0f, m_yAxisScale));
-    //m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, -120.0, 0.0);
+    //m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, 0.0, qMin(100.0f, m_yAxisScale));
+    m_pSpectrumPlot->setAxisScale(QwtPlot::yLeft, cDbScale, 0.0);
 }
