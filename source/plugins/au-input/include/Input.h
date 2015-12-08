@@ -48,6 +48,7 @@ private:
 
     void allocateBuffers();
     void releaseBuffers();
+    inline bool isBufferAllocated() const { return m_bufferAllocated; }
 
     AudioBuffer *m_pLeftBuffer;
     AudioBuffer *m_pRightBuffer;
@@ -57,6 +58,8 @@ private:
 
     float *m_pLeft;
     float *m_pRight;
+
+    bool m_bufferAllocated;
 };
 
 #endif // AU_INPUT_H

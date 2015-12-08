@@ -38,6 +38,8 @@ Input::Input(AudioUnitPlugin *pPlugin)
     m_pLeft = nullptr;
     m_pRight = nullptr;
 
+    m_bufferAllocated = false;
+
     Application::instance()->audioDevicesManager()->audioInputDevice()->addListener(this);
 }
 
@@ -68,7 +70,9 @@ QGraphicsItem* Input::graphicsItem()
 
 void Input::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
 {
-    if (pInputBuffer == nullptr || nSamples <= 0) {
+    if (pInputBuffer == nullptr
+            || !isBufferAllocated()
+            || nSamples <= 0) {
         // Nothing to process
         return;
     }
@@ -126,10 +130,14 @@ void Input::allocateBuffers()
     m_pRightBuffer = new AudioBuffer(2 * bufferSize);
     m_pLeft = new float[2 * bufferSize];
     m_pRight = new float[2 * bufferSize];
+
+    m_bufferAllocated = true;
 }
 
 void Input::releaseBuffers()
 {
+    m_bufferAllocated = false;
+
     delete m_pLeftBuffer;
     delete m_pRightBuffer;
     delete[] m_pLeft;
