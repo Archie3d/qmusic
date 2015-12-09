@@ -2,7 +2,7 @@
 QMusic is a visual dataflow programing environment that allows quick prototyping of audio processing
 and synthesis signal chains.
 
-[Download demo release for Windows 64-bit](https://github.com/Archie3d/qmusic/releases/download/v1.0.0-demo3/QMusic-1.0.0-win64.exe)
+[Download demo release for Windows 64-bit](https://github.com/Archie3d/qmusic/releases/download/v1.0.0-demo4/QMusic-1.0.0-win64.exe)
 
 # Playing
 There are some signal chains examples provided in **patches** folder of the source tree.
