@@ -75,6 +75,7 @@ void SpectrumWindow::plotSpectrum()
 #if 1
         // Spectrum in dB.
         v = 20 * log(v / 16.0);
+        v = qMax(v, cDbScale*1.2f); // Let the curve disappear
 #endif
         curve.append(v);
     }
