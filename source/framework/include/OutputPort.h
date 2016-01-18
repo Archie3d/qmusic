@@ -33,6 +33,9 @@
  */
 class QMUSIC_FRAMEWORK_API OutputPort : public Port
 {
+
+    friend class InputPort;
+
 public:
 
     /// Default constructor.
@@ -69,6 +72,15 @@ public:
      */
     int index() const override final;
 private:
+
+    /**
+     * Returns pointer to internal value holder.
+     * This is used to speed-up processing and should be used
+     * by connected input port only.
+     * @return
+     */
+    const float* valuePtr() const { return &m_value; }
+
 
     /// Value stored in this output port.
     float m_value;

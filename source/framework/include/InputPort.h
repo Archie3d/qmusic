@@ -102,6 +102,15 @@ private:
 
     /// Pointer to connected output port, if any.
     OutputPort *m_pConnectedOutputPort;
+
+    /**
+     * Pointer to the value holder.
+     * This will point to the connected output port value holder
+     * or to the default value of this port if not connected.
+     */
+    const float *m_pValue;
+
+    /// Default value used when port is not connected.
     float m_defaultValue;
 };
 

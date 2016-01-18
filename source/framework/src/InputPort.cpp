@@ -23,20 +23,27 @@
 InputPort::InputPort()
     : Port(Direction_Input),
       m_pConnectedOutputPort(nullptr),
-      m_defaultValue(0.0f)
+      m_defaultValue(0.0f),
+      m_pValue(&m_defaultValue)
 {
 }
 
 InputPort::InputPort(const QString &name, float defaultValue)
     : Port(Direction_Input, name),
       m_pConnectedOutputPort(nullptr),
-      m_defaultValue(defaultValue)
+      m_defaultValue(defaultValue),
+      m_pValue(&m_defaultValue)
 {
 }
 
 float InputPort::value() const
 {
-    return m_pConnectedOutputPort == nullptr ? m_defaultValue : m_pConnectedOutputPort->value();
+    // NOTE: This is a clean way to access the connected output port.
+    // However in order to improve the performance we keep the direct pointer
+    // to the connected output port value or to this class' default value
+    // if not connected.
+    // return m_pConnectedOutputPort == nullptr ? m_defaultValue : m_pConnectedOutputPort->value();
+    return *m_pValue;
 }
 
 void InputPort::update()
@@ -62,10 +69,13 @@ int InputPort::index() const
 
 void InputPort::connect(OutputPort *pOutput)
 {
+    Q_ASSERT(pOutput != nullptr);
     m_pConnectedOutputPort = pOutput;
+    m_pValue = pOutput->valuePtr();
 }
 
 void InputPort::disconnect()
 {
     m_pConnectedOutputPort = nullptr;
+    m_pValue = &m_defaultValue;
 }
