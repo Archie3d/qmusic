@@ -151,7 +151,10 @@ void Envelope::doEnvelope()
 void Envelope::noteOnEvent(NoteOnEvent *pEvent)
 {
     m_noteNumber = pEvent->noteNumber();
-    setState(State_Attack);
+    // Previous note has no been released - do legato (keel sustain state).
+    if (m_state != State_Sustain) {
+        setState(State_Attack);
+    }
 }
 
 void Envelope::noteOffEvent(NoteOffEvent *pEvent)
