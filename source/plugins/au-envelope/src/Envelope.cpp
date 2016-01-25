@@ -130,7 +130,13 @@ void Envelope::doEnvelope()
     case State_Decay:
         m_output = m_decayOffset + m_output * m_decayCoeff;
         if (m_output <= m_sustainLevel || m_decayTimeMs <= 0.0) {
-            setState(State_Sustain);
+            m_output = m_sustainLevel;
+            if (m_sustainLevel >= 0.0f) {
+                setState(State_Sustain);
+            } else {
+                // No need to sustain at zero level.
+                setState(State_Off);
+            }
         }
         break;
     case State_Sustain:
