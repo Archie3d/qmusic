@@ -23,20 +23,28 @@
 #include "DspApi.h"
 
 /**
- * Implement fast Fourier transformation
+ * @brief Implement fast Fourier transformation.
+ * This class performs direct and inverse fast Fourier transform
+ * including windowing.
  */
 class QMUSIC_DSP_API Fft
 {
 public:
 
+    /**
+     * Window type.
+     */
     typedef enum {
-        Window_None,
-        Window_Hann,
-        Window_Hamming,
-        Window_Blackman
+        Window_None,        ///< No window (square window).
+        Window_Hann,        ///< Hann window.
+        Window_Hamming,     ///< Hamming window.
+        Window_Blackman     ///< Blackman window.
     } Window;
 
+    /// Complex number based on float type.
     typedef std::complex<float> Complex;
+
+    /// Array of complex numbers.
     typedef std::valarray<Complex> Array;
 
     /**

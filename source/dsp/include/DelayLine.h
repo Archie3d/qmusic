@@ -35,6 +35,8 @@ public:
      * @param nSamplesMax Maximum number of samples to be delayed.
      */
     DelayLine(int nSamplesMax = 4096);
+
+    /// Destructor.
     ~DelayLine();
 
     void allocate(int nSamplesMax);
