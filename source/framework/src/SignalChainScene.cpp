@@ -176,7 +176,9 @@ void SignalChainScene::deleteAll()
 void SignalChainScene::setAudioUnitsMovable(bool v)
 {
     foreach(QGraphicsItem *pItem, items()) {
-        pItem->setFlag(QGraphicsItem::ItemIsMovable, v);
+        if (pItem->type() >= SignalChainItem::Type_First) {
+            pItem->setFlag(QGraphicsItem::ItemIsMovable, v);
+        }
     }
 }
 
