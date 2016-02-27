@@ -133,7 +133,7 @@ void Slider::createProperties()
     m_pPropMax->setAttribute("signleStep", 0.1);
 
     m_pPropSteps = propertyManager()->addProperty(QVariant::Int, "Steps");
-    m_pPropSteps->setValue(10);
+    m_pPropSteps->setValue(100);
     m_pPropSteps->setAttribute("minimum", 2);
 
     QVariantList list;
