@@ -17,6 +17,7 @@
 
 #include <QSplitter>
 #include <qwt_plot.h>
+#include <qwt_plot_picker.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_engine.h>
@@ -53,6 +54,12 @@ SpectrumWindow::SpectrumWindow(QWidget *pParent)
     pSplitter->insertWidget(1, m_pSpectrumPlot);
 
     setWidget(pSplitter);
+}
+
+SpectrumWindow::~SpectrumWindow()
+{
+    delete m_pWaveformPicker;
+    delete m_pSpectrumPicker;
 }
 
 void SpectrumWindow::plotWaveform()
@@ -116,6 +123,11 @@ void SpectrumWindow::createWaveformPlot()
     m_pWaveformPlot->setAxisAutoScale(QwtPlot::yLeft, false);
     m_pWaveformPlot->setAxisScale(QwtPlot::yLeft, -1.0, 1.0);
 
+    m_pWaveformPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
+                                          QwtPicker::CrossRubberBand,
+                                          QwtPicker::AlwaysOn,
+                                          m_pWaveformPlot->canvas());
+
     QwtPlotGrid *pGrid = new QwtPlotGrid();
     pGrid->enableXMin(true);
     pGrid->setMajorPen(Qt::darkGray, 0, Qt::DotLine);
@@ -146,6 +158,10 @@ void SpectrumWindow::createSpectrumPlot()
 
     m_pSpectrumPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
 
+    m_pSpectrumPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
+                                          QwtPicker::CrossRubberBand,
+                                          QwtPicker::AlwaysOn,
+                                          m_pSpectrumPlot->canvas());
 
     QwtText title(tr("Frequency, Hz"));
     title.setFont(cAxisTitleFont);

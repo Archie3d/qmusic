@@ -24,6 +24,7 @@
 
 class QwtPlot;
 class QwtPlotCurve;
+class QwtPlotPicker;
 
 class QMUSIC_VIEW_API SpectrumWindow : public QDockWidget
 {
@@ -31,6 +32,7 @@ class QMUSIC_VIEW_API SpectrumWindow : public QDockWidget
 public:
 
     SpectrumWindow(QWidget *pParent = nullptr);
+    ~SpectrumWindow();
 
     void plotWaveform();
     void plotSpectrum();
@@ -63,9 +65,11 @@ private:
 
     QwtPlot *m_pWaveformPlot;
     QwtPlotCurve *m_pWaveformCurve;
+    QwtPlotPicker *m_pWaveformPicker;
 
     QwtPlot *m_pSpectrumPlot;
     QwtPlotCurve *m_pSpectrumCurve;
+    QwtPlotPicker *m_pSpectrumPicker;
     float m_yAxisScale;
 };
 
