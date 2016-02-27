@@ -173,6 +173,13 @@ void SignalChainScene::deleteAll()
     clear();
 }
 
+void SignalChainScene::setAudioUnitsMovable(bool v)
+{
+    foreach(QGraphicsItem *pItem, items()) {
+        pItem->setFlag(QGraphicsItem::ItemIsMovable, v);
+    }
+}
+
 void SignalChainScene::copyToClipboard()
 {
     // Serialize selected items to byte array

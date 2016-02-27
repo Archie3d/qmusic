@@ -194,6 +194,7 @@ void MainWindow::startSignalChain()
     Application::instance()->audioDevicesManager()->startAudioDevices();
 
     // Start signal chain
+    m_pSignalChainWidget->scene()->setAudioUnitsMovable(false);
     m_pSignalChainWidget->scene()->signalChain()->start();
     m_pSignalChainWidget->scene()->signalChain()->enable(true); // Enable signal chain by default
     updateActions();
@@ -210,6 +211,7 @@ void MainWindow::stopSignalChain()
 
     pSignalChain->stop();
     pSignalChain->enable(false); // Disable signal chain
+    m_pSignalChainWidget->scene()->setAudioUnitsMovable(true);
     Application::instance()->audioDevicesManager()->stopAudioDevices();
 
     // Purge event router

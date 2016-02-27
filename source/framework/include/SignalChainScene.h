@@ -92,6 +92,14 @@ public slots:
     void deleteAll();
 
     /**
+     * @brief Emable/disable audio units drag operation.
+     * Dragging is normally disabled durin the play, so that the items
+     * cannot be moved while still being controllable.
+     * @param v
+     */
+    void setAudioUnitsMovable(bool v);
+
+    /**
      * Copy selected items into the clipboard.
      */
     void copyToClipboard();
