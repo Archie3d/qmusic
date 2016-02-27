@@ -29,6 +29,7 @@
 
 const QColor cWaveformColor("red");
 const QColor cSpectrumColor("navy");
+const QColor cSpectrumFillColor(190, 190, 220, 128);
 const QColor cAxisTitleColor("navy");
 const float cMinFrequency(100.0f);
 const float cMaxFrequency(22000.0f);
@@ -182,6 +183,8 @@ void SpectrumWindow::createSpectrumPlot()
     pen.setColor(cSpectrumColor);
     m_pSpectrumCurve = new QwtPlotCurve();
     m_pSpectrumCurve->setPen(pen);
+    m_pSpectrumCurve->setBrush(cSpectrumFillColor);
+    m_pSpectrumCurve->setBaseline(cDbScale - 50);   // Add offset to compensate plot margins
     m_pSpectrumCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
     m_pSpectrumCurve->attach(m_pSpectrumPlot);
 }
