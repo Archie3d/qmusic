@@ -1,0 +1,103 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <title>QMusic sound processing and synthesis framework</title>
+</head>
+<body>
+    <div class="banner">
+        <div class="header">Constructing Simple Signal Chains</div>
+    </div>
+
+    <div class="content">
+
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+    <hr>
+
+    <h2>Redirecting input to output</h2>
+    <p>
+        The simpliest signal chain that one can construct is connecting the input audio
+        signal to the output.
+        <div class="figure">
+            <img src="images/tutorial/input_to_output.png">
+        </div>
+    </p>
+    <p>
+        When running this circuit, the audio input (e.g. microphone) is redirected
+        to the output (e.g. speaker) without and modification. Signal waveform and its
+        spectrum is shown in the <em>Audio output</em> panel.
+    </p>
+
+    <h2>Low-pass filtering</h2>
+    <p>
+        We can make the circuit a bit more interesting by introducing some filtering of
+        the input signal before sending it to the output. In the <em>Filters</em> group of the
+        <em>Audio Units</em> panel there is LP/HP Filter that we can use. This is a simple
+        low-pass or high-pass filter. We will need two of those since we are dealing with
+        a stereo signal.
+    </p>
+    <p>
+        To control the filters cut-off frequency we will be using a slider unit that can be found
+        in the <em>Signal flow</em> group. When dropping the slider onto the working canvas check
+        its properties. We want to change its label to be <i>Cut-off</i> and the range of values
+        from say 10 to 10000 (Hz), which represents the range of frequencies we want to operate in.
+    </p>
+    <p>
+        Connect the slider's output to the <em>f</em> inputs of the both filters.
+        <div class="rfigure">
+            <img src="images/tutorial/au_lp_hp_filter.png">
+        </div>
+    </p>
+
+    <p>
+        Now when you run this circuit you can play with the slider to filter the audio in real-time.
+    </p>
+
+    <h2>Making an echo</h2>
+    <p>
+        We can create a simple echo effect by introducing a delay on the audio signal line
+        and then mixing the original signal with the delayed one together. This will create a
+        "signle reflection" echo effect.
+    </p>
+    <p>
+        Here to simplify the circuit we add together left and right samples of the input to create a
+        monophonic signal using the <em>Added</em> unit. Then the signal goes into a delay line set to
+        100ms.
+        <div class="rfigure">
+            <img src="images/tutorial/au_echo_simple.png">
+        </div>
+    </p>
+    <p>
+        If we want to create a "multiple reflection" echo effect we have to loop the delayed signal
+        back to the input recursively. Such a feedback look can actually make the signal chain unstable
+        and turn it into a generator. To avoid this we will have to damp the signal we feed back into the input.
+        To do so we can for example multiply it with a value less then 1, say 0.5.
+        <div class="rfigure">
+            <img src="images/tutorial/au_echo_feedback.png">
+        </div>
+    </p>
+    <p>
+        We can make the circuit even more flexible by adding sliders to control the delay time and the
+        damping. The <em>Delay</em> audio unit has a second input called 'delay', which accepts a delay
+        time fraction (value in 0..1 range) of the total delay set via the unit's properties panel.
+        Now, if we set the total delay to 1000ms and add the slider to output a value in 0..1 range we can
+        control the delay within 0..1s range with our slider. We can do the same for the damping factor.
+        <div class="rfigure">
+            <img src="images/tutorial/au_echo_feedback_ctrl.png">
+        </div>
+        Now we can vary the echo delay and damping in real-time by adjusting the sliders' positions.
+    </p>
+    <p>
+        We can make the echo effect even more realisting by applygin a filtering on the delayed signal.
+        Low-pass filter can be used here for example.
+        <div class="rfigure">
+            <img src="images/tutorial/au_echo_feedback_filter.png">
+        </div>
+    </p>
+
+    <hr>
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+
+    </div>
+
+</body>

@@ -1,0 +1,130 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <title>QMusic sound processing and synthesis framework</title>
+</head>
+<body>
+    <div class="banner">
+        <div class="header">Introduction</div>
+    </div>
+
+    <div class="content">
+
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+    <hr>
+
+    <h2>User Interface</h2>
+    <p>
+        At the very first start of the application after the installation it will present all
+        available interface features at their default configuration.
+        <div class="figure">
+            <img src="images/tutorial/first_screen.png">
+        </div>
+    </p>
+
+    <p>
+        The <em>Audio Units</em> panel on the left lists all available plugins.
+        Audio units can be dragged from this panel and dropped onto the central
+        canvas, which is a working area to construct the circuit.
+    <p>
+
+    <p>
+        In the right there is the <em>Audio output</em> panel that will display
+        the signal waveforma and its spectrum.
+    </p>
+
+    <p>
+        The <em>Properties</em> panel lists of the configurable properties of an audio
+        unit currently selected on the working area. Audio units can be configured via these
+        properties panel during the desisn. Some uints allow configuration to be changed even
+        during the playback.
+    </p>
+
+    <p>
+        On the bottom there is the <em>Console</em> panel, where application prints all the
+        logs and error messages. Over it there is a piano keyboard that shows the notes being
+        currently played via the MIDI input or keyboard.
+    </p>
+
+    <p>
+        The panels can be moved around and docked at different locations. The application will
+        memorize the changes done to its interface and will restore them upon the next launch.
+    </p>
+
+    <h2>Constructing Circuits</h2>
+    <p>
+        In QMusic audio circuits are constructing by dragging the audio units from the panel
+        onto the working area. Each audio unit has connection pads, which are used to connect
+        the units together and steer the signal flow. In order to make a connection between the
+        units click onto one pad and drag the wire onto another one. The connection will be established
+        upon the mouse button release.
+        <div class="rfigure">
+            <img src="images/tutorial/au_connect.png">
+        </div>
+    </p>
+
+    <p>
+        Audio units in QMusic may have the input connectors on their left side, and outputs on their right.
+        A single output can be connected to several inputs. But an input can receive signal only from a
+        single output.
+    </p>
+
+    <p>
+        The signals in QMusic chains are normalized. The audio samples value sits in -1..1 range.
+        If it goes outside this range the clipping occurs.
+    </p>
+
+    <h2>Audio Interfaces</h2>
+    <p>
+        Before you start making any sound you have to configure the audio interfaces appropriately.
+        To do so open the <em>Settings</em> dialog box via the <em>Sound/Settings...</em> menu.
+        <div class="figure">
+            <img src="images/tutorial/settings.png">
+        </div>
+    </p>
+    <p>
+        From the settings dialog select your input and output audio interfaces. Depending on your system
+        hardware some configuration may work better or do not work at all. For better performance it is
+        recommended to use ASIO interfaces.
+    </p>
+    <p>
+        Depending on the hardware capabilities a range of sample rates will be presented. <em>44.1kHz</em> is
+        a commonly used sample rate supported by all current audio devices.
+    </p>
+    <p>
+        <em>Buffer size</em> is an important parameter to be considered when using QMusic in real-time audio
+        processing or synthesis. Minimizing the buffer size leads to better responsivenes and smaller delay times,
+        however can result in unexpected sound glitches if the CPU is not performant enough or the system is loaded.
+        ASIO devices claim shorter delays and can be used with smaller buffers.
+    </p>
+
+    <p>
+        If you intend to control QMusic via MIDI interface you will have too select a <em>MIDI In</em> device
+        and corresponding <em>MIDI channel</em>.
+    </p>
+    <p>
+        By the way, you can run seleral instances of QMusic application listening on different MIDI input channels.
+        This allows playing different synthesized instruments simultaneously.
+    </p>
+
+    <h2>Running The Signal Chain</h2>
+    <p>
+        Signal chain evaluation starts when pressing the <img src="images/tutorial/play.png" class="inline"> button.
+        Check the console window for any configuration errors when starting the playback.
+    </p>
+    <p>
+        While playback is active the work area is locked: no items can be added, deleter, or modified. However
+        the audio unit properties can still be modified in real-time.
+    </p>
+    <p>
+        To stop the signal chain evaluation press the <img src="images/tutorial/stop.png" class="inline"> button.
+        This will unlock the working area for modifications.
+    </p>
+
+    <hr>
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+
+    </div>
+
+</body>

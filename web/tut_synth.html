@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <title>QMusic sound processing and synthesis framework</title>
+</head>
+<body>
+    <div class="banner">
+        <div class="header">Sound Synthesis</div>
+    </div>
+
+    <div class="content">
+
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+    <hr>
+
+    <h2>Generators</h2>
+    <p>
+        Making a sound with QMusic is relatively easy. There are some primitive generator units
+        provided in the <em>Generators</em> group of the <em>Audio Units</em> panel. The following
+        chain for iinstance will produce a continuous tone of 440Hz:
+        <div class="rfigure">
+            <img src="images/tutorial/synth_sine.png">
+        </div>
+        One can observe in the <em>Audio output</em> panel that it is indeed a single harmonic
+        sine wave.
+        <div class="figure">
+            <img src="images/tutorial/synth_sine_spectrum.png">
+        </div>
+    </p>
+
+    <p>
+        There are other waveforms that can be produced via the <em>Generator</em> audio unit. It allows
+        choosing among sine, sawtooth, square, and triangle waveforms.
+    </p>
+    <p>
+        Note that the <em>generator</em> component has a <em>Limit bandpass</em> property that will
+        effectively reduce the aliasing effect of the complex harmonics waveforms.
+    </p>
+
+    <h2>MIDI input</h2>
+    <p>
+        We can use the <em>MIDI in</em> unit from the <em>MIDI</em> section to feed us the tone frequency.
+        The MIDI unit responds to the MIDI events, like keys ons and offs, and pitch bend, and outputs the
+        corresponding frequency.
+        <div class="rfigure">
+            <img src="images/tutorial/synth_midi_simple.png">
+        </div>
+        This circuit allows controlling the playing tone frequency via the MIDI controller. If you do not
+        have a MIDI controller connected, you can use your PC keyboard keys, which are mappend to the two
+        piano octaves.
+    </p>
+
+    <h2>Envelope</h2>
+    <p>
+        If you run the circuit you will notice that the tone does not go off when the key is released, it just
+        keeps playing. In order to make the tone generator react properly on the keys on and off events we
+        have to introduce the <em>envelope</em> unit.
+        <div class="rfigure">
+            <img src="images/tutorial/synth_midi_adsr.png">
+        </div>
+    </p>
+    <p>
+        Provided envelope unit outputs classic ADSR (attack-decay-sustain-release) curve and reacts on MIDI
+        key on and off events. The attack, decay, and release times are controlled via the envelope's properties
+        panel, as well as the sustain level.
+    </p>
+    <p>
+        Additionaly the envelope unit allows enabling and disabling the signal chain processing depending
+        on whether a note is played or not. Disabling the signal chain when it does not produce any sound
+        will effectively reduce the CPU load. It is also important to use these flags when constructing
+        a voice of a polyphonic instrument.
+    </p>
+
+    <h2>Effects</h2>
+    <p>
+        Now we can inprove the synthesized sound quality by adding filters and effects.
+        QMusic provides some simple effects, like reverberation, that we can use.
+        <div class="rfigure">
+            <img src="images/tutorial/synth_midi_effects.png">
+        </div>
+    </p>
+
+
+    <hr>
+    <a href="index.html">&lt;&lt;&nbsp;Back to the front page</a>
+
+    </div>
+
+</body>
