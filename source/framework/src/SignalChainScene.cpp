@@ -39,7 +39,7 @@
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
-const QColor cGridColor(255, 255, 255);
+const QColor cGridColor(250, 250, 250);
 
 const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
