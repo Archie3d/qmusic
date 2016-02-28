@@ -39,7 +39,7 @@
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
-const QColor cGridColor(250, 250, 250);
+const QColor cGridColor(255, 255, 255);
 
 const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
@@ -176,7 +176,7 @@ void SignalChainScene::deleteAll()
 void SignalChainScene::setAudioUnitsMovable(bool v)
 {
     foreach(QGraphicsItem *pItem, items()) {
-        if (pItem->type() >= SignalChainItem::Type_First) {
+        if (pItem->type() >= SignalChainItem::Type_AudioUnit) {
             pItem->setFlag(QGraphicsItem::ItemIsMovable, v);
         }
     }
