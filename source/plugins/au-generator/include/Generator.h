@@ -46,6 +46,8 @@ protected:
     void process();
     void reset();
 
+    void noteOnEvent(NoteOnEvent *pEvent) override;
+
 private:
 
     void createProperties();
@@ -54,12 +56,14 @@ private:
     double m_phase;
     int m_waveform;
     bool m_bandlimit;
+    bool m_trigger;
 
     InputPort *m_pInputFreq;
     OutputPort *m_pOutput;
 
     QtVariantProperty *m_pPropWaveform;
     QtVariantProperty *m_pPropBandPassLimit;
+    QtVariantProperty *m_pPropTrigger;
 };
 
 #endif // AU_GENERATOR_H

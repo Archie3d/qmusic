@@ -227,6 +227,17 @@ void Generator::reset()
     m_pOutput->setValue(0.0f);
 }
 
+void Generator::noteOnEvent(NoteOnEvent *pEvent)
+{
+    Q_UNUSED(pEvent);
+
+    // If triggering is enabled, reset the generator's phase to
+    // zero upon note-on event.
+    if (m_trigger) {
+        m_phase = 0;
+    }
+}
+
 void Generator::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
@@ -240,8 +251,13 @@ void Generator::createProperties()
     m_pPropBandPassLimit = propertyManager()->addProperty(QVariant::Bool, "Limit bandpass");
     m_pPropBandPassLimit->setValue(false);
 
+    m_pPropTrigger = propertyManager()->addProperty(QVariant::Bool, "Trigger");
+    m_pPropTrigger->setValue(false);
+    m_pPropTrigger->setToolTip("Reset generator phase to zero when key is pressed");
+
     pRoot->addSubProperty(m_pPropWaveform);
     pRoot->addSubProperty(m_pPropBandPassLimit);
+    pRoot->addSubProperty(m_pPropTrigger);
 
     // Properties change handler
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
@@ -254,4 +270,5 @@ void Generator::setValues()
 {
     m_waveform = m_pPropWaveform->value().toInt();
     m_bandlimit = m_pPropBandPassLimit->value().toBool();
+    m_trigger = m_pPropTrigger->value().toBool();
 }
