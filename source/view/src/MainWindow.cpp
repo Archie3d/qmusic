@@ -63,7 +63,10 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     connect(Application::instance()->audioDevicesManager(), SIGNAL(devicesNotConfigured()),
             m_pSettingsAction, SLOT(trigger()));
 
-    resize(1280, 800);
+    // Set default size used at the first start only.
+    // This will be overridden by saved settings.
+    resize(1280, 900);
+
     loadSettings();
 
     updateActions();    
@@ -250,8 +253,6 @@ void MainWindow::editSettings()
 
 void MainWindow::createDockingWindows()
 {
-    //setDockOptions(QMainWindow::ForceTabbedDocks);
-
     m_pLogWindow = new LogWindow(this);
     addDockWidget(Qt::BottomDockWidgetArea, m_pLogWindow);
 
@@ -264,10 +265,13 @@ void MainWindow::createDockingWindows()
     addDockWidget(Qt::LeftDockWidgetArea, m_pAudioUnitsManagerWindow);
 
     m_pSpectrumWindow = new SpectrumWindow(this);
-    addDockWidget(Qt::RightDockWidgetArea, m_pSpectrumWindow);
+    addDockWidget(Qt::TopDockWidgetArea, m_pSpectrumWindow);
 
     m_pAudioUnitPropertiesWindow = new AudioUnitPropertiesWindow(this);
     addDockWidget(Qt::RightDockWidgetArea, m_pAudioUnitPropertiesWindow);
+
+    // Force log window to be displayed by default
+    m_pLogWindow->raise();
 }
 
 void MainWindow::createActions()
