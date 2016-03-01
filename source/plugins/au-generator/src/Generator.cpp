@@ -170,6 +170,7 @@ void Generator::serialize(QVariantMap &data, SerializationContext *pContext) con
     Q_ASSERT(pContext != nullptr);
     data["waveform"] = m_pPropWaveform->value();
     data["BandPassLimit"] = m_pPropBandPassLimit->value();
+    data["trigger"] = m_pPropTrigger->value();
     AudioUnit::serialize(data, pContext);
 }
 
@@ -178,6 +179,7 @@ void Generator::deserialize(const QVariantMap &data, SerializationContext *pCont
     Q_ASSERT(pContext != nullptr);
     m_pPropWaveform->setValue(data["waveform"]);
     m_pPropBandPassLimit->setValue(data["BandPassLimit"]);
+    m_pPropTrigger->setValue(data.value("trigger", false));
     AudioUnit::deserialize(data, pContext);
 }
 
