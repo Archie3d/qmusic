@@ -59,6 +59,9 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     connect(m_pSignalChainWidget, SIGNAL(audioUnitSelected(AudioUnit*)),
             m_pAudioUnitPropertiesWindow, SLOT(handleAudioUnitSelected(AudioUnit*)));
 
+    // Open settings dialog when audio manager reports devices not being configured properly
+    connect(Application::instance()->audioDevicesManager(), SIGNAL(devicesNotConfigured()),
+            m_pSettingsAction, SLOT(trigger()));
 
     resize(1280, 800);
     loadSettings();
@@ -187,11 +190,15 @@ void MainWindow::startSignalChain()
     double sampleRate = settings.get(Settings::Setting_SampleRate).toDouble();
     m_pSignalChainWidget->scene()->signalChain()->setTimeStep(1.0 / sampleRate);
 
-    // Subscribe signal chain for events
-    Application::instance()->eventRouter()->registerHandler(m_pSignalChainWidget->scene()->signalChain());
-
     // Start audio devices
     Application::instance()->audioDevicesManager()->startAudioDevices();
+    if (!Application::instance()->audioDevicesManager()->isStarted()) {
+        // Unable to start audio interfaces, cancel the sequence
+        return;
+    }
+
+    // Subscribe signal chain for events
+    Application::instance()->eventRouter()->registerHandler(m_pSignalChainWidget->scene()->signalChain());
 
     // Start signal chain
     m_pSignalChainWidget->scene()->setAudioUnitsMovable(false);

@@ -105,6 +105,7 @@ AudioDevicesManager::AudioDevicesManager(QObject *pParent)
 
     m_pMidiEventTranslator = new MidiEventTranslator();
     m_pMidiInputDevice->addListener(m_pMidiEventTranslator);
+    m_started = false;
 }
 
 AudioDevicesManager::~AudioDevicesManager()
@@ -125,6 +126,14 @@ void AudioDevicesManager::startAudioDevices()
 
     int waveInDeviceIndex = settings.get(Settings::Setting_WaveInIndex).toInt();
     int waveOutDeviceIndex = settings.get(Settings::Setting_WaveOutIndex).toInt();
+
+    if (waveInDeviceIndex < 0 || waveOutDeviceIndex < 0) {
+        // Wave devices have not been configured
+        qWarning() << "Audio interfaces have not been configured yet";
+        emit devicesNotConfigured();
+        return;
+    }
+
     int midiInDeviceIndex = settings.get(Settings::Setting_MidiInIndex).toInt();
     int midiInChannel = settings.get(Settings::Setting_MidiInChannel).toInt();
 
@@ -159,6 +168,8 @@ void AudioDevicesManager::startAudioDevices()
             qCritical() << "Failed to open MIDI input device";
         }
     }
+
+    m_started = true;
 }
 
 void AudioDevicesManager::stopAudioDevices()
@@ -186,4 +197,6 @@ void AudioDevicesManager::stopAudioDevices()
 
     // Purge unhandled events
     Application::instance()->eventRouter()->purge();
+
+    m_started = false;
 }

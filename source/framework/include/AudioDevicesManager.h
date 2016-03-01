@@ -56,6 +56,12 @@ public:
      */
     MidiInputDevice* midiInputDevice() const { return m_pMidiInputDevice; }
 
+    /**
+     * Tells whether the audio devices have been started.
+     * @return
+     */
+    bool isStarted() const { return m_started; }
+
 public slots:
 
     /**
@@ -67,6 +73,14 @@ public slots:
      * Stop all audio devices.
      */
     void stopAudioDevices();
+
+signals:
+
+    /**
+     * Signal used to notify that audio devices have not
+     * been configured correctly.
+     */
+    void devicesNotConfigured();
 
 private:
 
@@ -81,6 +95,9 @@ private:
 
     /// Helper to translate MIDI messages to signal chain events
     MidiEventTranslator *m_pMidiEventTranslator;
+
+    /// Audio devices started flag.
+    bool m_started;
 };
 
 #endif // AUDIODEVICESMANAGER_H
