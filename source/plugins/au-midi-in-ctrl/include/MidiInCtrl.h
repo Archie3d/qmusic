@@ -51,15 +51,15 @@ signals:
 
 protected:
 
-    void processStart();
-    void processStop();
-    void process();
-    void reset();
+    void processStart() override;
+    void processStop() override;
+    void process() override;
+    void reset() override;
 
-    QGraphicsItem* graphicsItem();
+    QGraphicsItem* graphicsItem() override;
 
     // IMidiInputListener
-    void inputMidiMessage(const MidiMessage &msg);
+    void inputMidiMessage(const MidiMessage &msg) override;
 
 private:
 

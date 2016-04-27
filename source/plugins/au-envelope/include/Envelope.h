@@ -47,13 +47,13 @@ public:
 
 protected:
 
-    void processStart();
-    void processStop();
-    void process();
-    void reset();
+    void processStart() override;
+    void processStop() override;
+    void process() override;
+    void reset() override;
 
-    void noteOnEvent(NoteOnEvent *pEvent);
-    void noteOffEvent(NoteOffEvent *pEvent);
+    void noteOnEvent(NoteOnEvent *pEvent) override;
+    void noteOffEvent(NoteOffEvent *pEvent) override;
 
 private:
 

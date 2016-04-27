@@ -56,9 +56,9 @@ public:
     const QList<SignalChainOutputPortItem*> outputPortItems() const { return m_outputPortItems; }
 
     // ISerializable interface
-    QString uid() const { return UID; }
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    QString uid() const override { return UID; }
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
     static ISerializable* create() { return new SignalChainAudioUnitItem(); }
 
 protected:

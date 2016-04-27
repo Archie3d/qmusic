@@ -70,8 +70,8 @@ public:
 
     // ISerializable interface
     QString uid() const override final { return UID; }
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
     static ISerializable* create() { return new SignalChainSceneSelection(); }
 

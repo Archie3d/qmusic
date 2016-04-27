@@ -29,9 +29,9 @@ public:
 
 protected:
 
-    void processStart();
-    void processStop();
-    void process();
+    void processStart() override;
+    void processStop() override;
+    void process() override;
     QGraphicsItem* graphicsItem() override;
     int flags() const override;
 

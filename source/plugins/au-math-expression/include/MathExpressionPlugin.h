@@ -30,6 +30,6 @@ public:
 
     QIcon icon() const override;
 
-    AudioUnit* createInstance();
-    AudioUnit* createInstanceInteractive();
+    AudioUnit* createInstance() override;
+    AudioUnit* createInstanceInteractive() override;
 };

@@ -44,18 +44,18 @@ public:
 
 protected:
 
-    void processStart();
-    void processStop();
-    void process();
-    void reset();
+    void processStart() override;
+    void processStop() override;
+    void process() override;
+    void reset() override;
 
-    QGraphicsItem* graphicsItem();
+    QGraphicsItem* graphicsItem() override;
     QColor color() const override;
-    int flags() const;
+    int flags() const override;
 
     // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
 private:
 

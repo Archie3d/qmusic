@@ -67,7 +67,7 @@ public:
     // ISerializable interface
     QString uid() const override final { return UID; }
     void serialize(QVariantMap &data, SerializationContext *pContext) const override;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
     static ISerializable* create() { return new SignalChain(); }
 
 #ifdef PROFILING

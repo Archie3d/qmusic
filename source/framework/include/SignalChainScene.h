@@ -81,8 +81,8 @@ public:
 
     // ISerializable interface
     QString uid() const override final { return UID; }
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
     static ISerializable* create() { return new SignalChainScene(); }
 
 public slots:
@@ -128,7 +128,7 @@ protected:
     void dragMoveEvent(QGraphicsSceneDragDropEvent *pEvent) override;
     void dropEvent(QGraphicsSceneDragDropEvent *pEvent) override;
 
-    void keyPressEvent(QKeyEvent *pEvent);
+    void keyPressEvent(QKeyEvent *pEvent) override;
 
     void drawBackground(QPainter *pPainter, const QRectF &rect) override;
 

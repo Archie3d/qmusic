@@ -41,22 +41,22 @@ public:
 
     StkClarinet(AudioUnitPlugin *pPlugin);
     ~StkClarinet();
-\
+
     QColor color() const override { return QColor(250, 240, 255); }
 
     // ISerializable interface
-    void serialize(QVariantMap &data, SerializationContext *pContext) const;
-    void deserialize(const QVariantMap &data, SerializationContext *pContext);
+    void serialize(QVariantMap &data, SerializationContext *pContext) const override;
+    void deserialize(const QVariantMap &data, SerializationContext *pContext) override;
 
 protected:
 
-    void processStart();
-    void processStop();
-    void process();
-    void reset();
+    void processStart() override;
+    void processStop() override;
+    void process() override;
+    void reset() override;
 
-    void noteOnEvent(NoteOnEvent *pEvent);
-    void noteOffEvent(NoteOffEvent *pEvent);
+    void noteOnEvent(NoteOnEvent *pEvent) override;
+    void noteOffEvent(NoteOffEvent *pEvent) override;
 
 private:
 
