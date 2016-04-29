@@ -176,7 +176,7 @@ QString MathExpression::removeScriptComments(const QString &src)
 {
     QStringList lines = src.split("\n", QString::SkipEmptyParts);
     QString res;
-    foreach (const QString &line, lines) {
+    for (const QString &line : lines) {
         QString tr = line.trimmed();
         if (tr.left(1) != "#") {
             res = res.append(QString("%1\n").arg(line));

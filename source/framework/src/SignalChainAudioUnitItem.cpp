@@ -64,14 +64,14 @@ QList<SignalChainConnectionItem*> SignalChainAudioUnitItem::connectionItems() co
 {
     QSet<SignalChainConnectionItem*> connections;
 
-    foreach (SignalChainInputPortItem *pInputItem, m_inputPortItems) {
-        foreach (SignalChainConnectionItem *pConnectionItem, pInputItem->connections()) {
+    for (SignalChainInputPortItem *pInputItem : m_inputPortItems) {
+        for (SignalChainConnectionItem *pConnectionItem : pInputItem->connections()) {
             connections.insert(pConnectionItem);
         }
     }
 
-    foreach (SignalChainOutputPortItem *pOutputItem, m_outputPortItems) {
-        foreach (SignalChainConnectionItem *pConnectionItem, pOutputItem->connections()) {
+    for (SignalChainOutputPortItem *pOutputItem : m_outputPortItems) {
+        for (SignalChainConnectionItem *pConnectionItem : pOutputItem->connections()) {
             connections.insert(pConnectionItem);
         }
     }
@@ -161,7 +161,7 @@ void SignalChainAudioUnitItem::updateView()
     if (nInputs > 0) {
         qreal step = portsHeight / nInputs;
         qreal ypos = portsLevel + step / 2;
-        foreach (SignalChainInputPortItem *pPortItem, m_inputPortItems) {
+        for (SignalChainInputPortItem *pPortItem : m_inputPortItems) {
             pPortItem->setPos(0, ypos);
             ypos += step;
         }
@@ -170,7 +170,7 @@ void SignalChainAudioUnitItem::updateView()
     if (nOutputs > 0) {
         qreal step = portsHeight / nOutputs;
         qreal ypos = portsLevel + step / 2;
-        foreach (SignalChainOutputPortItem *pPortItem, m_outputPortItems) {
+        for (SignalChainOutputPortItem *pPortItem : m_outputPortItems) {
             pPortItem->setPos(width, ypos);
             ypos += step;
         }
@@ -277,12 +277,12 @@ void SignalChainAudioUnitItem::createPortItems()
 {
     Q_ASSERT(m_pAudioUnit != nullptr);
 
-    foreach (InputPort *pInput, m_pAudioUnit->inputs()) {
+    for (InputPort *pInput : m_pAudioUnit->inputs()) {
         SignalChainInputPortItem *pInputItem = new SignalChainInputPortItem(pInput, this);
         m_inputPortItems.append(pInputItem);
     }
 
-    foreach (OutputPort *pOutput, m_pAudioUnit->outputs()) {
+    for (OutputPort *pOutput : m_pAudioUnit->outputs()) {
         SignalChainOutputPortItem *pOutputItem = new SignalChainOutputPortItem(pOutput, this);
         m_outputPortItems.append(pOutputItem);
     }

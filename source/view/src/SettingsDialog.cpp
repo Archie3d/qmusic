@@ -151,7 +151,7 @@ void SettingsDialog::enumerateDevices()
     QList<double> sampleRates;
     sampleRates.append(44100.0);    // Make sure we have at least the default sample rate.
 
-    foreach (const AudioDevice::Info info, list) {
+    for (const AudioDevice::Info info : list) {
         if (info.nInputs > 0) {
             // Input device detected
             m_pWaveInComboBox->addItem(QString("%1: %2").arg(info.hostApi, info.name), info.index);
@@ -167,13 +167,13 @@ void SettingsDialog::enumerateDevices()
         }
     }
 
-    foreach (double rate, sampleRates) {
+    for (double rate : sampleRates) {
         m_pSampleRateComboBox->addItem(QString::number(rate), QVariant(rate));
     }
 
     // Enumerate MIDI devices
     QList<MidiDevice::Description> midiDevices = MidiDevice::enumerateInputDevices();
-    foreach (const MidiDevice::Description desc, midiDevices) {
+    for (const MidiDevice::Description desc : midiDevices) {
         if (desc.type == MidiDevice::Type_Input) {
             m_pMidiInComboBox->addItem(desc.name, desc.number);
         }

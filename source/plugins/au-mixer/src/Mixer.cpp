@@ -73,7 +73,7 @@ void Mixer::processStop()
 void Mixer::process()
 {
     float sum = 0.0;
-    foreach (const InputPort *pInput, m_inputs) {
+    for (const InputPort *pInput : m_inputs) {
         sum += pInput->value();
     }
 

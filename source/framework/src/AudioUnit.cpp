@@ -68,10 +68,6 @@ void AudioUnit::prepareUpdate()
 
 void AudioUnit::update()
 {
-    //if (!isStarted()) {
-    //    return;
-    //}
-
     if (m_updated) {
         // Already updated.
         return;
@@ -85,7 +81,7 @@ void AudioUnit::update()
     // Activate already the updated flag to prevent loop recursion
     m_updated = true;
 
-    foreach (InputPort *pInput, m_inputs) {
+    for (InputPort *pInput : m_inputs) {
         pInput->update();
     }
 #ifdef PROFILING
@@ -166,7 +162,7 @@ QList<AudioUnit*> AudioUnit::updateChain(const QList<AudioUnit *> chain)
     }
 
     // Scan all the inputs of this unit
-    foreach (InputPort *pInputPort, m_inputs) {
+    for (InputPort *pInputPort : m_inputs) {
         OutputPort *pOutput = pInputPort->connectedOutputPort();
         if (pOutput != nullptr) {
             AudioUnit *pConnectedAu = dynamic_cast<AudioUnit*>(pOutput->audioUnit());
@@ -182,10 +178,6 @@ QList<AudioUnit*> AudioUnit::updateChain(const QList<AudioUnit *> chain)
 
 void AudioUnit::fastUpdate()
 {
-    //if (!isStarted()) {
-    //    return;
-    //}
-
     if (m_updated) {
         // Already updated.
         return;

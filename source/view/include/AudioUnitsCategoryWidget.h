@@ -50,14 +50,14 @@ public:
 
     AudioUnitsCategoryListModel(const QString &category, QObject *pParent = nullptr);
 
-    int rowCount(const QModelIndex &index) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    int rowCount(const QModelIndex &index) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
-    Qt::DropActions supportedDragActions() const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    QStringList mimeTypes() const;
-    QMimeData* mimeData(const QModelIndexList &indexes) const;
+    QStringList mimeTypes() const override;
+    QMimeData* mimeData(const QModelIndexList &indices) const override;
 
     QString category() const { return m_category; }
 

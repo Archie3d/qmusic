@@ -66,7 +66,7 @@ void AudioUnitsManager::initialize()
 
     // Compose list of plugin candidates
     QStringList list;
-    foreach (QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot)) {
+    for (QFileInfo info : path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot)) {
         if (info.fileName().left(cPluginPrefix.length()) == cPluginPrefix) {
             QString absolutePath = info.absoluteFilePath();
             if (QLibrary::isLibrary(absolutePath)) {
@@ -75,7 +75,7 @@ void AudioUnitsManager::initialize()
         }
     }
 
-    foreach (const QString &path, list) {
+    for (const QString &path : list) {
         load(path);
     }
 
@@ -84,7 +84,7 @@ void AudioUnitsManager::initialize()
 
 void AudioUnitsManager::cleanup()
 {
-    foreach (const QString &uid, m_loaders.keys()) {
+    for (const QString &uid : m_loaders.keys()) {
         unload(uid);
     }
 }

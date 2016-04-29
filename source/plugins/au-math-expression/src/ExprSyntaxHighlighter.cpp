@@ -31,7 +31,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     keywords << "if" << "else" << "while" << "and" << "or"
              << "null" << "var" << "switch" << "case" << "default";
 
-    foreach (const QString &keyword, keywords) {
+    for (const QString &keyword : keywords) {
         rule.pattern = QRegExp(QString("\\b%1\\b").arg(keyword));
         rule.format = fmtKeyword;
         m_highlightingRules.append(rule);
@@ -43,7 +43,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     QStringList reserved;
     reserved << "x" << "y" << "t";
 
-    foreach (const QString &res, reserved) {
+    for (const QString &res : reserved) {
         rule.pattern = QRegExp(QString("\\b%1\\b").arg(res));
         rule.format = fmtReserved;
         m_highlightingRules.append(rule);
@@ -56,7 +56,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     QStringList constants;
     constants << "pi" << "sr";
 
-    foreach (const QString &cnt, constants) {
+    for (const QString &cnt : constants) {
         rule.pattern = QRegExp(QString("\\b%1\\b").arg(cnt));
         rule.format = fmtConstants;
         m_highlightingRules.append(rule);
@@ -84,7 +84,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
 
 void ExprSyntaxHighlighter::highlightBlock(const QString &text)
 {
-    foreach (const HighlightingRule &rule, m_highlightingRules) {
+    for (const HighlightingRule &rule : m_highlightingRules) {
         QRegExp expression(rule.pattern);
         int index = expression.indexIn(text);
         while (index >= 0) {

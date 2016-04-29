@@ -65,7 +65,7 @@ SignalChainPortItem::SignalChainPortItem(Type type, const QString &labelText, QG
 
 SignalChainPortItem::~SignalChainPortItem()
 {
-    foreach (SignalChainConnectionItem *pConnection, m_connections) {
+    for (SignalChainConnectionItem *pConnection : m_connections) {
         pConnection->removePort(this);
     }
 }
@@ -117,7 +117,7 @@ void SignalChainPortItem::paint(QPainter *pPainter, const QStyleOptionGraphicsIt
 QVariant SignalChainPortItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemScenePositionHasChanged) {
-        foreach (SignalChainConnectionItem *pConnection, m_connections) {
+        for (SignalChainConnectionItem *pConnection : m_connections) {
             pConnection->updatePathFromPorts();
         }
     }

@@ -63,7 +63,7 @@ void OpenAir::createProperties()
 
     m_pPropEnvironment = propertyManager()->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter type");
     QVariantList list;
-    foreach (const QString &env, pPlugin->environments()) {
+    for (const QString &env : pPlugin->environments()) {
         list.append(env);
     }
 

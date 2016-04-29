@@ -96,7 +96,7 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
     }
     default:
         // Send all other events to all voices
-        foreach (ISignalChain *pSignalChain, m_voices) {
+        for (ISignalChain *pSignalChain : m_voices) {
             pSignalChain->handleEvent(pEvent);
         }
         break;
@@ -121,7 +121,7 @@ void PolyphonicContainer::processStart()
     }
     m_voiceStealing = m_pPropStealVoice->value().toBool();
 
-    foreach (ISignalChain *pSignalChain, m_voices) {
+    for (ISignalChain *pSignalChain : m_voices) {
         pSignalChain->setTimeStep(signalChain()->timeStep());
         pSignalChain->start();
     }
@@ -129,7 +129,7 @@ void PolyphonicContainer::processStart()
 
 void PolyphonicContainer::processStop()
 {
-    foreach (ISignalChain *pSignalChain, m_voices) {
+    for (ISignalChain *pSignalChain : m_voices) {
         pSignalChain->stop();
     }
     freeAllVoices();
@@ -141,19 +141,19 @@ void PolyphonicContainer::process()
 
     // Set outputs to zero, since
     // further all voices will add up to them
-    foreach (OutputPort *pOutputPort, m_outputs) {
+    for (OutputPort *pOutputPort : m_outputs) {
         pOutputPort->setValue(0.0f);
     }
 
     // The following will trigger update of internal signal chains
-    foreach (ExposedOutput *pAu, m_exposeOutputAudioUnits) {
+    for (ExposedOutput *pAu : m_exposeOutputAudioUnits) {
         pAu->fastUpdate();
     }
 }
 
 void PolyphonicContainer::reset()
 {
-    foreach (ISignalChain *pSignalChain, m_voices) {
+    for (ISignalChain *pSignalChain : m_voices) {
         pSignalChain->reset();
     }
 
@@ -238,7 +238,7 @@ void PolyphonicContainer::createVoices(int n)
 
     m_voices = m_pSignalChainScene->signalChain()->clone(n);
 
-    foreach (ISignalChain *pVoice, m_voices) {
+    for (ISignalChain *pVoice : m_voices) {
 
         // Add to the list of free voices
         m_freeVoices.append(pVoice);
@@ -248,7 +248,7 @@ void PolyphonicContainer::createVoices(int n)
 
         // Reference voice ports
         QList<IAudioUnit*> audioUnits = pVoice->audioUnits();
-        foreach (IAudioUnit *pAu, audioUnits) {
+        for (IAudioUnit *pAu : audioUnits) {
             if (pAu->uid() == cExposeInputUid) {
                 ExposedInput *pExpInput = dynamic_cast<ExposedInput*>(pAu);
                 Q_ASSERT(pExpInput != nullptr);
@@ -269,7 +269,7 @@ void PolyphonicContainer::createPorts()
     Q_ASSERT(m_pSignalChainScene != nullptr);
 
     QList<IAudioUnit*> audioUnits = m_pSignalChainScene->signalChain()->audioUnits();
-    foreach (IAudioUnit *pAu, audioUnits) {
+    for (IAudioUnit *pAu : audioUnits) {
         if (pAu->uid() == cExposeInputUid) {
             ExposedInput *pExpInput = dynamic_cast<ExposedInput*>(pAu);
             Q_ASSERT(pExpInput != nullptr);
@@ -286,7 +286,7 @@ void PolyphonicContainer::createPorts()
 
 void PolyphonicContainer::prepareVoicesUpdate()
 {
-    foreach (ISignalChain *pSignalChain, m_voices) {
+    for (ISignalChain *pSignalChain : m_voices) {
         pSignalChain->prepareUpdate();
     }
 }
@@ -333,7 +333,7 @@ void PolyphonicContainer::releaseVoices()
 
 ISignalChain* PolyphonicContainer::findBusyVoice(int noteNumber)
 {
-    foreach (const TheVoice &voice, m_busyVoices) {
+    for (const TheVoice &voice : m_busyVoices) {
         if (voice.first == noteNumber) {
             return voice.second;
         }

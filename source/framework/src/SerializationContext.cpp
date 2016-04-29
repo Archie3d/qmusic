@@ -88,7 +88,7 @@ ISerializable* SerializationContext::deserialize(const QVariant &handle)
     }
 
     ISerializable *pObject = nullptr;
-    foreach (ISerializableFactory *pFactory, m_factories) {
+    for (ISerializableFactory *pFactory : m_factories) {
         pObject = pFactory->createObject(record.uid);
         if (pObject != nullptr) {
             break;
@@ -126,7 +126,7 @@ void SerializationContext::fromByteArray(const QByteArray &data)
 
 QDataStream& operator << (QDataStream &stream, const SerializationContext &context)
 {
-    foreach (const SerializationContext::Record &record, context.m_records) {
+    for (const SerializationContext::Record &record : context.m_records) {
         stream << record.uid << record.data;
     }
 

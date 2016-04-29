@@ -41,7 +41,7 @@ void SignalChainSceneSelection::populateFromSignalChainScene(const SignalChainSc
     clear();
     QList<QGraphicsItem*> items = selectedOnly ? pScene->selectedItems() : pScene->items();
     QList<ConnectionStruct> connections;
-    foreach (QGraphicsItem *pItem, items) {
+    for (QGraphicsItem *pItem : items) {
         switch (pItem->type()) {
         case SignalChainItem::Type_AudioUnit:
             m_audioUnitItems.append(dynamic_cast<SignalChainAudioUnitItem*>(pItem));
@@ -63,7 +63,7 @@ void SignalChainSceneSelection::populateFromSignalChainScene(const SignalChainSc
     }
 
     // Select only those connections that have audio units selected at both ends.
-    foreach(const ConnectionStruct &conn, connections) {
+    for (const ConnectionStruct &conn : connections) {
         if (m_audioUnitItems.contains(conn.pSourceAudioUnitItem)
                 && m_audioUnitItems.contains(conn.pTargetAudioUnitItem)) {
             m_connections.append(conn);
@@ -82,7 +82,7 @@ void SignalChainSceneSelection::putOnScene(SignalChainScene *pScene, const QPoin
     QList<SignalChainAudioUnitItem*> itemsToDelete;
 
     // Put audio unit items
-    foreach (SignalChainAudioUnitItem *pAuItem, m_audioUnitItems) {
+    for (SignalChainAudioUnitItem *pAuItem : m_audioUnitItems) {
         bool itemWillBeDeleted = false;
         if ((pAuItem->audioUnit()->flags() & IAudioUnit::Flag_SingleInstance) != 0) {
             QString uid = pAuItem->audioUnit()->uid();
@@ -102,7 +102,7 @@ void SignalChainSceneSelection::putOnScene(SignalChainScene *pScene, const QPoin
     }
 
     // Establish connections
-    foreach (const ConnectionStruct &conn, m_connections) {
+    for (const ConnectionStruct &conn : m_connections) {
         SignalChainOutputPortItem *pOutputPortItem = conn.pSourceAudioUnitItem->outputPortItems().at(conn.sourcePortIndex);
         SignalChainInputPortItem *pInputPortItem = conn.pTargetAudioUnitItem->inputPortItems().at(conn.targetPortIndex);
         pScene->connectPorts(pOutputPortItem, pInputPortItem);
@@ -128,7 +128,7 @@ void SignalChainSceneSelection::serialize(QVariantMap &data, SerializationContex
     int groupSize = 0;
 
     QVariantList auList;
-    foreach (SignalChainAudioUnitItem *pAuItem, m_audioUnitItems) {
+    for (SignalChainAudioUnitItem *pAuItem : m_audioUnitItems) {
         groupPosition += pAuItem->pos();
         groupSize++;
         auList.append(pContext->serialize(pAuItem));
@@ -141,7 +141,7 @@ void SignalChainSceneSelection::serialize(QVariantMap &data, SerializationContex
     }
 
     QVariantList connectionList;
-    foreach (const ConnectionStruct &conn, m_connections) {
+    for (const ConnectionStruct &conn : m_connections) {
         QVariantMap map;
         map["sourceAudioUnitItem"] = pContext->serialize(conn.pSourceAudioUnitItem);
         map["targetAudioUnitItem"] = pContext->serialize(conn.pTargetAudioUnitItem);
@@ -165,7 +165,7 @@ void SignalChainSceneSelection::deserialize(const QVariantMap &data, Serializati
 
     // Deserialize audio unit items
     QVariantList auList = data["audioUnitItems"].toList();
-    foreach (const QVariant &handle, auList) {
+    for (const QVariant &handle : auList) {
         SignalChainAudioUnitItem *pAuItem = pContext->deserialize<SignalChainAudioUnitItem>(handle);
         Q_ASSERT(pAuItem != nullptr);
         pAuItem->setPos(pAuItem->pos() - groupPosition);    // Adjust position to the group center
@@ -174,7 +174,7 @@ void SignalChainSceneSelection::deserialize(const QVariantMap &data, Serializati
 
     // Deserialize connections
     QVariantList connectionList = data["connections"].toList();
-    foreach (const QVariant &v, connectionList) {
+    for (const QVariant &v : connectionList) {
         QVariantMap map = v.toMap();
         ConnectionStruct conn;
         conn.pSourceAudioUnitItem = pContext->deserialize<SignalChainAudioUnitItem>(map["sourceAudioUnitItem"]);

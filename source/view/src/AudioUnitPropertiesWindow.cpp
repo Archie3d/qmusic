@@ -41,7 +41,7 @@ void AudioUnitPropertiesWindow::setAudioUnit(AudioUnit *pAudioUnit)
     QtVariantProperty *pRootProperty = pAudioUnit->rootProperty();
     QList<QtProperty*> subProperties = pRootProperty->subProperties();
 
-    foreach (QtProperty *pProperty, subProperties) {
+    for (QtProperty *pProperty : subProperties) {
         m_pPropertyBrowser->addProperty(pProperty);
     }
 

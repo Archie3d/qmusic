@@ -97,7 +97,7 @@ QByteArray Application::clipboardData(const QString &mimeId)
     const QClipboard *pClipboard = QApplication::clipboard();
     const QMimeData *pMimeData = pClipboard->mimeData();
 
-    foreach (QString format, pMimeData->formats()) {
+    for (QString format : pMimeData->formats()) {
         QByteArray data = pMimeData->data(format);
         if (format.startsWith("application/x-qt")) {
             // Retrieving true format name

@@ -77,7 +77,7 @@ void EventRouter::purge()
 void EventRouter::processEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
-    foreach (IEventHandler *pHandler, m_handlers) {
+    for (IEventHandler *pHandler : m_handlers) {
         pHandler->handleEvent(pEvent);
     }
 }
@@ -91,7 +91,7 @@ void EventRouter::doPprocessEvents()
     m_mutex.unlock();
 
     // Process events
-    foreach (SignalChainEvent *pEvent, events) {
+    for (SignalChainEvent *pEvent : events) {
         processEvent(pEvent);
         delete pEvent;
     }

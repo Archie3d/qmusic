@@ -163,7 +163,7 @@ bool MidiInputDevice::validateDevice()
 
 void MidiInputDevice::notifyListeners(const MidiMessage &msg)
 {
-    foreach (IMidiInputListener *pListener, m->listeners) {
+    for (IMidiInputListener *pListener : m->listeners) {
         pListener->inputMidiMessage(msg);
     }
 }

@@ -110,7 +110,7 @@ void SignalChain::prepareUpdate()
     }
 
     // Prepare audio units update
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         pAudioUnit->prepareUpdate();
     }
 }
@@ -138,9 +138,9 @@ QList<ISignalChain *> SignalChain::clone(int instances)
     serContext.serialize(this);
 
     // Serialize connections
-    foreach (IAudioUnit *pIAu, m_audioUnits) {
+    for (IAudioUnit *pIAu : m_audioUnits) {
         AudioUnit *pAu = dynamic_cast<AudioUnit*>(pIAu);
-        foreach (InputPort *pInput, pAu->inputs()) {
+        for (InputPort *pInput : pAu->inputs()) {
             if (pInput->connectedOutputPort() != nullptr) {
                 IAudioUnit *pSourceAu = pInput->connectedOutputPort()->audioUnit();
                 IAudioUnit *pTargetAu = pInput->audioUnit();
@@ -172,7 +172,7 @@ QList<ISignalChain *> SignalChain::clone(int instances)
         SignalChain *pSignalChainClone = deserContext.deserialize<SignalChain>();
 
         // Deserialize connections
-        foreach(const Connection &conn, connections) {
+        for (const Connection &conn : connections) {
             AudioUnit *pSourceAu = deserContext.deserialize<AudioUnit>(conn.sourceAudioUnitHandle);
             AudioUnit *pTargetAu = deserContext.deserialize<AudioUnit>(conn.targetAudioUnitHandle);
             OutputPort *pSourcePort = pSourceAu->outputs().at(conn.sourcePortIndex);
@@ -189,7 +189,7 @@ QList<ISignalChain *> SignalChain::clone(int instances)
 void SignalChain::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         pAudioUnit->handleEvent(pEvent);
     }
 }
@@ -198,7 +198,7 @@ void SignalChain::handleEvent(SignalChainEvent *pEvent)
 void SignalChain::profilingLog()
 {
     QList<AudioUnitPlugin*> plugins;
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         AudioUnit *pAu = dynamic_cast<AudioUnit*>(pAudioUnit);
         if (pAu != nullptr) {
             AudioUnitPlugin *pPlugin = pAu->plugin();
@@ -209,7 +209,7 @@ void SignalChain::profilingLog()
     }
 
     logInfo("========= profiling =========");
-    foreach(AudioUnitPlugin *pPlugin, plugins) {
+    for (AudioUnitPlugin *pPlugin : plugins) {
         pPlugin->profilingLog();
     }
 
@@ -221,7 +221,7 @@ void SignalChain::serialize(QVariantMap &data, SerializationContext *pContext) c
     Q_ASSERT(pContext != nullptr);
 
     QVariantList units;
-    foreach (IAudioUnit *pAu, m_audioUnits) {
+    for (IAudioUnit *pAu : m_audioUnits) {
         units.append(pContext->serialize(pAu));
     }
     data["audioUnits"] = units;
@@ -235,7 +235,7 @@ void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pCo
     qDeleteAll(m_audioUnits);
 
     QVariantList units = data["audioUnits"].toList();
-    foreach (const QVariant &v, units) {
+    for (const QVariant &v : units) {
         ISerializable *pSer = pContext->deserialize(v);
         IAudioUnit *pAu = dynamic_cast<IAudioUnit*>(pSer);
         addAudioUnit(pAu);
@@ -244,21 +244,21 @@ void SignalChain::deserialize(const QVariantMap &data, SerializationContext *pCo
 
 void SignalChain::startAllAudioUnits()
 {
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         pAudioUnit->start();
     }
 }
 
 void SignalChain::stopAllAudioUnits()
 {
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         pAudioUnit->stop();
     }
 }
 
 void SignalChain::resetAllAudioUnits()
 {
-    foreach (IAudioUnit *pAudioUnit, m_audioUnits) {
+    for (IAudioUnit *pAudioUnit : m_audioUnits) {
         pAudioUnit->reset();
     }
 }

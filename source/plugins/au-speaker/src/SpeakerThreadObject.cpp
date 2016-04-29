@@ -108,7 +108,7 @@ void SpeakerThreadObject::signalUpdateOver()
 void SpeakerThreadObject::performChainUpdate()
 {
     m_pSignalChain->prepareUpdate();
-    foreach (AudioUnit *pAu, m_updateChain) {
+    for (AudioUnit *pAu : m_updateChain) {
         // Perform fast non-recursive update
         pAu->fastUpdate();
     }

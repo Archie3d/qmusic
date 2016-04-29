@@ -93,11 +93,11 @@ QStringList AudioUnitsCategoryListModel::mimeTypes() const
     return types;
 }
 
-QMimeData* AudioUnitsCategoryListModel::mimeData(const QModelIndexList &indexes) const
+QMimeData* AudioUnitsCategoryListModel::mimeData(const QModelIndexList &indices) const
 {
     QMimeData *pMimeData = new QMimeData();
     QList<AudioUnitPlugin*> plugins = Application::instance()->audioUnitsManager()->audioUnitsInCategory(m_category);
-    foreach (const QModelIndex &index, indexes) {
+    for (const QModelIndex &index : indices) {
         if (index.isValid()) {
             AudioUnitPlugin *pPlugin = plugins.at(index.row());
             pMimeData->setData(AudioUnitPlugin::MimeDataFormat, pPlugin->uid().toUtf8());

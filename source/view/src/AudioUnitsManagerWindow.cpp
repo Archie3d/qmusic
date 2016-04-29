@@ -36,7 +36,7 @@ AudioUnitsManagerWindow::AudioUnitsManagerWindow(QWidget *pParent)
 void AudioUnitsManagerWindow::populate()
 {
     QStringList categories = Application::instance()->audioUnitsManager()->categories();
-    foreach (const QString &category, categories) {
+    for (const QString &category : categories) {
         AudioUnitsCategoryWidget *pCategoryWidget = new AudioUnitsCategoryWidget(category);
         m_pToolBox->addItem(pCategoryWidget, category);
     }

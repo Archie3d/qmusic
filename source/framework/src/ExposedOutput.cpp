@@ -41,7 +41,7 @@ ExposedOutput::~ExposedOutput()
 
 void ExposedOutput::fastUpdate()
 {
-    foreach (AudioUnit *pAu, m_updateChain) {
+    for (AudioUnit *pAu : m_updateChain) {
         pAu->fastUpdate();
     }
 }

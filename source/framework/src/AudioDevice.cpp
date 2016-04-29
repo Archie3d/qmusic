@@ -192,7 +192,7 @@ void AudioDevice::removeListener(IAudioDeviceListener *pListener)
 
 void AudioDevice::processAudio(const float *pInputBuffer, float *pOutputBuffer, long nSamples)
 {
-    foreach (IAudioDeviceListener *pListener, m_listeners) {
+    for (IAudioDeviceListener *pListener : m_listeners) {
         pListener->processAudio(pInputBuffer, pOutputBuffer, nSamples);
     }
 }

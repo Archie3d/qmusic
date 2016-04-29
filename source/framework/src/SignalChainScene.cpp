@@ -67,7 +67,7 @@ SignalChainScene::~SignalChainScene()
 SignalChainItem* SignalChainScene::signalChainItemAtPos(const QPointF &pos) const
 {
     QList<QGraphicsItem*> graphicsItems = items(QRectF(pos - QPointF(1, 1), QSizeF(3, 3)));
-    foreach (QGraphicsItem *pItem, graphicsItems) {
+    for (QGraphicsItem *pItem : graphicsItems) {
         if (pItem->type() >= SignalChainItem::Type_First) {
             return dynamic_cast<SignalChainItem*>(pItem);
         }
@@ -109,7 +109,7 @@ SignalChainScene* SignalChainScene::loadFromFile(const QString &path)
 
 void SignalChainScene::selectAll(bool select)
 {
-    foreach (QGraphicsItem *pItem, items(Qt::DescendingOrder)) {
+    for (QGraphicsItem *pItem : items(Qt::DescendingOrder)) {
         pItem->setSelected(select);
     }
 }
@@ -146,11 +146,11 @@ void SignalChainScene::deleteSelected()
     QSet<SignalChainConnectionItem*> connectionsToDelete;
     QSet<SignalChainAudioUnitItem*> audioUnitsToDelete;
 
-    foreach (QGraphicsItem *pItem, selectedItems()) {
+    for (QGraphicsItem *pItem : selectedItems()) {
         if (pItem->type() == SignalChainItem::Type_AudioUnit) {
             SignalChainAudioUnitItem *pAuItem = dynamic_cast<SignalChainAudioUnitItem*>(pItem);
             audioUnitsToDelete.insert(pAuItem);
-            foreach (SignalChainConnectionItem *pConnItem, pAuItem->connectionItems()) {
+            for (SignalChainConnectionItem *pConnItem : pAuItem->connectionItems()) {
                 connectionsToDelete.insert(pConnItem);
             }
         } else if (pItem->type() == SignalChainItem::Type_Connection) {
@@ -159,11 +159,11 @@ void SignalChainScene::deleteSelected()
         }
     }
 
-    foreach (SignalChainConnectionItem *pItem, connectionsToDelete) {
+    for (SignalChainConnectionItem *pItem : connectionsToDelete) {
         delete pItem;
     }
 
-    foreach (SignalChainAudioUnitItem *pItem, audioUnitsToDelete) {
+    for (SignalChainAudioUnitItem *pItem : audioUnitsToDelete) {
         delete pItem;
     }
 }
@@ -175,7 +175,7 @@ void SignalChainScene::deleteAll()
 
 void SignalChainScene::setAudioUnitsMovable(bool v)
 {
-    foreach(QGraphicsItem *pItem, items()) {
+    for (QGraphicsItem *pItem : items()) {
         if (pItem->type() >= SignalChainItem::Type_AudioUnit) {
             pItem->setFlag(QGraphicsItem::ItemIsMovable, v);
         }
@@ -439,7 +439,7 @@ QVariant SignalChainScene::serializeAudioUnitItems(SerializationContext *pContex
     Q_ASSERT(pContext != nullptr);
 
     QVariantList list;
-    foreach (QGraphicsItem *pItem, items()) {
+    for (QGraphicsItem *pItem : items()) {
         if (pItem->type() == SignalChainItem::Type_AudioUnit) {
             SignalChainAudioUnitItem *pSignalChainAuItem = dynamic_cast<SignalChainAudioUnitItem*>(pItem);
             Q_ASSERT(pSignalChainAuItem != nullptr);
@@ -456,7 +456,7 @@ QVariant SignalChainScene::serializeConnections(SerializationContext *pContext) 
     Q_ASSERT(pContext != nullptr);
 
     QVariantList list;
-    foreach (QGraphicsItem *pItem, items()) {
+    for (QGraphicsItem *pItem : items()) {
         if (pItem->type() == SignalChainItem::Type_Connection) {
             SignalChainConnectionItem *pSignalChainConnectionItem = dynamic_cast<SignalChainConnectionItem*>(pItem);
             Q_ASSERT(pSignalChainConnectionItem != nullptr);
@@ -486,7 +486,7 @@ void SignalChainScene::deserializeAudioUnitItems(const QVariant &data, Serializa
     Q_ASSERT(pContext != nullptr);
 
     QVariantList list = data.toList();
-    foreach (const QVariant &handle, list) {
+    for (const QVariant &handle : list) {
         SignalChainAudioUnitItem *pAuItem = pContext->deserialize<SignalChainAudioUnitItem>(handle);
         Q_ASSERT(pAuItem != nullptr);
         addItem(pAuItem);
@@ -498,7 +498,7 @@ void SignalChainScene::deserializeConnections(const QVariant &data, Serializatio
     Q_ASSERT(pContext != nullptr);
 
     QVariantList list = data.toList();
-    foreach (const QVariant &vMap, list) {
+    for (const QVariant &vMap : list) {
         QVariantMap map = vMap.toMap();
 
         SignalChainAudioUnitItem *pSourceAu = pContext->deserialize<SignalChainAudioUnitItem>(map["sourceAudioUnit"]);
@@ -549,7 +549,7 @@ void SignalChainScene::deserializeFromByteArray(const QByteArray &data)
 
 SignalChainAudioUnitItem* SignalChainScene::findAudioUnitInstance(const QString &uid)
 {
-    foreach (QGraphicsItem *pItem, items()) {
+    for (QGraphicsItem *pItem : items()) {
         if (pItem->type() == SignalChainItem::Type_AudioUnit) {
             SignalChainAudioUnitItem *pAuItem = dynamic_cast<SignalChainAudioUnitItem*>(pItem);
             if (pAuItem->audioUnit()->uid() == uid) {
