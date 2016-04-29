@@ -31,3 +31,50 @@ QProgressBar#dspLoadBar[loadLevel="2"]::chunk:horizontal {
         stop: 0.45 rgba(255, 220, 220, 255)
         stop: 1 red);
 }
+
+QToolBox {
+    margin-right: 3px;
+    margin-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 0px;
+    background-color: transparent;
+    font-weight: bold;
+}
+
+QToolBox > QWidget {
+    background-color: rgb(200, 200, 200);
+}
+
+QToolBox::tab {
+    padding-left: 10px;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop: 0 rgb(160, 160, 160),
+        stop: 0.45 rgb(180, 180, 180),
+        stop: 1 rgb(140, 140, 140));
+}
+
+QToolBox::tab:first {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+QToolBox::tab:middle {
+    /*border-radius: 6px;*/
+}
+
+QToolBox::tab:last {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+QToolBox::tab:selected {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+QToolBox::tab::title {
+    image: none;
+    subcontrol-position: top left;
+    subcontrol-origin: margin;
+    color: rgb(32, 32, 32);
+}
