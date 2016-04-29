@@ -116,18 +116,18 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     double keyWidth = double(width()) / double(numberOfWhiteKeys());
-    double blackKeyWidth = keyWidth * 2 / 3;
+    double blackKeyWidth = keyWidth * 0.6;
 
     QPen pen;
     pen.setColor(QColor("gray"));
-    QBrush whiteBrush(QColor("white"));
+    QBrush whiteBrush(QColor(255, 250, 240));
     QBrush blackBrush(QColor("black"));
     QBrush onBrush(QColor(0xCC, 0xDD, 0xFF));
 
     painter.setPen(pen);
 
     QFont font("Arial");
-    font.setPixelSize(keyWidth / 3 * 2);
+    font.setPixelSize(keyWidth * 0.6);
     painter.setFont(font);
 
     // Draw white keys
@@ -154,7 +154,16 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
                 painter.setBrush(blackBrush);
             }
 
-            QRectF r(pos - blackKeyWidth / 2, 0, blackKeyWidth, height() * 2 / 3);
+            // Move Db, Gb, and Eb, Bb slightly apart.
+            float bpos = 0.0f;
+            if (flatNote.note() == MidiNote::Note_Db || flatNote.note() == MidiNote::Note_Gb) {
+                bpos = -1.0f;
+            } else if (flatNote.note() == MidiNote::Note_Eb || flatNote.note() == MidiNote::Note_Bb) {
+                bpos = 1.0f;
+            }
+            bpos = pos + blackKeyWidth * 0.2f * bpos;
+
+            QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, height() * 2 / 3);
             painter.drawRect(r);
         }
 
@@ -163,6 +172,13 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
             painter.drawText(pos + 1, height() - 2, note.toString());
         }
     }
+
+    // Draw a shadow on top
+    QLinearGradient shadow(QPointF(0.0f, 0.0f), QPointF(0.0f, 16.0f));
+    shadow.setColorAt(0.0, QColor(0, 0, 0, 128));
+    shadow.setColorAt(1.0, QColor(0, 0, 0, 0));
+
+    painter.fillRect(0, 0, width()-1, 16, shadow);
 }
 
 void PianoWidget::keyPressEvent(QKeyEvent *pEvent)
