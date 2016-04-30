@@ -87,10 +87,10 @@ void StkFreeVerb::processStop()
 
 void StkFreeVerb::process()
 {
-    float left = m_pInputLeft->value();
-    float right = m_pInputRight->value();
-    m_pOutputLeft->setValue(m_pFreeVerb->tick(left, right, 0));
-    m_pOutputRight->setValue(m_pFreeVerb->tick(left, right, 1));
+    m_pOutputLeft->setValue(m_pFreeVerb->tick(m_pInputLeft->value(),
+                                              m_pInputRight->value(),
+                                              0));
+    m_pOutputRight->setValue(m_pFreeVerb->lastOut(1));
 }
 
 void StkFreeVerb::reset()
