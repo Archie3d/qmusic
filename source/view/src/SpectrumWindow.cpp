@@ -20,6 +20,7 @@
 #include <qwt_plot_picker.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_canvas.h>
 #include <qwt_scale_engine.h>
 #include "Fft.h"
 #include "Application.h"
@@ -27,8 +28,8 @@
 #include "AudioDevice.h"
 #include "SpectrumWindow.h"
 
-const QColor cWaveformColor("red");
-const QColor cSpectrumColor("navy");
+const QColor cWaveformColor(255, 144, 64);
+const QColor cSpectrumColor(220, 220, 255);
 const QColor cSpectrumFillColor(190, 190, 220, 128);
 const QColor cAxisTitleColor("navy");
 const float cMinFrequency(100.0f);
@@ -72,7 +73,7 @@ void SpectrumWindow::plotSpectrum()
 {
     Fft::Array input(m_signal.size());
     for (int i = 0; i < m_signal.size(); i++) {
-        input[i] = m_signal.at(i);
+        input[i] = qRound(m_signal.at(i) * 1e6) / 1e6;
     }
 
     Fft::direct(input, Fft::Window_Hann);
@@ -123,11 +124,14 @@ void SpectrumWindow::createWaveformPlot()
     m_pWaveformPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
     m_pWaveformPlot->setAxisAutoScale(QwtPlot::yLeft, false);
     m_pWaveformPlot->setAxisScale(QwtPlot::yLeft, -1.0, 1.0);
+    m_pWaveformPlot->setCanvasBackground(QColor(32, 24, 16));
+    dynamic_cast<QwtPlotCanvas*>(m_pWaveformPlot->canvas())->setFrameShadow(QFrame::Plain);
 
     m_pWaveformPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
                                           QwtPicker::CrossRubberBand,
                                           QwtPicker::AlwaysOn,
                                           m_pWaveformPlot->canvas());
+    m_pWaveformPicker->setTrackerPen(QColor(255, 255, 128));
 
     QwtPlotGrid *pGrid = new QwtPlotGrid();
     pGrid->enableXMin(true);
@@ -137,6 +141,8 @@ void SpectrumWindow::createWaveformPlot()
 
     QPen pen;
     pen.setColor(cWaveformColor);
+    pen.setWidthF(1.5f);
+
     m_pWaveformCurve = new QwtPlotCurve();
     m_pWaveformCurve->setPen(pen);
     m_pWaveformCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
@@ -156,13 +162,15 @@ void SpectrumWindow::createSpectrumPlot()
     m_pSpectrumPlot->setAxisAutoScale(QwtPlot::xBottom, false);
     m_pSpectrumPlot->setAxisScale(QwtPlot::xBottom, cMinFrequency, cMaxFrequency);
     m_pSpectrumPlot->setAxisFont(QwtPlot::xBottom, cAxisFont);
-
     m_pSpectrumPlot->setAxisFont(QwtPlot::yLeft, cAxisFont);
+    m_pSpectrumPlot->setCanvasBackground(QColor(19, 19, 22));
+    dynamic_cast<QwtPlotCanvas*>(m_pSpectrumPlot->canvas())->setFrameShadow(QFrame::Plain);
 
     m_pSpectrumPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
                                           QwtPicker::CrossRubberBand,
                                           QwtPicker::AlwaysOn,
                                           m_pSpectrumPlot->canvas());
+    m_pSpectrumPicker->setTrackerPen(QColor(128, 255, 255));
 
     QwtText title(tr("Frequency, Hz"));
     title.setFont(cAxisTitleFont);
@@ -181,6 +189,7 @@ void SpectrumWindow::createSpectrumPlot()
 
     QPen pen;
     pen.setColor(cSpectrumColor);
+    pen.setWidthF(1.0f);
     m_pSpectrumCurve = new QwtPlotCurve();
     m_pSpectrumCurve->setPen(pen);
     m_pSpectrumCurve->setBrush(cSpectrumFillColor);
