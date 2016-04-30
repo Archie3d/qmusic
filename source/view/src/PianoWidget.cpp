@@ -143,7 +143,8 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
         } else {
             painter.setBrush(whiteBrush);
         }
-        painter.drawRect(r);
+
+        drawKey(painter, r);
 
         // Draw black keys
         if (note.hasFlat() &&  i > 0) { // Skip C-1b
@@ -161,10 +162,10 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
             } else if (flatNote.note() == MidiNote::Note_Eb || flatNote.note() == MidiNote::Note_Bb) {
                 bpos = 1.0f;
             }
-            bpos = pos + blackKeyWidth * 0.2f * bpos;
+            bpos = pos + blackKeyWidth * 0.15f * bpos;
 
             QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, height() * 2 / 3);
-            painter.drawRect(r);
+            drawKey(painter, r);
         }
 
         // Draw C keys labels.
@@ -179,6 +180,19 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
     shadow.setColorAt(1.0, QColor(0, 0, 0, 0));
 
     painter.fillRect(0, 0, width()-1, 16, shadow);
+}
+
+void PianoWidget::drawKey(QPainter &painter, const QRectF &rect) const
+{
+    QRectF r(rect);
+    QPainterPath path;
+    path.setFillRule(Qt::WindingFill);
+    path.addRoundedRect(r, 3, 3);
+    r.setHeight(r.height() - 3);
+    path.addRect(r);
+    path = path.simplified();
+
+    painter.drawPath(path);
 }
 
 void PianoWidget::keyPressEvent(QKeyEvent *pEvent)

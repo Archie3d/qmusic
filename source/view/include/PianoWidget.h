@@ -58,13 +58,20 @@ private:
     int numberOfWhiteKeys() const;
 
     /**
+     * @brief Draw a single piano key.
+     * @param painter
+     * @param rect
+     */
+    void drawKey(QPainter &painter, const QRectF &rect) const;
+
+    /**
      * Tells whether the note is on.
      * @param number NoteNumber
-     * @return
+     * @return true if note is on.
      */
     bool isNoteOn(int number) const;
 
-    ///< Map note number to its on/off state
+    /// Map note number to its on/off state
     QMap<int, bool> m_onNotes;
 };
 
