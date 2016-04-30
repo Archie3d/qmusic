@@ -41,6 +41,8 @@ const QFont cAxisTitleFont("Verdana", 7, QFont::Bold);
 // Number of samples used to compute spectrum
 const int cSignalSize(4096);
 
+#define clamp(v) ((v > 1.0f) ? 1.0 : (v < -1.0f ? -1.0f : v))
+
 SpectrumWindow::SpectrumWindow(QWidget *pParent)
     : QDockWidget(pParent),
       m_signal(cSignalSize, 0.0f)
@@ -73,7 +75,8 @@ void SpectrumWindow::plotSpectrum()
 {
     Fft::Array input(m_signal.size());
     for (int i = 0; i < m_signal.size(); i++) {
-        input[i] = qRound(m_signal.at(i) * 1e6) / 1e6;
+        input[i] = clamp(qRound(m_signal.at(i) * 1e6) / 1e6);
+
     }
 
     Fft::direct(input, Fft::Window_Hann);
