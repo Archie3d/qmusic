@@ -41,6 +41,10 @@
 #include "SettingsDialog.h"
 #include "MainWindow.h"
 
+// On OS X (non-retina) tool bar looks too thick,
+// this value will limit it heigt (in pixels).
+#define OSX_TOOLBAR_HEIGHT  32
+
 MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     : QMainWindow(pParent, flags)
 {
@@ -307,8 +311,9 @@ void MainWindow::createActions()
 void MainWindow::createMenu()
 {
 #ifdef Q_OS_OSX
-    // Qt5 has some problems with menubar on OS X
-    menuBar()->setNativeMenuBar(false);
+    // Qt5 has some problems with menubar on certain OS X versions.
+    // The follwing will move the menubar into the main window.
+    //menuBar()->setNativeMenuBar(false);
 #endif
 
     m_pFileMenu = menuBar()->addMenu(tr("&File"));
@@ -337,12 +342,18 @@ void MainWindow::createToolBars()
     m_pDspLoadBar->setMaximumWidth(200);
 
     m_pFileToolBar = addToolBar(tr("File"));
+#ifdef Q_OS_OSX
+    m_pFileToolBar->setMaximumHeight(OSX_TOOLBAR_HEIGHT);
+#endif
     m_pFileToolBar->setObjectName("fileToolBar");
     m_pFileToolBar->addAction(m_pNewSignalChainAction);
     m_pFileToolBar->addAction(m_pOpenSignalChainAction);
     m_pFileToolBar->addAction(m_pSaveSignalChainAction);
 
     m_pSignalChainToolBar = addToolBar(tr("Signal Chain"));
+#ifdef Q_OS_OSX
+    m_pSignalChainToolBar->setMaximumHeight(OSX_TOOLBAR_HEIGHT);
+#endif
     m_pSignalChainToolBar->setObjectName("signalChainToolBar");
     m_pSignalChainToolBar->addAction(m_pStartSignalChainAction);
     m_pSignalChainToolBar->addAction(m_pStopSignalChainAction);
