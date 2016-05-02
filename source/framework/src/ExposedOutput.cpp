@@ -48,6 +48,8 @@ void ExposedOutput::fastUpdate()
 
 void ExposedOutput::processStart()
 {
+    Q_ASSERT(m_pReferencedOutputPort != nullptr);
+
     m_updateChain = updateChain();
 }
 
@@ -57,12 +59,12 @@ void ExposedOutput::processStop()
 
 void ExposedOutput::process()
 {
-    if (m_pReferencedOutputPort != nullptr) {
-        float value = m_pReferencedOutputPort->value();
-        // Mix the input with whatever has been already assigned to referenced port
-        m_pInput->update();
-        m_pReferencedOutputPort->setValue(value + m_pInput->value());
-    }
+    Q_ASSERT(m_pReferencedOutputPort != nullptr);
+
+    float value = m_pReferencedOutputPort->value();
+    // Mix the input with whatever has been already assigned to referenced port
+    m_pInput->update();
+    m_pReferencedOutputPort->setValue(value + m_pInput->value());
 }
 
 void ExposedOutput::reset()

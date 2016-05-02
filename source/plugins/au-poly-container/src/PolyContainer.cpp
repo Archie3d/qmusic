@@ -145,9 +145,12 @@ void PolyphonicContainer::process()
         pOutputPort->setValue(0.0f);
     }
 
-    // The following will trigger update of internal signal chains
+    // The following will trigger update of internal signal chains.
     for (ExposedOutput *pAu : m_exposeOutputAudioUnits) {
-        pAu->fastUpdate();
+        // Optimization: we only update the enabled (sounding) signal chains.
+        if (pAu->signalChain()->isEnabled()) {
+            pAu->fastUpdate();
+        }
     }
 }
 
@@ -286,9 +289,10 @@ void PolyphonicContainer::createPorts()
 
 void PolyphonicContainer::prepareVoicesUpdate()
 {
-    for (ISignalChain *pSignalChain : m_voices) {
-        pSignalChain->prepareUpdate();
-    }
+    // Prepare updating the busy (playing) voices only.
+    for (auto voice : m_busyVoices) {
+        voice.second->prepareUpdate();
+   }
 }
 
 void PolyphonicContainer::manageVoices()
