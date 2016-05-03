@@ -22,9 +22,11 @@
 #include "Application.h"
 #include "LogWindow.h"
 
+const QColor cTimeStampColor(60, 90, 120);
+
 QHash<Logger::Level, QColor> cLogLevelColorMap = {
-    {Logger::Level_Debug, QColor("grey")},
-    {Logger::Level_Info, QColor("black")},
+    {Logger::Level_Debug, QColor("magenta")},
+    {Logger::Level_Info, QColor("grey")},
     {Logger::Level_Warning, QColor("orange")},
     {Logger::Level_Error, QColor("red")}
 };
@@ -59,11 +61,11 @@ void LogWindow::onLogged(Logger::Level level, const QString &text)
     }
 #endif
 
-    QColor color = cLogLevelColorMap.value(level, QColor("black"));
+    QColor color = cLogLevelColorMap.value(level, QColor("grey"));
     QString strDateTime = QDateTime::currentDateTime().toString();
 
     m_pLogText->moveCursor(QTextCursor::End);
-    m_pLogText->setTextColor(QColor("navy"));
+    m_pLogText->setTextColor(cTimeStampColor);
     m_pLogText->insertPlainText(strDateTime);
     m_pLogText->moveCursor(QTextCursor::End);
     m_pLogText->setTextColor(color);
@@ -75,7 +77,7 @@ void LogWindow::onLogged(Logger::Level level, const QString &text)
     m_pLogText->moveCursor(QTextCursor::End);
     m_pLogText->insertHtml(text);
     m_pLogText->moveCursor(QTextCursor::End);
-    m_pLogText->setTextColor(QColor("black"));
+    m_pLogText->setTextColor(QColor("grey"));
     m_pLogText->insertPlainText("\n");
     m_pLogText->moveCursor(QTextCursor::End);
 }

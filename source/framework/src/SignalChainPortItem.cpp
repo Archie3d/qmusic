@@ -28,7 +28,7 @@
 const int cRadius = 3;
 const int cFontSize = 7;
 const char *cFontFamily = "Verdana";
-const QColor cPortNameColor(64, 0, 128);
+const QColor cPortNameColor(132, 180, 50);
 const QColor cSocketColor("red");
 
 /*

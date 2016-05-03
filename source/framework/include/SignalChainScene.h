@@ -130,7 +130,7 @@ protected:
 
     void keyPressEvent(QKeyEvent *pEvent) override;
 
-    void drawBackground(QPainter *pPainter, const QRectF &rect) override;
+    //void drawBackground(QPainter *pPainter, const QRectF &rect) override;
 
 private slots:
 
