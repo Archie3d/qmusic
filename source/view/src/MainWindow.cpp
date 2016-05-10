@@ -76,8 +76,8 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
     updateActions();    
 
     logInfo(tr("*** <b>%1</b> version %2 ***")
-            .arg(Application::Product)
-            .arg(QMUSIC_VERSION));
+            .arg(qApp->applicationName())
+            .arg(qApp->applicationVersion()));
 }
 
 MainWindow::~MainWindow()

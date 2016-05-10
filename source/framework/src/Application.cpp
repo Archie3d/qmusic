@@ -15,15 +15,23 @@
     Lesser General Public License for more details.
 */
 
+#ifdef _MSC_VER
+#   include <Windows.h>
+#   include <ShlObj.h>
+#   include <NTSecAPI.h>
+#endif // _MSC_VER
+
 #include <QDebug>
 #include <QTimer>
 #include <QClipboard>
 #include <QMimeData>
 #include <QFile>
+#include <QStandardPaths>
 #include "Logger.h"
 #include "AudioDevicesManager.h"
 #include "AudioUnitsManager.h"
 #include "EventRouter.h"
+#include "CrashReporter.h"
 #include "Application.h"
 
 const QString Application::Company("Archie3d");
@@ -60,6 +68,13 @@ Application::Application(int argc, char **argv)
       m_pMainWindow(nullptr)
 {
     Q_ASSERT(s_pApplicationInstance == nullptr);
+
+    setApplicationName(Product);
+    setApplicationVersion(QMUSIC_VERSION);
+
+    // Install crash reporter
+    CrashReporter *pCR = CrashReporter::instance();
+    Q_ASSERT(pCR != nullptr);
 
     setOrganizationName(Company);
     setOrganizationDomain(Domain);
@@ -112,6 +127,30 @@ QByteArray Application::clipboardData(const QString &mimeId)
     }
 
     return QByteArray();
+}
+
+QDir Application::dataDirectory()
+{
+    QString path = QDir::homePath();
+#ifdef _MSC_VER
+    TCHAR szPath[MAX_PATH];
+    BOOL res = SHGetSpecialFolderPath(0, szPath, CSIDL_APPDATA, 1 /* Create if does not exist */);
+    if (res == TRUE) {
+        path = QString::fromLatin1(szPath);
+    }
+    path += "\\" + applicationName();
+    QDir dir(path);
+    if (!dir.exists()) {
+        QDir().mkpath(dir.absolutePath());
+    }
+    return QDir(path);
+#endif // _MSC_VER
+}
+
+QDir Application::documentsDirectory()
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    return QDir(path);
 }
 
 int Application::launch()

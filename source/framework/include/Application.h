@@ -19,6 +19,7 @@
 #define APPLICATION_H
 
 #include <QApplication>
+#include <QDir>
 #include <QMainWindow>
 #include "FrameworkApi.h"
 
@@ -73,6 +74,18 @@ public:
      * @return
      */
     QByteArray clipboardData(const QString &mimeId);
+
+    /**
+     * Returns application data directory.
+     * @return
+     */
+    static QDir dataDirectory();
+
+    /**
+     * Returns application documents directory.
+     * @return
+     */
+    static QDir documentsDirectory();
 
 public slots:
 
