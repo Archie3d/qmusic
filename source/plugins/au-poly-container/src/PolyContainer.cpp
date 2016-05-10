@@ -64,6 +64,8 @@ void PolyphonicContainer::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent);
 
+    QMutexLocker locker(&m_containerMutex);
+
     switch (pEvent->type()) {
     case SignalChainEvent::NoteOn: {
         NoteOnEvent *pNoteOnEvent = dynamic_cast<NoteOnEvent*>(pEvent);
@@ -137,6 +139,8 @@ void PolyphonicContainer::processStop()
 
 void PolyphonicContainer::process()
 {
+    QMutexLocker locker(&m_containerMutex);
+
     prepareVoicesUpdate();
 
     // Set outputs to zero, since

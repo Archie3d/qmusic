@@ -86,6 +86,10 @@ private:
     QList<OutputPort*> m_outputs;
     QList<ExposedOutput*> m_exposeOutputAudioUnits;
 
+    /// Locker mutex to manage access to the container
+    /// from the signal chain (process) and event loop (handleEvent).
+    QMutex m_containerMutex;
+
     /// List of cloned signal chains
     QList<ISignalChain*> m_voices;
 
