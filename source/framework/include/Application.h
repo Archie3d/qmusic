@@ -15,6 +15,9 @@
     Lesser General Public License for more details.
 */
 
+#ifndef APPLICATION_H
+#define APPLICATION_H
+
 #include <QApplication>
 #include <QMainWindow>
 #include "FrameworkApi.h"
@@ -122,3 +125,5 @@ QMUSIC_FRAMEWORK_API void logError(const QString &text);
 #endif
 
 #define logDebug(msg)   logDebug0(QString("<b><u>%1:%2</u></b> ").arg(__FILENAME__).arg(__LINE__) + (msg))
+
+#endif // APPLICATION_H
