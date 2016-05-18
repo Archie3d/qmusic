@@ -83,10 +83,14 @@ const QMap<Qt::Key, MidiNote> cKeysToMotesMap = {
     { Qt::Key_BracketRight, MidiNote(MidiNote::Note_G, 5) }
 };
 
+const double cBlackKeyWidth = 0.6;
+const double cBlackKeyHeight = 2.0 / 3.0;
+
 PianoWidget::PianoWidget(QWidget *pParent)
     : QWidget(pParent),
       m_onNotes()
 {
+    calculateKeysRects();
     reset();
 
     setFocusPolicy(Qt::StrongFocus);
@@ -108,15 +112,18 @@ void PianoWidget::setNote(int number, bool on)
     repaint();
 }
 
+void PianoWidget::resizeEvent(QResizeEvent *pEvent)
+{
+    calculateKeysRects();
+    QWidget::resizeEvent(pEvent);
+}
+
 void PianoWidget::paintEvent(QPaintEvent *pEvent)
 {
     Q_UNUSED(pEvent);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
-    double keyWidth = double(width()) / double(numberOfWhiteKeys());
-    double blackKeyWidth = keyWidth * 0.6;
 
     QPen pen;
     pen.setColor(QColor("gray"));
@@ -127,9 +134,36 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
     painter.setPen(pen);
 
     QFont font("Arial");
-    font.setPixelSize(keyWidth * 0.6);
+    font.setPixelSize(whiteKeyWidth() * cBlackKeyWidth);
     painter.setFont(font);
 
+    // Paint white keys first
+    for (int n : m_keysRects.keys()) {
+        MidiNote note(n);
+        if (note.isNatural()) {
+            QRectF rect = m_keysRects[n];
+            painter.setBrush(isNoteOn(n) ? onBrush : whiteBrush);
+            drawKey(painter, rect);
+
+            // Draw C key labels
+            if (note.note() == MidiNote::Note_C) {
+                painter.drawText(rect.left() + 1, height() - 2, note.toString());
+            }
+
+        }
+    }
+
+    // Paint black keys on top
+    for (int n : m_keysRects.keys()) {
+        MidiNote note(n);
+        if (!note.isNatural()) {
+            QRectF rect = m_keysRects[n];
+            painter.setBrush(isNoteOn(n) ? onBrush : blackBrush);
+            drawKey(painter, rect);
+        }
+    }
+
+#if  0
     // Draw white keys
     for (int i = 0; i < numberOfWhiteKeys(); i++) {
         int octave = (i / 7) - 1;
@@ -164,7 +198,7 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
             }
             bpos = pos + blackKeyWidth * 0.15f * bpos;
 
-            QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, height() * 2 / 3);
+            QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, blackKeyHeight());
             drawKey(painter, r);
         }
 
@@ -173,6 +207,8 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
             painter.drawText(pos + 1, height() - 2, note.toString());
         }
     }
+
+#endif
 
     // Draw a shadow on top
     QLinearGradient shadow(QPointF(0.0f, 0.0f), QPointF(0.0f, 16.0f));
@@ -201,10 +237,7 @@ void PianoWidget::keyPressEvent(QKeyEvent *pEvent)
     if (!pEvent->isAutoRepeat() && cKeysToMotesMap.contains(key)) {
         MidiNote note = cKeysToMotesMap.value(key);
 
-        if (!m_onNotes[note.number()]) {
-            NoteOnEvent *pNoteOnEvent = new NoteOnEvent(note.number(), 100);
-            Application::instance()->eventRouter()->postEvent(pNoteOnEvent);
-        }
+        sendNoteOn(note.number(), 100);
     }
 
     QWidget::keyPressEvent(pEvent);
@@ -216,13 +249,49 @@ void PianoWidget::keyReleaseEvent(QKeyEvent *pEvent)
     if (!pEvent->isAutoRepeat() && cKeysToMotesMap.contains(key)) {
         MidiNote note = cKeysToMotesMap.value(key);
 
-        if (m_onNotes[note.number()]) {
-            NoteOffEvent *pNoteOffEvent = new NoteOffEvent(note.number(), 100);
-            Application::instance()->eventRouter()->postEvent(pNoteOffEvent);
-        }
+        sendNoteOff(note.number(), 100);
     }
 
     QWidget::keyReleaseEvent(pEvent);
+}
+
+void PianoWidget::mousePressEvent(QMouseEvent *pEvent)
+{
+    int n = mousePosToNoteNumber(pEvent->pos());
+    if (n >= 0) {
+        int velocity = velocityForMousePos(pEvent->pos(), n);
+        sendNoteOn(n, velocity);
+        m_mouseNoteNumber = n;
+    }
+    QWidget::mousePressEvent(pEvent);
+}
+
+void PianoWidget::mouseReleaseEvent(QMouseEvent *pEvent)
+{
+    int n = mousePosToNoteNumber(pEvent->pos());
+    if (n >= 0) {
+        int velocity = velocityForMousePos(pEvent->pos(), n);
+        sendNoteOff(n, velocity);
+        if (m_mouseNoteNumber != n) {
+            // Also release stuck key
+            sendNoteOff(m_mouseNoteNumber, velocity);
+        }
+        m_mouseNoteNumber = -1;
+    }
+
+    QWidget::mouseReleaseEvent(pEvent);
+}
+
+void PianoWidget::mouseMoveEvent(QMouseEvent *pEvent)
+{
+    int n = mousePosToNoteNumber(pEvent->pos());
+    if (n != m_mouseNoteNumber) {
+        int velocity = velocityForMousePos(pEvent->pos(), n);
+        sendNoteOn(n, velocity);
+        sendNoteOff(m_mouseNoteNumber, velocity);
+        m_mouseNoteNumber = n;
+    }
+    QWidget::mouseMoveEvent(pEvent);
 }
 
 bool PianoWidget::eventFilter(QObject *pObject, QEvent *pEvent)
@@ -252,4 +321,94 @@ int PianoWidget::numberOfWhiteKeys() const
 bool PianoWidget::isNoteOn(int number) const
 {
     return m_onNotes.value(number, false);
+}
+
+int PianoWidget::mousePosToNoteNumber(const QPoint &pos) const
+{
+    // Check the black keys first
+    for (int n : m_keysRects.keys()) {
+        MidiNote note(n);
+        if (!note.isNatural()) {
+            QRectF rect = m_keysRects[n];
+            if (rect.contains(pos)) {
+                return n;
+            }
+        }
+    }
+
+    // Check the white keys then
+    for (int n : m_keysRects.keys()) {
+        MidiNote note(n);
+        if (note.isNatural()) {
+            QRectF rect = m_keysRects[n];
+            if (rect.contains(pos)) {
+                return n;
+            }
+        }
+    }
+
+    return -1;
+}
+
+double PianoWidget::whiteKeyWidth() const
+{
+    return double(width()) / double(numberOfWhiteKeys());
+}
+
+void PianoWidget::calculateKeysRects()
+{
+    double keyWidth = whiteKeyWidth();
+    double blackKeyWidth = keyWidth * cBlackKeyWidth;
+
+    // White keys
+    for (int i = 0; i < numberOfWhiteKeys(); i++) {
+        int octave = (i / 7) - 1;
+        int n = i % 7;
+        MidiNote note(cWhiteNotes.at(n), octave);
+
+        int pos = keyWidth * double(i);
+        QRectF r(pos, 0, keyWidth, height());
+
+        m_keysRects[note.number()] = r;
+
+        // Black keys
+        if (note.hasFlat() &&  i > 0) { // Skip C-1b
+            MidiNote flatNote = note.flat();
+
+            // Move Db, Gb, and Eb, Bb slightly apart.
+            float bpos = 0.0f;
+            if (flatNote.note() == MidiNote::Note_Db || flatNote.note() == MidiNote::Note_Gb) {
+                bpos = -1.0f;
+            } else if (flatNote.note() == MidiNote::Note_Eb || flatNote.note() == MidiNote::Note_Bb) {
+                bpos = 1.0f;
+            }
+            bpos = pos + blackKeyWidth * 0.15f * bpos;
+
+            QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, height() * cBlackKeyHeight);
+
+            m_keysRects[flatNote.number()] = r;
+        }
+
+    }
+}
+
+int PianoWidget::velocityForMousePos(const QPoint &pos, int noteNumber) const
+{
+    return pos.y() * 127 / m_keysRects.value(noteNumber).height();
+}
+
+void PianoWidget::sendNoteOn(int number, int velocity)
+{
+    if (!m_onNotes[number]) {
+        NoteOnEvent *pNoteOnEvent = new NoteOnEvent(number, velocity);
+        Application::instance()->eventRouter()->postEvent(pNoteOnEvent);
+    }
+}
+
+void PianoWidget::sendNoteOff(int number, int velocity)
+{
+    if (m_onNotes[number]) {
+        NoteOffEvent *pNoteOffEvent = new NoteOffEvent(number, velocity);
+        Application::instance()->eventRouter()->postEvent(pNoteOffEvent);
+    }
 }
