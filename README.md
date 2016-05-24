@@ -9,6 +9,8 @@ There are some signal chains examples provided in **patches** folder of the sour
 
 [Listen to some sounds](https://soundcloud.com/arthur-benilov/sets/qmusic-synthesizer).
 
+![Screenshot 6](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_6.png)
+
 ![Screenshot 1](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_1.png)
 
 ![Screenshot 2](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_2.png)
@@ -19,7 +21,6 @@ There are some signal chains examples provided in **patches** folder of the sour
 
 ![Screenshot 5](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_5.png)
 
-![Screenshot 6](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_6.png)
 
 
 # Building
