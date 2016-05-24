@@ -19,6 +19,8 @@ There are some signal chains examples provided in **patches** folder of the sour
 
 ![Screenshot 5](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_5.png)
 
+![Screenshot 6](https://raw.githubusercontent.com/Archie3d/qmusic/master/screenshots/screenshot_6.png)
+
 
 # Building
 CMake is required to configure and build the project.
