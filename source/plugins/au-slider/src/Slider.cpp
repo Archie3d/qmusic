@@ -24,8 +24,9 @@
 #include "ISignalChain.h"
 #include "Slider.h"
 
+// Slider geometry (for horizontal orientation).
 const int cDefaultWidth = 164;
-const int cDefaultHeight = 36;
+const int cDefaultHeight = 30;
 
 Slider::Slider(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)
