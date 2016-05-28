@@ -18,13 +18,20 @@
 #include <QTextCharFormat>
 #include "ExprSyntaxHighlighter.h"
 
+const QColor cKeywordColor(100, 120, 200);
+const QColor cConstColor(200, 60, 200);
+const QColor cStringColor(Qt::darkGreen);
+const QColor cCommentColor(80, 80, 80);
+const QColor cReservedColor(220, 20, 20);
+const QColor cFuncColor(60, 200, 200);
+
 ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     : QSyntaxHighlighter(pParent)
 {
     HighlightingRule rule;
 
     QTextCharFormat fmtKeyword;
-    fmtKeyword.setForeground(Qt::darkBlue);
+    fmtKeyword.setForeground(cKeywordColor);
     fmtKeyword.setFontWeight(QFont::Bold);
 
     QStringList keywords;
@@ -38,7 +45,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     }
 
     QTextCharFormat fmtReserved;
-    fmtReserved.setForeground(Qt::darkRed);
+    fmtReserved.setForeground(cReservedColor);
 
     QStringList reserved;
     reserved << "x" << "y" << "t";
@@ -50,7 +57,7 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     }
 
     QTextCharFormat fmtConstants;
-    fmtConstants.setForeground(Qt::darkMagenta);
+    fmtConstants.setForeground(cConstColor);
     fmtConstants.setFontWeight(QFont::Bold);
 
     QStringList constants;
@@ -63,20 +70,20 @@ ExprSyntaxHighlighter::ExprSyntaxHighlighter(QTextDocument *pParent)
     }
 
     QTextCharFormat fmtQuotation;
-    fmtQuotation.setForeground(Qt::darkGreen);
+    fmtQuotation.setForeground(cStringColor);
     fmtQuotation.setFontItalic(true);
     rule.pattern = QRegExp("'.*'");
     rule.format = fmtQuotation;
     m_highlightingRules.append(rule);
 
     QTextCharFormat fmtFunction;
-    fmtFunction.setForeground(Qt::darkCyan);
+    fmtFunction.setForeground(cFuncColor);
     rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
     rule.format = fmtFunction;
     m_highlightingRules.append(rule);
 
     QTextCharFormat fmtComment;
-    fmtComment.setForeground(Qt::gray);
+    fmtComment.setForeground(cCommentColor);
     rule.pattern = QRegExp("#[^\n]*");
     rule.format = fmtComment;
     m_highlightingRules.append(rule);

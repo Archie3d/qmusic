@@ -26,8 +26,7 @@
 #include "SignalChainPortItem.h"
 
 const int cRadius = 3;
-const int cFontSize = 7;
-const char *cFontFamily = "Verdana";
+const QFont cLabelFont("Arial", 9);
 const QColor cPortNameColor(132, 180, 50);
 const QColor cSocketColor("red");
 
@@ -50,10 +49,7 @@ SignalChainPortItem::SignalChainPortItem(Type type, const QString &labelText, QG
 
     // Add port label
     m_pLabelItem = new QGraphicsSimpleTextItem(this);
-    QFont font = m_pLabelItem->font();
-    font.setFamily(cFontFamily);
-    font.setPointSize(cFontSize);
-    m_pLabelItem->setFont(font);
+    m_pLabelItem->setFont(cLabelFont);
     m_pLabelItem->setText(labelText);
     m_pLabelItem->setBrush(QBrush(cPortNameColor));
     if (type == Type_InputPort) {

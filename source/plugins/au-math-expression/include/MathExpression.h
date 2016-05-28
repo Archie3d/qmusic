@@ -38,7 +38,7 @@ public:
 
     void createPorts(int nInputs, int nOutputs);
 
-    QColor color() const { return QColor(250, 250, 250); }
+    QColor color() const { return QColor(64, 64, 64); }
 
     QGraphicsItem *graphicsItem();
 

@@ -50,6 +50,9 @@ ExprEditorDialog::ExprEditorDialog(QWidget *pParent)
 
     setLayout(pLayout);
 
+    // Set a reasonable size (elsewhere it is too small on retina displays).
+    resize(600, 400);
+
     setModal(true);
 }
 
