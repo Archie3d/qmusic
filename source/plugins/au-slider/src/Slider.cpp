@@ -25,7 +25,7 @@
 #include "Slider.h"
 
 const int cDefaultWidth = 164;
-const int cDefaultHeight = 24;
+const int cDefaultHeight = 36;
 
 Slider::Slider(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin)

@@ -32,7 +32,7 @@ const qreal cPortMargin = 5.0;
 const qreal cPortSpacing = 20.0;
 const QSize cIconSize(16, 16);
 
-const QColor cTitleColor(0, 64, 128);
+const QColor cTitleColor(92, 170, 200);
 const QColor cSelectionColor(255, 159, 40);
 
 const QString SignalChainAudioUnitItem::UID("SignalChainAudioUnitItem");
@@ -185,7 +185,7 @@ void SignalChainAudioUnitItem::updateView()
     // Drop shadow effect if not yet created
     if (graphicsEffect() == nullptr) {
         QGraphicsDropShadowEffect *pShadowEffect = new QGraphicsDropShadowEffect();
-        pShadowEffect->setOffset(3.0);
+        pShadowEffect->setOffset(0.0);
         pShadowEffect->setBlurRadius(15.0);
         setGraphicsEffect(pShadowEffect);
     }

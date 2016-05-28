@@ -39,7 +39,7 @@
 #include "SignalChainScene.h"
 
 const QSizeF cGridSize(8, 8);
-const QColor cGridColor(250, 250, 250);
+const QColor cGridColor(20, 20, 20);
 
 const QString SignalChainScene::UID("SignalChainScene");
 const quint32 SignalChainScene_Magic(0x7af98ed8);
@@ -52,6 +52,8 @@ SignalChainScene::SignalChainScene(QObject *pParent)
     m_pSignalChain = new SignalChain();
     m_pDraggedAudioUnitPlugin = nullptr;
     m_pConnectionItem = nullptr;
+
+    //setBackgroundBrush(QColor(24, 28, 32));
 
     connect(this, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
 }
@@ -347,6 +349,7 @@ void SignalChainScene::keyPressEvent(QKeyEvent *pEvent)
 
 }
 
+#if 0
 void SignalChainScene::drawBackground(QPainter *pPainter, const QRectF &rect)
 {
     pPainter->save();
@@ -377,6 +380,7 @@ void SignalChainScene::drawBackground(QPainter *pPainter, const QRectF &rect)
 
     pPainter->restore();
 }
+#endif
 
 void SignalChainScene::onSelectionChanged()
 {

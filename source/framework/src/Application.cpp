@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QFile>
 #include <QStandardPaths>
+#include <QStyleFactory>
 #include "Logger.h"
 #include "AudioDevicesManager.h"
 #include "AudioUnitsManager.h"
@@ -169,6 +170,28 @@ int Application::launch()
 
 void Application::loadStylesheet()
 {
+    setStyle(QStyleFactory::create("fusion"));
+
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor(53,53,53));
+    palette.setColor(QPalette::WindowText, QColor(120, 115, 110)); // 160, 155, 150
+    palette.setColor(QPalette::Base, QColor(15,15,15));
+    palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+    palette.setColor(QPalette::ToolTipBase, Qt::white);
+    palette.setColor(QPalette::ToolTipText, Qt::white);
+    palette.setColor(QPalette::Text, QColor(180, 170, 165));
+    palette.setColor(QPalette::Button, QColor(53,53,53));
+    palette.setColor(QPalette::ButtonText, QColor(180, 180, 180));
+    palette.setColor(QPalette::BrightText, Qt::red);
+
+    palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
+    palette.setColor(QPalette::HighlightedText, Qt::black);
+
+    palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
+    palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
+    setPalette(palette);
+
+
     QFile f(":/framework/style.qss");
     if (f.open(QIODevice::ReadOnly)) {
         QString styleSheet = QString::fromUtf8(f.readAll());

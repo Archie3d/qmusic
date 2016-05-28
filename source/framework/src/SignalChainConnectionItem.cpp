@@ -27,7 +27,7 @@
 #include "SignalChainPortItem.h"
 #include "SignalChainConnectionItem.h"
 
-QColor cDefaultColor(64, 64, 64);
+QColor cDefaultColor(140, 140, 140);
 QColor cSelectColor(255, 159, 40);
 qreal cWidth(1.25);
 
@@ -155,10 +155,15 @@ void SignalChainConnectionItem::paint(QPainter *pPainter, const QStyleOptionGrap
 {
     Q_UNUSED(pWidget);
 
-    QPen pen = isConnected() ? QPen(cDefaultColor, cWidth) : QPen(Qt::DotLine);
-    if (isConnected() && isSelected()) {
-        pen.setColor(cSelectColor);
+    QPen pen(cDefaultColor, cWidth);
+    if (isConnected()) {
+        if (isSelected()) {
+            pen.setColor(cSelectColor);
+        }
+    } else {
+        pen.setStyle(Qt::DotLine);
     }
+
     pPainter->setPen(pen);
     pPainter->setBrush(Qt::NoBrush);
     pPainter->drawPath(path());

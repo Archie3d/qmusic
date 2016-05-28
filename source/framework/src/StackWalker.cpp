@@ -79,6 +79,9 @@
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **********************************************************************/
+
+#ifdef _MSC_VER
+
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -1352,3 +1355,5 @@ void StackWalker::OnOutput(LPCSTR buffer)
 {
   OutputDebugStringA(buffer);
 }
+
+#endif // _MSC_VER
