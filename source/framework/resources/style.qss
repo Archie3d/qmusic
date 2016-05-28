@@ -1,11 +1,12 @@
 QProgressBar#dspLoadBar {
     border: 1px solid gray;
     border-radius: 3px;
-    background: white;
+    background: rgb(128, 128, 120);
     padding: 1px;
     margin: 2px;
     max-height: 14px;
     text-align:center;
+    color: rgb(224, 224, 220);
 }
 
 QProgressBar#dspLoadBar[loadLevel="0"]::chunk:horizontal {

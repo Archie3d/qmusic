@@ -31,7 +31,7 @@
 const QColor cWaveformColor(255, 144, 64);
 const QColor cSpectrumColor(220, 220, 255);
 const QColor cSpectrumFillColor(190, 190, 220, 128);
-const QColor cAxisTitleColor("navy");
+const QColor cAxisTitleColor(128, 120, 64);
 const float cMinFrequency(100.0f);
 const float cMaxFrequency(22000.0f);
 const float cDbScale(-320.0f);
