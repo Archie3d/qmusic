@@ -50,7 +50,7 @@ void LHPFilter::serialize(QVariantMap &data, SerializationContext *pContext) con
 void LHPFilter::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
-    m_pFilterType->setValue(data["filterTime"]);
+    m_pFilterType->setValue(data["filterType"]);
     AudioUnit::deserialize(data, pContext);
 }
 
