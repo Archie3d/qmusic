@@ -111,9 +111,15 @@ void MidiIn::noteOnEvent(NoteOnEvent *pEvent)
 
 void MidiIn::noteOffEvent(NoteOffEvent *pEvent)
 {
-    if (pEvent->noteNumber() == m_noteNumber) {
-        m_velocity = pEvent->normalizedVelocity();
-    }
+    Q_UNUSED(pEvent);
+    // This will change the reported velocity.
+    // TODO: Note-off velocity should be probably a separate output
+    // or a selectable flag, as for most cases it is not
+    // desirable to change the velocity of already sounding note.
+
+    //if (pEvent->noteNumber() == m_noteNumber) {
+    //    m_velocity = pEvent->normalizedVelocity();
+    //}
 }
 
 void MidiIn::pitchBendEvent(PitchBendEvent *pEvent)
