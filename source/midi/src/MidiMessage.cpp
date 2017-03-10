@@ -16,7 +16,7 @@
 */
 
 #include <QHash>
-#include "midimessage.h"
+#include "MidiMessage.h"
 
 const MidiMessage MidiMessage::TuneRequest(0x00F60000);
 const MidiMessage MidiMessage::EndOfExclusive(0x00F70000);

@@ -17,6 +17,8 @@ file(GLOB HOSTAPI_WDMKS ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wdmks/*.c*)
 file(GLOB HOSTAPI_WASAPI ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wasapi/*.c*)
 file(GLOB HOSTAPI_WMME ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/wmme/*.c*)
 file(GLOB HOSTAPI_COREAUDIO ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/coreaudio/*.c*)
+file(GLOB HOSTAPI_ALSA ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/alsa/*.c*)
+file(GLOB HOSTAPI_JACK ${CMAKE_CURRENT_SOURCE_DIR}/src/hostapi/jack/*.c*)
 
 
 if(WIN32)
@@ -29,6 +31,14 @@ if(WIN32)
 elseif(APPLE)
     file(GLOB HOSTAPI_SRC
         ${HOSTAPI_COREAUDIO}
+    )
+elseif(UNIX)
+    find_package(ALSA REQUIRED)
+    include_directories(${ALSA_INCLUDE_DIR})
+
+    file(GLOB HOSTAPI_SRC
+        ${HOSTAPI_ALSA}
+        #${HOSTAPI_JACK}
     )
 endif()
 
@@ -75,6 +85,8 @@ elseif(APPLE)
     find_library(AUDIOUNIT AudioUnit "/")
     find_library(AUDIOTOOLBOX AudioToolbox "/")
     find_library(COREMIDI CoreMidi "/")
+elseif(UNIX)
+    add_definitions(-DPA_USE_ALSA)
 endif()
 
 # Disable compiler warnings
@@ -89,4 +101,9 @@ target_link_libraries(${PROJECT_NAME} ${DEPENDS})
 
 if(APPLE)
     target_link_libraries(${PROJECT_NAME} ${COREFOUNDATION} ${CORESERVICES} ${COREAUDIO} ${AUDIOUNIT} ${AUDIOTOOLBOX} ${COREMIDI})
+elseif(UNIX)
+    target_link_libraries(${PROJECT_NAME} ${ALSA_LIBRARY})
+
+    #add_definitions(-DPA_USE_JACK)
+    #target_link_libraries(${PROJECT_NAME} jack)
 endif()

@@ -18,7 +18,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <QObject.h>
+#include <QObject>
 #include "FrameworkApi.h"
 
 /**

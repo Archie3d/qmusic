@@ -17,7 +17,7 @@
 
 #include <qglobal.h>
 #include "RtMidi.h"
-#include "mididevice.h"
+#include "MidiDevice.h"
 
 MidiDevice::MidiDevice(Type type, int number)
     : m_valid(false),

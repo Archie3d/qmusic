@@ -20,7 +20,6 @@
 
 #include <QString>
 #include "FrameworkApi.h"
-#include "Signal.h"
 
 class IAudioUnit;
 

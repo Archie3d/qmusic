@@ -19,6 +19,7 @@
 #define AU_POLY_CONTAINER_H
 
 #include <QPair>
+#include <QMutex>
 #include "AudioUnit.h"
 #include "ISignalChainSceneContainer.h"
 

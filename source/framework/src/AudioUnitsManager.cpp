@@ -24,9 +24,11 @@
 #include "AudioUnitsManager.h"
 
 const QString cPluginPrefix =
-#if defined(Q_OS_OSX)
+#if defined(Q_OS_OSX) || defined(Q_OS_LINUX)
     "libau-";
 #elif defined(Q_OS_WIN)
+    "au-";
+#else
     "au-";
 #endif
 

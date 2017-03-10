@@ -15,6 +15,7 @@
     Lesser General Public License for more details.
 */
 
+#include <cstring>
 #include <qglobal.h>
 #include "DelayLine.h"
 

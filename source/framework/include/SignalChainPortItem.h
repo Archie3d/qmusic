@@ -19,7 +19,6 @@
 #define SIGNALCHAINPORTITEM_H
 
 #include "FrameworkApi.h"
-#include "Signal.h"
 #include "SignalChainItem.h"
 
 class SignalChainConnectionItem;
