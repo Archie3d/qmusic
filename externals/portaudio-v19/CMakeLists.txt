@@ -102,7 +102,7 @@ target_link_libraries(${PROJECT_NAME} ${DEPENDS})
 if(APPLE)
     target_link_libraries(${PROJECT_NAME} ${COREFOUNDATION} ${CORESERVICES} ${COREAUDIO} ${AUDIOUNIT} ${AUDIOTOOLBOX} ${COREMIDI})
 elseif(UNIX)
-    target_link_libraries(${PROJECT_NAME} ${ALSA_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} ${ALSA_LIBRARY} rt m pthread)
 
     #add_definitions(-DPA_USE_JACK)
     #target_link_libraries(${PROJECT_NAME} jack)

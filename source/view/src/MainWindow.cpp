@@ -82,6 +82,9 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
 
 MainWindow::~MainWindow()
 {
+#ifdef Q_OS_OSX
+    delete m_pMenuBar;
+#endif
 }
 
 void MainWindow::updateDspLoad(float l)
@@ -311,12 +314,13 @@ void MainWindow::createActions()
 void MainWindow::createMenu()
 {
 #ifdef Q_OS_OSX
-    // Qt5 has some problems with menubar on certain OS X versions.
-    // The follwing will move the menubar into the main window.
-    //menuBar()->setNativeMenuBar(false);
+    // Create parentless menu bar on OS X
+    m_pMenuBar = new QMenuBar(nullptr);
+#else
+    m_pMenuBar = menuBar();
 #endif
 
-    m_pFileMenu = menuBar()->addMenu(tr("&File"));
+    m_pFileMenu = m_pMenuBar->addMenu(tr("&File"));
     m_pFileMenu->addAction(m_pNewSignalChainAction);
     m_pFileMenu->addAction(m_pOpenSignalChainAction);
     m_pFileMenu->addSeparator();
@@ -325,7 +329,7 @@ void MainWindow::createMenu()
     m_pFileMenu->addSeparator();
     m_pFileMenu->addAction(m_pQuitAction);
 
-    m_pSoundMenu = menuBar()->addMenu(tr("&Sound"));
+    m_pSoundMenu = m_pMenuBar->addMenu(tr("&Sound"));
     m_pSoundMenu->addAction(m_pStartSignalChainAction);
     m_pSoundMenu->addAction(m_pStopSignalChainAction);
     m_pSoundMenu->addSeparator();

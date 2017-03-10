@@ -64,7 +64,7 @@ Application* Application::instance()
     return s_pApplicationInstance;
 }
 
-Application::Application(int argc, char **argv)
+Application::Application(int &argc, char **argv)
     : QApplication(argc, argv),
       m_pMainWindow(nullptr)
 {

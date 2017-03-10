@@ -57,7 +57,7 @@ public:
      */
     static Application* instance();
 
-    Application(int argc, char **argv);
+    Application(int &argc, char **argv);
     ~Application();
 
     Logger* logger() const { return m_pLogger; }

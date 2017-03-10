@@ -101,6 +101,7 @@ private:
     QAction *m_pSettingsAction;
 
     // Menus
+    QMenuBar *m_pMenuBar;
     QMenu *m_pFileMenu;
     QMenu *m_pSoundMenu;
 
