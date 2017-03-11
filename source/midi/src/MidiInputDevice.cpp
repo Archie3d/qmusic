@@ -74,12 +74,16 @@ bool MidiInputDevice::open()
         return true;
     }
 
-    m->pMidiIn->openPort(number());
-    // Do not ignore  sysex, timing, or active sensing
-    m->pMidiIn->ignoreTypes(false, false, false);
+    try {
+        m->pMidiIn->openPort(number());
+        // Do not ignore  sysex, timing, or active sensing
+        m->pMidiIn->ignoreTypes(false, false, false);
+    } catch (...) {
+        // Unable to open MIDI device
+    }
 
-    m->deviceIsOpen = true;
-    return true;
+    m->deviceIsOpen = m->pMidiIn->isPortOpen();
+    return m->deviceIsOpen;
 }
 
 bool MidiInputDevice::isOpen() const
@@ -117,9 +121,8 @@ bool MidiInputDevice::close()
     }
 
     m->pMidiIn->closePort();
-
-    m->deviceIsOpen = false;
-    return true;
+    m->deviceIsOpen = m->pMidiIn->isPortOpen();;
+    return !m->deviceIsOpen;
 }
 
 void MidiInputDevice::addListener(IMidiInputListener *pListener)
