@@ -119,7 +119,7 @@ float SpeakerThreadObject::getNextLeftChannelSample()
     if (m_pSignalChain->isEnabled()) {
         // We do not update the input as it has been updated
         // during the chain group update.
-        float value = m_pLeftChannelInput->value();
+        float value = m_pLeftChannelInput->getValue();
         return CLAMP(value);
     }
     return 0.0f;
@@ -130,7 +130,7 @@ float SpeakerThreadObject::getNextRightChannelSample()
     if (m_pSignalChain->isEnabled()) {
         // We do not update the input as it has been updated
         // during the chain group update.
-        float value = m_pRightChannelInput->value();
+        float value = m_pRightChannelInput->getValue();
         return CLAMP(value);
     }
     return 0.0f;

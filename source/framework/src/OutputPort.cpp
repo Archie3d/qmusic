@@ -31,15 +31,9 @@ OutputPort::OutputPort(const QString &name)
 {
 }
 
-void OutputPort::setValue(float value)
-{
-    m_value = value;
-}
-
 void OutputPort::update()
 {
-    Q_ASSERT(audioUnit() != nullptr);
-    audioUnit()->update();
+    updateAudioUnit();
 }
 
 int OutputPort::index() const

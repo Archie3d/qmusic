@@ -74,7 +74,7 @@ void Mixer::process()
 {
     float sum = 0.0;
     for (const InputPort *pInput : m_inputs) {
-        sum += pInput->value();
+        sum += pInput->getValue();
     }
 
     m_pOutput->setValue(sum * m_mixFactor);

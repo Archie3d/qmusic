@@ -66,10 +66,8 @@ void LHPFilter::processStop()
 
 void LHPFilter::process()
 {
-    int type = m_pFilterType->value().toInt();
-    m_filter.setType(type == 0 ? VAOnePoleFilter::Type_LP : VAOnePoleFilter::Type_HP);
-    m_filter.setCutOffFrequency(m_pInputCutOffFreq->value());
-    m_pOutput->setValue(m_filter.doFilter(m_pInput->value()));
+    m_filter.setCutOffFrequency(m_pInputCutOffFreq->getValue());
+    m_pOutput->setValue(m_filter.doFilter(m_pInput->getValue()));
 }
 
 void LHPFilter::reset()
@@ -88,4 +86,14 @@ void LHPFilter::createProperties()
     m_pFilterType->setValue(0);
     pRoot->addSubProperty(m_pFilterType);
 
+    QObject::connect(propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+        Q_UNUSED(pProperty);
+        setValues();
+    });
+}
+
+void LHPFilter::setValues()
+{
+    int type = m_pFilterType->value().toInt();
+    m_filter.setType(type == 0 ? VAOnePoleFilter::Type_LP : VAOnePoleFilter::Type_HP);
 }

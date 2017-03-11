@@ -49,7 +49,10 @@ float InputPort::value() const
 void InputPort::update()
 {
     if (m_pConnectedOutputPort != nullptr) {
-        m_pConnectedOutputPort->update();
+        //m_pConnectedOutputPort->update();
+
+        // Update audio unit directly bypassing the port chain.
+        m_pConnectedOutputPort->updateAudioUnit();
     }
 }
 

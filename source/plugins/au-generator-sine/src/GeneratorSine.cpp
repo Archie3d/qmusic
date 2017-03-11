@@ -72,7 +72,7 @@ void GeneratorSine::processStop()
 void GeneratorSine::process()
 {
     float out = m_amp * sin(m_phase * 2.0 * M_PI);
-    float f = m_pInputFreq->value();
+    float f = m_pInputFreq->getValue();
     float dPhase = f * m_freqScale;
     m_phase = fmod(m_phase + dPhase, 1.0);
 

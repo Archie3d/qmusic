@@ -101,12 +101,12 @@ void StkBowed::process()
         return;
     }
 
-    float freq = m_pInputFreq->value();
+    float freq = m_pInputFreq->getValue();
     if (freq < cLowestFrequency) {
         return;
     }
 
-    float amp = m_pInputVelocity->value();
+    float amp = m_pInputVelocity->getValue();
 
     m_pBowed->setFrequency(freq);
     // TODO: Should it be Ctrl_BowVelocity instead?

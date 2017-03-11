@@ -83,7 +83,7 @@ void StkRhodey::process()
         return;
     }
 
-    float freq = m_pInputFreq->value();
+    float freq = m_pInputFreq->getValue();
 
     m_pRhodey->setFrequency(freq);
 

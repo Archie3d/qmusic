@@ -59,12 +59,12 @@ void DelayLine::allocate(int nSamplesMax)
 
 void DelayLine::setDelay(int nSamples)
 {
-    int delay = qMin(nSamples, m_nSamplesMax - 1);
-    if (delay == m_nSamples) {
-        // No changes
+    if (nSamples == m_nSamples) {
+        // No change
         return;
     }
 
+    int delay = qMin(nSamples, m_nSamplesMax - 1);
     m_nSamples = delay;
 
     if (m_inIndex >= m_nSamples) {

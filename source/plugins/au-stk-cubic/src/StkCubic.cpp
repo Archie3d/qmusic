@@ -73,7 +73,7 @@ void StkCubic::processStop()
 
 void StkCubic::process()
 {
-    float in = m_pInput->value();
+    float in = m_pInput->getValue();
     m_pOutput->setValue(m_pCubic->tick(in));
 }
 

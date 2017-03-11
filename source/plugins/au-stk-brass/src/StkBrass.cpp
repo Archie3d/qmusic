@@ -97,11 +97,11 @@ void StkBrass::process()
         return;
     }
 
-    float freq = m_pInputFreq->value();
+    float freq = m_pInputFreq->getValue();
     if (freq < cLowestFrequency) {
         return;
     }
-    float breath = m_pInputBreath->value();
+    float breath = m_pInputBreath->getValue();
 
     m_pBrass->controlChange(Ctrl_LipTension, 128.0 * m_pPropLipTension->value().toDouble());
     m_pBrass->controlChange(Ctrl_SlideLength, 128.0 * m_pPropSlideLength->value().toDouble());

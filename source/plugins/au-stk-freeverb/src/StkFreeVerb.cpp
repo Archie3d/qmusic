@@ -87,8 +87,8 @@ void StkFreeVerb::processStop()
 
 void StkFreeVerb::process()
 {
-    m_pOutputLeft->setValue(m_pFreeVerb->tick(m_pInputLeft->value(),
-                                              m_pInputRight->value(),
+    m_pOutputLeft->setValue(m_pFreeVerb->tick(m_pInputLeft->getValue(),
+                                              m_pInputRight->getValue(),
                                               0));
     m_pOutputRight->setValue(m_pFreeVerb->lastOut(1));
 }

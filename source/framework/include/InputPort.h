@@ -57,6 +57,12 @@ public:
     float value() const override;
 
     /**
+     * Fast access to the port value.
+     * @return
+     */
+    inline float getValue() const { return *m_pValue; }
+
+    /**
      * Update the input.
      * This will trigger update of connected output port (if any).
      */

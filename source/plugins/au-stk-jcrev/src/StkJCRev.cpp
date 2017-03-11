@@ -71,7 +71,7 @@ void StkJCRev::processStop()
 
 void StkJCRev::process()
 {
-    m_pOutputLeft->setValue(m_pJCRev->tick(m_pInput->value(), 0));
+    m_pOutputLeft->setValue(m_pJCRev->tick(m_pInput->getValue(), 0));
     m_pOutputRight->setValue(m_pJCRev->lastOut(1));
 }
 

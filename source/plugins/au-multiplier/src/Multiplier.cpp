@@ -47,9 +47,7 @@ void Multiplier::processStop()
 
 void Multiplier::process()
 {
-    float v = m_pInput->value();
-    float gain = m_pGain->value();
-    m_pOutput->setValue(v * gain);
+    m_pOutput->setValue(m_pInput->getValue() * m_pGain->getValue());
 }
 
 void Multiplier::reset()

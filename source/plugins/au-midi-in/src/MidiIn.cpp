@@ -93,8 +93,8 @@ void MidiIn::process()
     m_pOutputFreq->setValue(m_frequency * m_frequencyBend);
 
     // Perform some filtering on velocity value to avoid glitches
-    float f = 0.8f;
-    m_pOutputVelocity->setValue(m_pOutputVelocity->value() * f +
+    const float f = 0.8f;
+    m_pOutputVelocity->setValue(m_pOutputVelocity->getValue() * f +
                                 m_velocity * (1.0f - f));
 }
 

@@ -20,6 +20,7 @@
 
 #include <QString>
 #include "FrameworkApi.h"
+#include "IAudioUnit.h"
 
 class IAudioUnit;
 
@@ -79,6 +80,11 @@ public:
      * @brief Update signal chain.
      */
     virtual void update() = 0;
+
+    /**
+     * Direct update of the audio unit.
+     */
+    inline void updateAudioUnit() { Q_ASSERT(m_pAudioUnit != nullptr); m_pAudioUnit->update(); }
 
 private:
 

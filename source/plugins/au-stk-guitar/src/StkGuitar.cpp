@@ -83,7 +83,7 @@ void StkGuitar::processStop()
 
 void StkGuitar::process()
 {
-    float freq = m_pInputFreq->value();
+    float freq = m_pInputFreq->getValue();
 
     if (freq < cMinFrequency) {
         return;

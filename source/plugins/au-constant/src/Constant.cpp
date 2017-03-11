@@ -49,7 +49,7 @@ void Constant::processStop()
 
 void Constant::process()
 {
-
+    // Constant does not change while processing
 }
 
 void Constant::reset()
@@ -105,6 +105,7 @@ void Constant::createProperties()
                 m_pValueItem->setText(QString::number(pV->value().toFloat(), 'f', 2));
 
                 // Update the output immediately
+                // TODO: This operation in not atomic
                 m_pOutput->setValue(pV->value().toFloat());
             }
         }

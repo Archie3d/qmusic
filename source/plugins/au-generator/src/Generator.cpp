@@ -186,6 +186,8 @@ void Generator::deserialize(const QVariantMap &data, SerializationContext *pCont
 void Generator::processStart()
 {
     setValues();
+
+    m_dt = signalChain()->timeStep();
 }
 
 void Generator::processStop()
@@ -196,9 +198,7 @@ void Generator::processStop()
 void Generator::process()
 {
     ISignalChain* chain = signalChain();
-    float dt = chain->timeStep();
-    float f = m_pInputFreq->value();
-    float dPhase = f * dt;
+    float dPhase = m_pInputFreq->getValue() * m_dt;
 
     float out = 0.0;
     switch (m_waveform) {
@@ -262,7 +262,7 @@ void Generator::createProperties()
     pRoot->addSubProperty(m_pPropTrigger);
 
     // Properties change handler
-    QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
+    QObject::connect(propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
         Q_UNUSED(pProperty);
         setValues();
     });

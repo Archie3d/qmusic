@@ -31,6 +31,8 @@ void FilterAbstractImpl::setSampleRate(double sr)
 
 void FilterAbstractImpl::setCutOffFrequency(double f)
 {
-    m_cutOffFrequency = f;
-    update();
+    if (m_cutOffFrequency != f) {
+        m_cutOffFrequency = f;
+        update();
+    }
 }

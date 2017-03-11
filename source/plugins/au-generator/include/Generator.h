@@ -53,7 +53,8 @@ private:
     void createProperties();
     void setValues();
 
-    double m_phase;
+    float m_phase;
+    float m_dt;
     int m_waveform;
     bool m_bandlimit;
     bool m_trigger;

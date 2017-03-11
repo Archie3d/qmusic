@@ -68,7 +68,7 @@ void BiQuadFilter::processStop()
 
 void BiQuadFilter::process()
 {
-    float f = m_pInputCutOffFreq->value();
+    float f = m_pInputCutOffFreq->getValue();
     if (m_f != f) {
         switch(m_filterType) {
         case Type_Resonance:
@@ -82,7 +82,7 @@ void BiQuadFilter::process()
         }
         m_f = f;
     }
-    m_pOutput->setValue(m_filter.tick(m_pInput->value()));
+    m_pOutput->setValue(m_filter.tick(m_pInput->getValue()));
 }
 
 void BiQuadFilter::reset()

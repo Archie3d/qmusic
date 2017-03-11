@@ -61,10 +61,10 @@ void ExposedOutput::process()
 {
     Q_ASSERT(m_pReferencedOutputPort != nullptr);
 
-    float value = m_pReferencedOutputPort->value();
+    float value = m_pReferencedOutputPort->getValue();
     // Mix the input with whatever has been already assigned to referenced port
     m_pInput->update();
-    m_pReferencedOutputPort->setValue(value + m_pInput->value());
+    m_pReferencedOutputPort->setValue(value + m_pInput->getValue());
 }
 
 void ExposedOutput::reset()

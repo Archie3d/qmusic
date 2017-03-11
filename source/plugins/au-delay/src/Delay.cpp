@@ -74,12 +74,12 @@ void Delay::processStop()
 
 void Delay::process()
 {
-    float delayRatio = qMin(1.0f, qMax(0.0f, m_pDelayRatioInput->value()));
+    float delayRatio = qMin(1.0f, qMax(0.0f, m_pDelayRatioInput->getValue()));
     int delaySamples = int(float(m_delaySamples) * delayRatio);
 
     m_pDelayLine->setDelay(delaySamples);
 
-    float out = m_pDelayLine->process(m_pInput->value());
+    float out = m_pDelayLine->process(m_pInput->getValue());
     m_pOutput->setValue(out);
 }
 

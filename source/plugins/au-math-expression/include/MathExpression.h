@@ -69,6 +69,7 @@ private:
     Expression m_expression;
     float m_sampleRate; // Sample rate.
     float m_t;  // Time.
+    float m_dt; // Time stamp (1/sample_rate)
     std::vector<float> m_xVector;
     std::vector<float> m_yVector;
     long long m_timeStep;

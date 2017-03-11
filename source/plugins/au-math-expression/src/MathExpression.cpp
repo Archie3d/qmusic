@@ -122,6 +122,7 @@ void MathExpression::processStart()
     m_sampleRate = signalChain()->sampleRate();
 
     m_timeStep = 0;
+    m_dt = signalChain()->timeStep();
 }
 
 void MathExpression::processStop()
@@ -136,11 +137,11 @@ void MathExpression::process()
 
     // Copy input values
     for (int i = 0; i < m_inputs.count(); i++) {
-        m_xVector[i] = m_inputs.at(i)->value();
+        m_xVector[i] = m_inputs.at(i)->getValue();
     }
 
     // Set current time
-    m_t = m_timeStep * signalChain()->timeStep();
+    m_t = m_timeStep * m_dt;
 
     // Evaluate the expression
     m_expression.value();

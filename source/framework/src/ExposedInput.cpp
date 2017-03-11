@@ -49,10 +49,10 @@ void ExposedInput::processStop()
 
 void ExposedInput::process()
 {
-    if (m_pReferencedInputPort) {
+    if (m_pReferencedInputPort != nullptr) {
         // Do no update, should be already updated.
         //m_pReferencedInputPort->update();
-        m_pOutput->setValue(m_pReferencedInputPort->value());
+        m_pOutput->setValue(m_pReferencedInputPort->getValue());
     }
 }
 

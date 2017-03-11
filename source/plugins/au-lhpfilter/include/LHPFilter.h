@@ -45,6 +45,7 @@ protected:
 private:
 
     void createProperties();
+    void setValues();
 
     VAOnePoleFilter m_filter;
 

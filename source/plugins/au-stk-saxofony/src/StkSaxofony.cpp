@@ -101,12 +101,12 @@ void StkSaxofony::process()
         return;
     }
 
-    float freq = m_pInputFreq->value();
+    float freq = m_pInputFreq->getValue();
     if (freq < cLowestFrequency) {
         return;
     }
 
-    float breath = m_pInputBreath->value();
+    float breath = m_pInputBreath->getValue();
 
     m_pSaxofony->setFrequency(freq);
 

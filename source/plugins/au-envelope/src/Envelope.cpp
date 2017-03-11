@@ -102,9 +102,9 @@ void Envelope::process()
     doEnvelope();
 
     // Recalculate
-    calculateAttack();
-    calculateDecay();
-    calculateRelease();
+    //calculateAttack();
+    //calculateDecay();
+    //calculateRelease();
 
     m_pOutput->setValue(m_output);
 }
@@ -283,4 +283,8 @@ void Envelope::cachePropetties()
     m_releaseTimeMs = m_pReleaseTimeMs->value().toFloat();
     m_signalChainEnable = m_pSignalChainEnable->value().toBool();
     m_signalChainDisable = m_pSignalChainDisable->value().toBool();
+
+    calculateAttack();
+    calculateDecay();
+    calculateRelease();
 }

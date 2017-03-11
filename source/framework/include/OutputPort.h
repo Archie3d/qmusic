@@ -57,7 +57,13 @@ public:
      * Assign value to this port.
      * @param value
      */
-    void setValue(float value);
+    inline void setValue(float value) { m_value = value; }
+
+    /**
+     * Returns port value.
+     * @return
+     */
+    inline float getValue() const { return m_value; }
 
     /**
      * Update the port.
@@ -71,6 +77,7 @@ public:
      * @return
      */
     int index() const override final;
+
 private:
 
     /**

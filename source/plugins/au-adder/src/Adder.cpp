@@ -44,9 +44,7 @@ void Adder::processStop()
 
 void Adder::process()
 {
-    float a = m_pInputA->value();
-    float b = m_pInputB->value();
-    m_pOutput->setValue(a + b);
+    m_pOutput->setValue(m_pInputA->getValue() + m_pInputB->getValue());
 }
 
 QGraphicsItem* Adder::graphicsItem()
