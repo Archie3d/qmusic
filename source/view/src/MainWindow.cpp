@@ -302,9 +302,11 @@ void MainWindow::createActions()
     connect(m_pQuitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     m_pStartSignalChainAction = new QAction(QIcon(":/icons/play.png"), tr("Start"), this);
+    m_pStartSignalChainAction->setShortcut(QKeySequence(Qt::Key_Space));
     connect(m_pStartSignalChainAction, SIGNAL(triggered()), this, SLOT(startSignalChain()));
 
     m_pStopSignalChainAction = new QAction(QIcon(":/icons/stop.png"), tr("Stop"), this);
+    m_pStopSignalChainAction->setShortcut(QKeySequence(Qt::Key_Space));
     connect(m_pStopSignalChainAction, SIGNAL(triggered()), this, SLOT(stopSignalChain()));
 
     m_pSettingsAction = new QAction(QIcon(":/icons/settings.png"), tr("Settings..."), this);
