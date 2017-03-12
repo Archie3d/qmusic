@@ -163,53 +163,6 @@ void PianoWidget::paintEvent(QPaintEvent *pEvent)
         }
     }
 
-#if  0
-    // Draw white keys
-    for (int i = 0; i < numberOfWhiteKeys(); i++) {
-        int octave = (i / 7) - 1;
-        int n = i % 7;
-        MidiNote note(cWhiteNotes.at(n), octave);
-
-        int pos = keyWidth * double(i);
-        QRectF r(pos, 0, keyWidth, height());
-        if (isNoteOn(note.number())) {
-            painter.setBrush(onBrush);
-        } else {
-            painter.setBrush(whiteBrush);
-        }
-
-        drawKey(painter, r);
-
-        // Draw black keys
-        if (note.hasFlat() &&  i > 0) { // Skip C-1b
-            MidiNote flatNote = note.flat();
-            if (isNoteOn(flatNote.number())) {
-                painter.setBrush(onBrush);
-            } else {
-                painter.setBrush(blackBrush);
-            }
-
-            // Move Db, Gb, and Eb, Bb slightly apart.
-            float bpos = 0.0f;
-            if (flatNote.note() == MidiNote::Note_Db || flatNote.note() == MidiNote::Note_Gb) {
-                bpos = -1.0f;
-            } else if (flatNote.note() == MidiNote::Note_Eb || flatNote.note() == MidiNote::Note_Bb) {
-                bpos = 1.0f;
-            }
-            bpos = pos + blackKeyWidth * 0.15f * bpos;
-
-            QRectF r(bpos - blackKeyWidth / 2, 0, blackKeyWidth, blackKeyHeight());
-            drawKey(painter, r);
-        }
-
-        // Draw C keys labels.
-        if (note.note() == MidiNote::Note_C) {
-            painter.drawText(pos + 1, height() - 2, note.toString());
-        }
-    }
-
-#endif
-
     // Draw a shadow on top
     QLinearGradient shadow(QPointF(0.0f, 0.0f), QPointF(0.0f, 16.0f));
     shadow.setColorAt(0.0, QColor(0, 0, 0, 128));
