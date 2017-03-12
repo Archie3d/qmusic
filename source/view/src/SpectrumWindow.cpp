@@ -203,17 +203,21 @@ void SpectrumWindow::createSpectrumPlot()
 
 void SpectrumWindow::plotWaveformCurve(const QVector<float> &curve)
 {
+    const int cNPoints = 1024;  // Number of points to plot
     QVector<QPointF> samples;
 
     float sampleRate = Application::instance()->audioDevicesManager()->audioOutputDevice()->openDeviceInfo().sampleRate;
 
-    int i = 0;
-    for (int i = 0; i < curve.size(); i++) {
+    int step = curve.size() / cNPoints;
+    if (step < 1) {
+        step = 1;
+    }
+    for (int i = 0; i < curve.size(); i += step) {
         samples.append(QPointF(i * 1000.0f / sampleRate, curve.at(i)));
     }
 
     m_pWaveformCurve->setSamples(samples);
-    m_pWaveformPlot->setAxisScale(QwtPlot::xBottom, 0.0, curve.size() * 1000.0f / sampleRate);
+    m_pWaveformPlot->setAxisScale(QwtPlot::xBottom, 0.0, samples.size() * 1000.0f / sampleRate);
     m_pWaveformPlot->replot();
 }
 
