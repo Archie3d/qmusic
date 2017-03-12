@@ -364,6 +364,8 @@ void MainWindow::createToolBars()
     QWidget *pStretch = new QWidget(this);
     pStretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_pSignalChainToolBar->addWidget(pStretch);
+    m_pSignalChainToolBar->addAction(m_pSettingsAction);
+    m_pSignalChainToolBar->addSeparator();
     m_pSignalChainToolBar->addWidget(new QLabel(tr("DSP load ")));
     m_pSignalChainToolBar->addWidget(m_pDspLoadBar);
 }

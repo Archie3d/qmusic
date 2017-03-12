@@ -57,7 +57,7 @@ private:
     QSpinBox *m_pBufferSizeSpinBox;
 
     QComboBox *m_pMidiInComboBox;
-    QSpinBox *m_pMidiInChannelSpinBox;
+    QComboBox *m_pMidiInChannelComboBox;
 };
 
 #endif // SETTINGSDIALOG_H

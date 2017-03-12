@@ -29,6 +29,8 @@
 #include "MidiInputDevice.h"
 #include "SettingsDialog.h"
 
+const int cMidiChannelsTotal = 16;
+
 SettingsDialog::SettingsDialog(QWidget *pParent)
     : QDialog(pParent)
 {
@@ -75,7 +77,9 @@ void SettingsDialog::loadSettings()
         m_pMidiInComboBox->setCurrentIndex(index);
     }
 
-    m_pMidiInChannelSpinBox->setValue(settings.get(Settings::Setting_MidiInChannel).toInt());
+    m_pMidiInChannelComboBox->setCurrentIndex(
+                m_pMidiInChannelComboBox->findData(settings.get(Settings::Setting_MidiInChannel).toInt())
+                );
 }
 
 void SettingsDialog::saveSettings()
@@ -96,7 +100,7 @@ void SettingsDialog::saveSettings()
 
     index = m_pMidiInComboBox->currentData().toInt(&ok);
     settings.set(Settings::Setting_MidiInIndex, ok ? index : -1);
-    settings.set(Settings::Setting_MidiInChannel, m_pMidiInChannelSpinBox->value());
+    settings.set(Settings::Setting_MidiInChannel, m_pMidiInChannelComboBox->currentData().toInt());
 }
 
 void SettingsDialog::createLayout()
@@ -112,9 +116,7 @@ void SettingsDialog::createLayout()
     m_pBufferSizeSpinBox->setMinimum(16);
     m_pBufferSizeSpinBox->setMaximum(16 * 1024);
     m_pMidiInComboBox = new QComboBox();
-    m_pMidiInChannelSpinBox = new QSpinBox();
-    m_pMidiInChannelSpinBox->setMinimum(1);
-    m_pMidiInChannelSpinBox->setMaximum(16);
+    m_pMidiInChannelComboBox = new QComboBox();
 
     pFormLayout->addRow(tr("Wave In"), m_pWaveInComboBox);
     pFormLayout->addRow(tr("Wave Out"), m_pWaveOutComboBox);
@@ -122,7 +124,7 @@ void SettingsDialog::createLayout()
     pFormLayout->addRow(tr("Buffer size"), m_pBufferSizeSpinBox);
     pFormLayout->addRow(new QLabel());
     pFormLayout->addRow(tr("MIDI In"), m_pMidiInComboBox);
-    pFormLayout->addRow(tr("MIDI In channel"), m_pMidiInChannelSpinBox);
+    pFormLayout->addRow(tr("MIDI In channel"), m_pMidiInChannelComboBox);
 
     // Create buttons
     QPushButton *pOkButton = new QPushButton(tr("OK"));
@@ -177,5 +179,10 @@ void SettingsDialog::enumerateDevices()
         if (desc.type == MidiDevice::Type_Input) {
             m_pMidiInComboBox->addItem(desc.name, desc.number);
         }
+    }
+
+    // MIDI channels
+    for (int i = 1; i <= cMidiChannelsTotal; i++) {
+        m_pMidiInChannelComboBox->addItem(QString("Channel %1").arg(i), i);
     }
 }
