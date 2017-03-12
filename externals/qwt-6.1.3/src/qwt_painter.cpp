@@ -194,7 +194,7 @@ bool QwtPainter::isAligning( QPainter *painter )
 /*!
   Enable whether coordinates should be rounded, before they are painted
   to a paint engine that floors to integer values. For other paint engines
-  this ( PDF, SVG ), this flag has no effect.
+  ( PDF, SVG ) this flag has no effect.
   QwtPainter stores this flag only, the rounding itself is done in 
   the painting code ( f.e the plot items ).
 
@@ -1264,7 +1264,11 @@ QPixmap QwtPainter::backingStore( QWidget *widget, const QSize &size )
 
     if ( widget && widget->windowHandle() )
     {
+#if QT_VERSION < 0x050100
         pixelRatio = widget->windowHandle()->devicePixelRatio();
+#else
+        pixelRatio = widget->devicePixelRatio();
+#endif
     }
     else
     {
