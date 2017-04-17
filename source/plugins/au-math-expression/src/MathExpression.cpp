@@ -115,8 +115,8 @@ void MathExpression::processStart()
     QString script = removeScriptComments(m_script);
     m_compiledOk = parser.compile(script.toStdString(), m_expression);
     if (!m_compiledOk) {
-        qCritical() << "Unable to evaluate expression";
-        qDebug() << script;
+        qCritical() << "Unable to evaluate expression:"
+                    << QString::fromStdString(parser.error());
     }
 
     m_sampleRate = signalChain()->sampleRate();
