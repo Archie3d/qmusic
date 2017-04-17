@@ -144,7 +144,12 @@ void MathExpression::process()
     m_t = m_timeStep * m_dt;
 
     // Evaluate the expression
-    m_expression.value();
+    try {
+        m_expression.value();
+    } catch (...) {
+        qCritical() << "Signal processing stopped due to a faulty expression evaluation.";
+        signalChain()->stop();
+    }
 
     // Copy outputs from the script
     for (int i = 0; i < m_outputs.count(); i++) {
