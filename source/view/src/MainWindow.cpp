@@ -73,7 +73,11 @@ MainWindow::MainWindow(QWidget *pParent, Qt::WindowFlags flags)
 
     loadSettings();
 
-    updateActions();    
+    updateActions();
+
+    // Set the default open/save directory to patches/
+    m_lastUsedDir = Application::instance()->applicationDirPath();
+    m_lastUsedDir.cd("patches");
 
     logInfo(tr("*** <b>%1</b> version %2 ***")
             .arg(qApp->applicationName())
@@ -163,9 +167,8 @@ void MainWindow::saveSignalChain()
 
 void MainWindow::saveAsSignalChain()
 {
-    QString proposedPath = Application::instance()->applicationDirPath();
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save signal chain as"),
-                                                    proposedPath,
+                                                    m_lastUsedDir.absolutePath(),
                                                     tr("QMusic signal chain (*.sch)"));
     if (fileName.isEmpty()) {
         return;
@@ -174,13 +177,14 @@ void MainWindow::saveAsSignalChain()
     m_pSignalChainWidget->save(fileName);
     logInfo(tr("Signal chain saved as %1").arg(fileName));
     setWindowTitle(fileName);
+
+    m_lastUsedDir = QFileInfo(fileName).absoluteDir();
 }
 
 void MainWindow::openSignalChain()
 {
-    QString proposedPath = Application::instance()->applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open signal chain"),
-                                                    proposedPath,
+                                                    m_lastUsedDir.absolutePath(),
                                                     tr("QMusic signalchain (*.sch)"));
 
     if (fileName.isEmpty()) {
@@ -189,6 +193,8 @@ void MainWindow::openSignalChain()
 
     m_pSignalChainWidget->load(fileName);
     setWindowTitle(fileName);
+
+    m_lastUsedDir = QFileInfo(fileName).absoluteDir();
 
     logInfo(tr("Loaded signal chain from %1").arg(fileName));
 }

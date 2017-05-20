@@ -19,6 +19,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDir>
 #include "ViewApi.h"
 
 class QAction;
@@ -111,6 +112,9 @@ private:
 
     // Load bar
     QProgressBar *m_pDspLoadBar;
+
+    // Previously used open/save path
+    QDir m_lastUsedDir;
 };
 
 #endif // MAINWINDOW_H
