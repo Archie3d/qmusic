@@ -1,6 +1,6 @@
 {
     "uid":          "b204ef68c26e67637356c2529240d5b8",
-    "name":         "BiQuad Filter",
+    "name":         "BiQuad Filter (deprecated)",
     "category":     "Filters",
     "version":      "1.0.0"
 }

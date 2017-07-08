@@ -21,10 +21,10 @@
 #include <qmath.h>
 #include "Application.h"
 #include "ISignalChain.h"
-#include "BiQuadFilter.h"
+#include "BiQuadFilterUnit.h"
 
 
-BiQuadFilter::BiQuadFilter(AudioUnitPlugin *pPlugin)
+BiQuadFilterUnit::BiQuadFilterUnit(AudioUnitPlugin *pPlugin)
     : AudioUnit(pPlugin),
       m_filter()
 {
@@ -36,75 +36,65 @@ BiQuadFilter::BiQuadFilter(AudioUnitPlugin *pPlugin)
     createProperties();
 }
 
-BiQuadFilter::~BiQuadFilter()
-{
-}
+BiQuadFilterUnit::~BiQuadFilterUnit() = default;
 
-void BiQuadFilter::serialize(QVariantMap &data, SerializationContext *pContext) const
+void BiQuadFilterUnit::serialize(QVariantMap &data, SerializationContext *pContext) const
 {
     Q_ASSERT(pContext != nullptr);
     data["filterType"] = m_pFilterType->value();
-    data["filterRadius"] = m_pFilterRadius->value();
+    data["filterQ"] = m_pQFactor->value();
     AudioUnit::serialize(data, pContext);
 }
 
-void BiQuadFilter::deserialize(const QVariantMap &data, SerializationContext *pContext)
+void BiQuadFilterUnit::deserialize(const QVariantMap &data, SerializationContext *pContext)
 {
     Q_ASSERT(pContext != nullptr);
     m_pFilterType->setValue(data["filterType"]);
-    m_pFilterRadius->setValue(data["filterRadius"]);
+    m_pQFactor->setValue(data["filterQ"]);
     AudioUnit::deserialize(data, pContext);
 }
 
-void BiQuadFilter::processStart()
+void BiQuadFilterUnit::processStart()
 {
     m_filter.setSampleRate(signalChain()->sampleRate());
     setValues();
 }
 
-void BiQuadFilter::processStop()
+void BiQuadFilterUnit::processStop()
 {
 }
 
-void BiQuadFilter::process()
+void BiQuadFilterUnit::process()
 {
     float f = m_pInputCutOffFreq->getValue();
     if (m_f != f) {
-        switch(m_filterType) {
-        case Type_Resonance:
-            m_filter.setResonance(f, m_radius, true);
-            break;
-        case Type_Notch:
-            m_filter.setNotch(f, m_radius);
-            break;
-        default:
-            break;
-        }
+        m_filter.setCutOffFrequency(f);
         m_f = f;
     }
-    m_pOutput->setValue(m_filter.tick(m_pInput->getValue()));
+    m_pOutput->setValue(m_filter.doFilter(m_pInput->getValue()));
 }
 
-void BiQuadFilter::reset()
+void BiQuadFilterUnit::reset()
 {
+    m_filter.reset();
 }
 
-void BiQuadFilter::createProperties()
+void BiQuadFilterUnit::createProperties()
 {
     QtVariantProperty *pRoot = rootProperty();
 
     m_pFilterType = propertyManager()->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter type");
     QVariantList list;
-    list << "Resonance" << "Notch";
+    list << "Low-pass" << "High-pass" << "Band-pass" << "Notch" << "All-pass" << "Peaking EQ" << "Low-shelf" << "High-shelf";
     m_pFilterType->setAttribute("enumNames", list);
     m_pFilterType->setValue(0);
 
-    m_pFilterRadius = propertyManager()->addProperty(QVariant::Double, "Radius");
-    m_pFilterRadius->setValue(0.5);
-    m_pFilterRadius->setAttribute("singleStep", 0.1);
+    m_pQFactor = propertyManager()->addProperty(QVariant::Double, "Q-factor");
+    m_pQFactor->setValue(0.7);
+    m_pQFactor->setAttribute("singleStep", 0.1);
 
     pRoot->addSubProperty(m_pFilterType);
-    pRoot->addSubProperty(m_pFilterRadius);
+    pRoot->addSubProperty(m_pQFactor);
 
     // Properties change handler
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
@@ -114,9 +104,19 @@ void BiQuadFilter::createProperties()
 
 }
 
-void BiQuadFilter::setValues()
+void BiQuadFilterUnit::setValues()
 {
-    m_filterType = m_pFilterType->value().toInt() == 0 ? Type_Resonance : Type_Notch;
-    m_radius = m_pFilterRadius->value().toFloat();
-    m_f = 0.0f;
+    const QVector<BiquadFilter::Type> cType {
+        BiquadFilter::Type_LPF,
+        BiquadFilter::Type_HPF,
+        BiquadFilter::Type_BPF,
+        BiquadFilter::Type_Notch,
+        BiquadFilter::Type_APF,
+        BiquadFilter::Type_PeakingEQ,
+        BiquadFilter::Type_LowShelf,
+        BiquadFilter::Type_HighShelf
+    };
+
+    m_filter.setType(cType.at(m_pFilterType->value().toInt()));
+    m_filter.setQFactor(m_pQFactor->value().toFloat());
 }
