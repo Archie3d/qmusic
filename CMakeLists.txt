@@ -5,7 +5,7 @@ if(${CMAKE_MAJOR_VERSION} GREATER 2)
     cmake_policy(SET CMP0043 OLD)
     cmake_policy(SET CMP0054 OLD)
 endif()
-cmake_policy(SET CMP0020 OLD)
+cmake_policy(SET CMP0020 NEW)
 
 project(QMusic)
 
@@ -41,9 +41,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/target/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Installation destination
-set(INSTALL_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+set(INSTALL_BIN_PATH ${CMAKE_INSTALL_PREFIX})
 set(INSTALL_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib)
-set(INSTALL_PATCHES_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+set(INSTALL_PATCHES_PATH ${CMAKE_INSTALL_PREFIX})
 
 
 # Path to look for custom CMake scripts
@@ -94,5 +94,6 @@ set(PATCHES_DIRECTORY ${PROJECT_BINARY_DIR}/target/bin)
 file(COPY ${PATCHES_SRC} DESTINATION ${PATCHES_DIRECTORY})
 install(DIRECTORY ${PATCHES_SRC} DESTINATION ${INSTALL_PATCHES_PATH} COMPONENT patches)
 
+include(InstallRequiredSystemLibraries)
 include(install_qt)
 include(make_package)

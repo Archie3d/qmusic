@@ -22,18 +22,6 @@ set(QT_PLATFORM_LIBS
     qwindows
 )
 
-set(ICU_VERSION "53")
-
-if (QT_MINOR_VERSION EQUAL 5)
-    set(ICU_VERSION "54")
-endif()
-
-set(ICU_LIBS
-    icudt${ICU_VERSION}
-    icuin${ICU_VERSION}
-    icuuc${ICU_VERSION}
-)
-
 if(WIN32)
 
     # cmake does not like windows-like slash in path
@@ -58,9 +46,8 @@ if(WIN32)
                 DESTINATION "${INSTALL_BIN_PATH}/platforms" COMPONENT runtime)
     endforeach()
 
-    foreach(ICU_LIB ${ICU_LIBS})
-        set(ICU_LIB "${ICU_LIB}.dll")
-        install(FILES "${QT_DIR}/bin/${ICU_LIB}" DESTINATION ${INSTALL_BIN_PATH} COMPONENT runtime)
-    endforeach()
+    # Install runtime
+    install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+            DESTINATION ${INSTALL_BIN_PATH} COMPONENT runtime)
 
 endif()

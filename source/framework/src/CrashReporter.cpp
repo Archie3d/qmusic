@@ -147,7 +147,7 @@ void createMiniDump(_EXCEPTION_POINTERS *pExceptionInfo, const QDateTime &timest
     }
 
     QString miniDumpFile = miniDumpFilePath(timestamp);
-    QByteArray baMiniDumpFile = miniDumpFile.toLatin1();
+    QByteArray baMiniDumpFile = miniDumpFile.toLocal8Bit();
 
     HANDLE hFile = CreateFile(baMiniDumpFile.data(),
                               GENERIC_READ | GENERIC_WRITE,
@@ -192,7 +192,7 @@ void createCrashLog(const QString &trace, const QDateTime &timestamp)
         data.append(QString("Version: %1\n").arg(qApp->applicationVersion()));
         data.append(QString("------------------------------------------------\n"));
         f.write(data);
-        data = trace.toUtf8();
+        data = trace.toLocal8Bit();
         f.write(data);
         f.close();
     }
@@ -222,7 +222,7 @@ LONG WINAPI unhandledExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
                         "Crash dump has been created in %1 folder.\n"
                       )
             .arg(Application::dataDirectory().absolutePath());
-    QByteArray baMessage = message.toLatin1();
+    QByteArray baMessage = message.toLocal8Bit();
 
     FatalAppExit(-1, baMessage.constData());
     return EXCEPTION_CONTINUE_SEARCH;
