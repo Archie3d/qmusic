@@ -57,7 +57,7 @@ void Delay::deserialize(const QVariantMap &data, SerializationContext *pContext)
 void Delay::processStart()
 {
     float delayMs = m_pPropDelay->value().toFloat();
-    m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep();
+    m_delaySamples = delayMs / 1000.0 / signalChain()->timeStep() + 1;
     if (m_pDelayLine == nullptr || m_pDelayLine->samplesMax() != m_delaySamples) {
         // (re-)allocate delay line object
         delete m_pDelayLine;
@@ -75,9 +75,8 @@ void Delay::processStop()
 void Delay::process()
 {
     float delayRatio = qMin(1.0f, qMax(0.0f, m_pDelayRatioInput->getValue()));
-    int delaySamples = int(float(m_delaySamples) * delayRatio);
 
-    m_pDelayLine->setDelay(delaySamples);
+    m_pDelayLine->setDelayFraction(delayRatio);
 
     float out = m_pDelayLine->process(m_pInput->getValue());
     m_pOutput->setValue(out);

@@ -48,6 +48,8 @@ public:
      */
     void setDelay(int nSamples);
 
+    void setDelayFraction(double f);
+
     /**
      * Reset the delay line.
      * This will clear the internal buffer by setting all the
@@ -75,6 +77,7 @@ private:
     double *m_pBuffer;  ///< Samples buffer.
     int m_inIndex;      ///< Index within the buffer for input sample.
     int m_outIndex;     ///< Index within the buffer for output sample.
+    double m_frac;
 };
 
 #endif // DELAYLINE_H

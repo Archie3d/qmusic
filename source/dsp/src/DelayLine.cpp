@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <qglobal.h>
+#include <qmath.h>
 #include "DelayLine.h"
 
 DelayLine::DelayLine(int nSamplesMax)
@@ -29,6 +30,7 @@ DelayLine::DelayLine(int nSamplesMax)
     m_nSamples = 0;
     m_inIndex = 0;
     m_outIndex = 0;
+    m_frac = 0.0;
 
     allocate(nSamplesMax);
 }
@@ -59,6 +61,8 @@ void DelayLine::allocate(int nSamplesMax)
 
 void DelayLine::setDelay(int nSamples)
 {
+    // Reset interpolation
+    m_frac = 0.0;
     if (nSamples == m_nSamples) {
         // No change
         return;
@@ -74,6 +78,23 @@ void DelayLine::setDelay(int nSamples)
     }
 }
 
+void DelayLine::setDelayFraction(double f)
+{
+    if (f < 0.0) {
+        f = 0.0;
+    }
+    if (f > 1.0) {
+        f = 1.0;
+    }
+
+    double fSamples = double(m_nSamplesMax - 1) * f;
+    int nSamples = ceil(fSamples);
+    setDelay(nSamples);
+
+    // Linear interpolation factor
+    m_frac = ceil(fSamples) - fSamples;
+}
+
 void DelayLine::reset()
 {
     Q_ASSERT(m_pBuffer != nullptr);
@@ -87,10 +108,11 @@ double DelayLine::process(double x)
     }
 
     m_pBuffer[m_inIndex] = x;
-    float out = m_pBuffer[m_outIndex];
+    double out = m_pBuffer[m_outIndex];
 
     m_inIndex = (m_inIndex + 1) % m_nSamplesMax;
     m_outIndex = (m_outIndex + 1) % m_nSamplesMax;
 
-    return out;
+    // Linear interpolation
+    return out * (1.0 - m_frac) + m_pBuffer[m_outIndex] * m_frac;
 }
