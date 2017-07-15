@@ -43,6 +43,7 @@ void BiQuadFilterUnit::serialize(QVariantMap &data, SerializationContext *pConte
     Q_ASSERT(pContext != nullptr);
     data["filterType"] = m_pFilterType->value();
     data["filterQ"] = m_pQFactor->value();
+    data["filterDB"] = m_pDbGain->value();
     AudioUnit::serialize(data, pContext);
 }
 
@@ -51,6 +52,7 @@ void BiQuadFilterUnit::deserialize(const QVariantMap &data, SerializationContext
     Q_ASSERT(pContext != nullptr);
     m_pFilterType->setValue(data["filterType"]);
     m_pQFactor->setValue(data["filterQ"]);
+    m_pDbGain->setValue(data["filterDB"]);
     AudioUnit::deserialize(data, pContext);
 }
 
@@ -93,8 +95,13 @@ void BiQuadFilterUnit::createProperties()
     m_pQFactor->setValue(0.7);
     m_pQFactor->setAttribute("singleStep", 0.1);
 
+    m_pDbGain = propertyManager()->addProperty(QVariant::Double, "dB gain");
+    m_pDbGain->setValue(1.0);
+    m_pDbGain->setAttribute("singleStep", 0.1);
+
     pRoot->addSubProperty(m_pFilterType);
     pRoot->addSubProperty(m_pQFactor);
+    pRoot->addSubProperty(m_pDbGain);
 
     // Properties change handler
     QObject::connect (propertyManager(), &QtVariantPropertyManager::propertyChanged, [this](QtProperty *pProperty){
@@ -119,4 +126,5 @@ void BiQuadFilterUnit::setValues()
 
     m_filter.setType(cType.at(m_pFilterType->value().toInt()));
     m_filter.setQFactor(m_pQFactor->value().toFloat());
+    m_filter.setDBGain(m_pDbGain->value().toFloat());
 }

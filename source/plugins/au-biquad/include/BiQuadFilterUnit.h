@@ -67,6 +67,7 @@ private:
 
     QtVariantProperty *m_pFilterType;
     QtVariantProperty *m_pQFactor;
+    QtVariantProperty *m_pDbGain;
 };
 
 #endif // AU_BIQUAD_H
