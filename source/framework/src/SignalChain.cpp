@@ -48,6 +48,9 @@ void SignalChain::start()
         return;
     }
     m_updateEventsCounter = 0;
+
+    // Make sure we reset the audio units before starting
+    resetAllAudioUnits();
     startAllAudioUnits();
     m_enabled = false;
     m_started = true;
@@ -259,6 +262,6 @@ void SignalChain::stopAllAudioUnits()
 void SignalChain::resetAllAudioUnits()
 {
     for (IAudioUnit *pAudioUnit : m_audioUnits) {
-        pAudioUnit->reset();
+        pAudioUnit->resetUnitAndPorts();
     }
 }

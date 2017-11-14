@@ -66,6 +66,11 @@ public:
     inline float getValue() const { return m_value; }
 
     /**
+     * @brief Reset the value help by the output port.
+     */
+    inline void reset() { m_value = 0.0; }
+
+    /**
      * Update the port.
      * This will trigger corresponding audio unit update that eventually
      * will assign the output port value.

@@ -134,7 +134,9 @@ void Speaker::processStart()
     // Delete buffers in case the size is changed
     allocateBuffers();
 
-    signalChain()->reset();
+    // We do not reset signal chain here, because it will
+    // prevent optimization of the static outputs (the outputs will be reset).
+
     m_pThreadObject->setSignalChain(signalChain());
 
     m_pThread->setPriority(QThread::TimeCriticalPriority);

@@ -119,6 +119,12 @@ void AudioUnit::stop()
     m_started = false;
 }
 
+void AudioUnit::resetUnitAndPorts()
+{
+    reset();
+    resetAllOutputs();
+}
+
 void AudioUnit::handleEvent(SignalChainEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
@@ -281,6 +287,13 @@ void AudioUnit::pitchBendEvent(PitchBendEvent *pEvent)
 void AudioUnit::controllerEvent(ControllerEvent *pEvent)
 {
     Q_ASSERT(pEvent != nullptr);
+}
+
+void AudioUnit::resetAllOutputs()
+{
+    for (OutputPort *pPort : m_outputs) {
+        pPort->reset();
+    }
 }
 
 #ifdef PROFILING

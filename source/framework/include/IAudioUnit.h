@@ -86,6 +86,11 @@ public:
     virtual void reset() = 0;
 
     /**
+     * @brief Reset this audio unit and all its output ports.
+     */
+    virtual void resetUnitAndPorts() = 0;
+
+    /**
      * @brief Create a custom graphics view for this item
      * @return
      */

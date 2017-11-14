@@ -63,6 +63,7 @@ public:
     void stop() override final;
     bool isStarted() const override final { return m_started; }   
     void reset() override {}
+    void resetUnitAndPorts() override final;
     QGraphicsItem* graphicsItem() override { return nullptr; }
     QColor color() const override;
     QString title() const override;
@@ -191,6 +192,11 @@ protected:
     virtual void noteOffEvent(NoteOffEvent *pEvent);
     virtual void pitchBendEvent(PitchBendEvent *pEvent);
     virtual void controllerEvent(ControllerEvent *pEvent);
+
+    /**
+     * @brief Reset all output ports;
+     */
+    void resetAllOutputs();
 
 private:
 
